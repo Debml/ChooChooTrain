@@ -30,8 +30,8 @@ reserved = {
 tokens = [
      'colon', 'semicolon', 'comma','curlybraces_open', 'curlybraces_close', 'parenthesis_open', 
      'parenthesis_close', 'squarebracket_open', 'squarebracket_close', 'op_assign', 'op_less', 
-     'op_less_equal', 'op_greater', 'op_greater_equal', 'op_equal', 'op_not_equal', 'op_and', 
-     'op_or', 'op_negation', 'op_addition', 'op_subtraction', 'op_multiplication', 'op_division', 
+     'op_less_equal', 'op_greater', 'op_greater_equal', 'op_equal', 'op_not_equal', 
+     'op_addition', 'op_subtraction', 'op_multiplication', 'op_division', 
      'cst_whole', 'cst_decimal', 'cst_words', 'cst_boolean', 'id'] + list(reserved.values())
 
 #Token regular expressions
@@ -42,8 +42,8 @@ t_curlybraces_open = r'{'
 t_curlybraces_close = r'}'
 t_parenthesis_open = r'\('
 t_parenthesis_close = r'\)'
-t_squarebracket_open = r'['
-t_squarebracket_close = r']'
+t_squarebracket_open = r'\['
+t_squarebracket_close = r'\]'
 t_op_less = r'<'
 t_op_less_equal = r'<='
 t_op_greater = r'>'
@@ -75,7 +75,7 @@ def t_cst_boolean(t):
     return t     
 def t_id(t): 
     r'[A-Za-z][A-Za-z0-9]*'
-    t.type = reserved.get(t.value, 'ID')
+    t.type = reserved.get(t.value, 'id')
     return t 
 def t_newline(t):
     r'\n+'
