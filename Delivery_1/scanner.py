@@ -1,6 +1,7 @@
 import ply.lex as lex
 
-#regEx : tokenName
+#List of reserved keywords
+#keyword : tokenName
 reserved = {
     'block' : 'block',
     'main' : 'main',
@@ -9,7 +10,7 @@ reserved = {
     'return' : 'ret',    
     'call' : 'call',
     'variable' : 'variable',
-    'of type' : 'ofType',
+    'of type' : 'of_type',
     'do' : 'do',
     'until' : 'until',
     'if' : 'if',
@@ -20,32 +21,42 @@ reserved = {
     'decimal' : 'decimal',
     'words' : 'words',
     'boolean' : 'boolean',
+    'and' : 'op_and',
+    'or' : 'op_or',
+    'not' : 'op_negation'
 }
 
+#Token list
 tokens = [
-     'colon', 'semicolon', 'comma','cb_open', 'cb_close', 'par_open', 'par_close', 'sb_open', 
-     'sb_close', 'assignOp', 'relOp', 'binaryOp', 'negationOp', 'plusOp', 'minusOp', 'multiplicationOp', 
-     'divisionOp', 'cst_whole', 'cst_decimal',  'cst_words', 'cst_boolean', 'id'] + list(reserved.values())
+     'colon', 'semicolon', 'comma','curlybraces_open', 'curlybraces_close', 'parenthesis_open', 
+     'parenthesis_close', 'squarebracket_open', 'squarebracket_close', 'op_assign', 'op_less', 
+     'op_less_equal', 'op_greater', 'op_greater_equal', 'op_equal', 'op_not_equal', 'op_and', 
+     'op_or', 'op_negation', 'op_addition', 'op_subtraction', 'op_multiplication', 'op_division', 
+     'cst_whole', 'cst_decimal', 'cst_words', 'cst_boolean', 'id'] + list(reserved.values())
 
 #Token regular expressions
-t_ignore  = ' \t'
 t_colon = r':'
-t_semicolon = r';' 
+t_semicolon = r';'
 t_comma = r','
-t_cb_open = r'{'
-t_cb_close = r'}'
-t_par_open = r'\('
-t_par_close = r'\)'
-t_sb_open = r'['
-t_sb_close = r']'
-t_assignOp = r'='
-t_relOp = r'<|<=|>|>=|==|!='
-t_binaryOp = r'and|or'
-t_negationOp = r'not'
-t_plusOp = r'\+'
-t_minusOp = r'-'
-t_multiplicationOp = r'\*'
-t_divisionOp = r'\/'
+t_curlybraces_open = r'{'
+t_curlybraces_close = r'}'
+t_parenthesis_open = r'\('
+t_parenthesis_close = r'\)'
+t_squarebracket_open = r'['
+t_squarebracket_close = r']'
+t_op_less = r'<'
+t_op_less_equal = r'<='
+t_op_greater = r'>'
+t_op_greater_equal = r'>='
+t_op_equal = r'=='
+t_op_assign = r'='
+t_op_not_equal = r'!='
+t_op_addition = r'\+'
+t_op_subtraction = r'-'
+t_op_multiplication = r'\*'
+t_op_division = r'\/'
+t_ignore  = ' \t'
+
 def t_cst_whole(t):
     r'[0-9]+'
     t.value = int(t.value)
