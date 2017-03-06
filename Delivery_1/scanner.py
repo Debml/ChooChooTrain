@@ -4,10 +4,10 @@ import ply.lex as lex
 #keyword : tokenName
 reserved = {
     'block' : 'block',
-    'main' : 'main',
+    'starting' : 'starting',
     'receives' : 'receives',
-    'returns' : 'returns',
-    'return' : 'ret',    
+    'returns' : 'block_returns',
+    'return' : 'return_statement',    
     'call' : 'call',
     'variable' : 'variable',
     'of type' : 'of_type',
