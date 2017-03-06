@@ -1,0 +1,3124 @@
+Created by PLY version 3.10 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> PROGRAM
+Rule 1     PROGRAM -> PROGRAM_AUX
+Rule 2     PROGRAM_AUX -> BLOCK
+Rule 3     PROGRAM_AUX -> PROGRAM_AUX BLOCK
+Rule 4     BLOCK -> BLOCK_AUX block id RECEIVES_AUX RETURNS_AUX BLOCK_BODY
+Rule 5     BLOCK_AUX -> starting
+Rule 6     BLOCK_AUX -> empty
+Rule 7     RECEIVES_AUX -> receives colon id of_type TYPE RECEIVES_AUX1
+Rule 8     RECEIVES_AUX -> empty
+Rule 9     RECEIVES_AUX1 -> comma id of_type TYPE RECEIVES_AUX1
+Rule 10    RECEIVES_AUX1 -> empty
+Rule 11    RETURNS_AUX -> block_returns TYPE
+Rule 12    RETURNS_AUX -> empty
+Rule 13    BLOCK_BODY -> curlybraces_open BLOCK_BODY_AUX curlybraces_close
+Rule 14    BLOCK_BODY_AUX1 -> STATEMENT BLOCK_BODY_AUX1
+Rule 15    BLOCK_BODY_AUX1 -> empty
+Rule 16    BLOCK_BODY_AUX -> DECLARATIONS BLOCK_BODY_AUX1
+Rule 17    BLOCK_BODY_AUX -> BLOCK_BODY_AUX1
+Rule 18    TYPE -> whole
+Rule 19    TYPE -> decimal
+Rule 20    TYPE -> words
+Rule 21    TYPE -> boolean
+Rule 22    BODY -> curlybraces_open BODY_AUX curlybraces_close
+Rule 23    BODY_AUX -> STATEMENT BODY_AUX
+Rule 24    BODY_AUX -> empty
+Rule 25    CONDITION -> if parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX
+Rule 26    CONDITION_AUX -> else BODY
+Rule 27    CONDITION_AUX -> empty
+Rule 28    CONSTANT -> id CONSTANT_AUX
+Rule 29    CONSTANT -> cst_whole
+Rule 30    CONSTANT -> cst_decimal
+Rule 31    CONSTANT -> cst_words
+Rule 32    CONSTANT -> cst_boolean
+Rule 33    CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close
+Rule 34    CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close
+Rule 35    CONSTANT_AUX -> empty
+Rule 36    CONSTANT_AUX1 -> comma EXPRESSION CONSTANT_AUX1
+Rule 37    CONSTANT_AUX1 -> empty
+Rule 38    DECLARATIONS -> VAR_DECLARATION
+Rule 39    DECLARATIONS -> LIST_DECLARATION
+Rule 40    VAR_DECLARATION -> variable id VAR_DECLARATION_AUX of_type TYPE semicolon
+Rule 41    VAR_DECLARATION_AUX -> comma id VAR_DECLARATION_AUX
+Rule 42    VAR_DECLARATION_AUX -> empty
+Rule 43    LIST_DECLARATION -> variable id squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon
+Rule 44    EXPRESSION -> EXPRESSION_AUX EXP EXPRESSION_AUX1
+Rule 45    EXPRESSION_AUX -> op_negation
+Rule 46    EXPRESSION_AUX -> empty
+Rule 47    EXPRESSION_AUX1 -> op_and EXPRESSION_AUX EXP
+Rule 48    EXPRESSION_AUX1 -> op_or EXPRESSION_AUX EXP
+Rule 49    EXP -> ITEM EXP_AUX
+Rule 50    EXP_AUX -> op_less ITEM
+Rule 51    EXP_AUX -> op_less_equal ITEM
+Rule 52    EXP_AUX -> op_greater ITEM
+Rule 53    EXP_AUX -> op_greater_equal ITEM
+Rule 54    EXP_AUX -> op_equal ITEM
+Rule 55    EXP_AUX -> op_not_equal ITEM
+Rule 56    EXP_AUX -> empty
+Rule 57    FACTOR -> parenthesis_open EXPRESSION parenthesis_close
+Rule 58    FACTOR -> FACTOR_AUX
+Rule 59    FACTOR_AUX -> op_addition CONSTANT
+Rule 60    FACTOR_AUX -> op_subtraction CONSTANT
+Rule 61    FACTOR_AUX -> CONSTANT
+Rule 62    ITEM -> TERM ITEM_AUX
+Rule 63    ITEM_AUX -> op_addition ITEM
+Rule 64    ITEM_AUX -> op_subtraction ITEM
+Rule 65    ITEM_AUX -> empty
+Rule 66    TERM -> FACTOR TERM_AUX
+Rule 67    TERM_AUX -> op_multiplication TERM
+Rule 68    TERM_AUX -> op_division TERM
+Rule 69    TERM_AUX -> empty
+Rule 70    STATEMENT -> ASSIGN
+Rule 71    STATEMENT -> CONDITION
+Rule 72    STATEMENT -> READ
+Rule 73    STATEMENT -> WRITE
+Rule 74    STATEMENT -> LOOP
+Rule 75    STATEMENT -> RETURN
+Rule 76    STATEMENT -> CALL
+Rule 77    CALL -> call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon
+Rule 78    CALL_AUX -> comma EXPRESSION CALL_AUX
+Rule 79    CALL_AUX -> empty
+Rule 80    LOOP -> do BODY until parenthesis_open EXPRESSION parenthesis_close
+Rule 81    ASSIGN -> id ASSIGN_AUX op_assign EXPRESSION semicolon
+Rule 82    ASSIGN_AUX -> squarebracket_open EXPRESSION squarebracket_close
+Rule 83    RETURN -> return_statement EXPRESSION semicolon
+Rule 84    READ -> input parenthesis_open id READ_AUX parenthesis_close semicolon
+Rule 85    READ_AUX -> squarebracket_open EXPRESSION squarebracket_close
+Rule 86    READ_AUX -> empty
+Rule 87    WRITE -> print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon
+Rule 88    WRITE_AUX -> comma EXPRESSION WRITE_AUX
+Rule 89    WRITE_AUX -> empty
+Rule 90    empty -> <empty>
+
+Terminals, with rules where they appear
+
+block                : 4
+block_returns        : 11
+boolean              : 21
+call                 : 77
+colon                : 7
+comma                : 9 36 41 78 88
+cst_boolean          : 32
+cst_decimal          : 30
+cst_whole            : 29
+cst_words            : 31
+curlybraces_close    : 13 22
+curlybraces_open     : 13 22
+decimal              : 19
+do                   : 80
+else                 : 26
+error                : 
+id                   : 4 7 9 28 40 41 43 77 81 84
+if                   : 25
+input                : 84
+of_type              : 7 9 40 43
+op_addition          : 59 63
+op_and               : 47
+op_assign            : 81
+op_division          : 68
+op_equal             : 54
+op_greater           : 52
+op_greater_equal     : 53
+op_less              : 50
+op_less_equal        : 51
+op_multiplication    : 67
+op_negation          : 45
+op_not_equal         : 55
+op_or                : 48
+op_subtraction       : 60 64
+parenthesis_close    : 25 34 57 77 80 84 87
+parenthesis_open     : 25 34 57 77 80 84 87
+print                : 87
+receives             : 7
+return_statement     : 83
+semicolon            : 40 43 77 81 83 84 87
+squarebracket_close  : 33 43 82 85
+squarebracket_open   : 33 43 82 85
+starting             : 5
+until                : 80
+variable             : 40 43
+whole                : 18
+words                : 20
+
+Nonterminals, with rules where they appear
+
+ASSIGN               : 70
+ASSIGN_AUX           : 81
+BLOCK                : 2 3
+BLOCK_AUX            : 4
+BLOCK_BODY           : 4
+BLOCK_BODY_AUX       : 13
+BLOCK_BODY_AUX1      : 14 16 17
+BODY                 : 25 26 80
+BODY_AUX             : 22 23
+CALL                 : 76
+CALL_AUX             : 77 78
+CONDITION            : 71
+CONDITION_AUX        : 25
+CONSTANT             : 59 60 61
+CONSTANT_AUX         : 28
+CONSTANT_AUX1        : 34 36
+DECLARATIONS         : 16
+EXP                  : 44 47 48
+EXPRESSION           : 25 33 34 36 43 57 77 78 80 81 82 83 85 87 88
+EXPRESSION_AUX       : 44 47 48
+EXPRESSION_AUX1      : 44
+EXP_AUX              : 49
+FACTOR               : 66
+FACTOR_AUX           : 58
+ITEM                 : 49 50 51 52 53 54 55 63 64
+ITEM_AUX             : 62
+LIST_DECLARATION     : 39
+LOOP                 : 74
+PROGRAM              : 0
+PROGRAM_AUX          : 1 3
+READ                 : 72
+READ_AUX             : 84
+RECEIVES_AUX         : 4
+RECEIVES_AUX1        : 7 9
+RETURN               : 75
+RETURNS_AUX          : 4
+STATEMENT            : 14 23
+TERM                 : 62 67 68
+TERM_AUX             : 66
+TYPE                 : 7 9 11 40 43
+VAR_DECLARATION      : 38
+VAR_DECLARATION_AUX  : 40 41
+WRITE                : 73
+WRITE_AUX            : 87 88
+empty                : 6 8 10 12 15 24 27 35 37 42 46 56 65 69 79 86 89
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . PROGRAM
+    (1) PROGRAM -> . PROGRAM_AUX
+    (2) PROGRAM_AUX -> . BLOCK
+    (3) PROGRAM_AUX -> . PROGRAM_AUX BLOCK
+    (4) BLOCK -> . BLOCK_AUX block id RECEIVES_AUX RETURNS_AUX BLOCK_BODY
+    (5) BLOCK_AUX -> . starting
+    (6) BLOCK_AUX -> . empty
+    (90) empty -> .
+
+    starting        shift and go to state 6
+    block           reduce using rule 90 (empty -> .)
+
+    BLOCK_AUX                      shift and go to state 2
+    PROGRAM                        shift and go to state 3
+    PROGRAM_AUX                    shift and go to state 4
+    empty                          shift and go to state 1
+    BLOCK                          shift and go to state 5
+
+state 1
+
+    (6) BLOCK_AUX -> empty .
+
+    block           reduce using rule 6 (BLOCK_AUX -> empty .)
+
+
+state 2
+
+    (4) BLOCK -> BLOCK_AUX . block id RECEIVES_AUX RETURNS_AUX BLOCK_BODY
+
+    block           shift and go to state 7
+
+
+state 3
+
+    (0) S' -> PROGRAM .
+
+
+
+state 4
+
+    (1) PROGRAM -> PROGRAM_AUX .
+    (3) PROGRAM_AUX -> PROGRAM_AUX . BLOCK
+    (4) BLOCK -> . BLOCK_AUX block id RECEIVES_AUX RETURNS_AUX BLOCK_BODY
+    (5) BLOCK_AUX -> . starting
+    (6) BLOCK_AUX -> . empty
+    (90) empty -> .
+
+    $end            reduce using rule 1 (PROGRAM -> PROGRAM_AUX .)
+    starting        shift and go to state 6
+    block           reduce using rule 90 (empty -> .)
+
+    BLOCK_AUX                      shift and go to state 2
+    empty                          shift and go to state 1
+    BLOCK                          shift and go to state 8
+
+state 5
+
+    (2) PROGRAM_AUX -> BLOCK .
+
+    starting        reduce using rule 2 (PROGRAM_AUX -> BLOCK .)
+    block           reduce using rule 2 (PROGRAM_AUX -> BLOCK .)
+    $end            reduce using rule 2 (PROGRAM_AUX -> BLOCK .)
+
+
+state 6
+
+    (5) BLOCK_AUX -> starting .
+
+    block           reduce using rule 5 (BLOCK_AUX -> starting .)
+
+
+state 7
+
+    (4) BLOCK -> BLOCK_AUX block . id RECEIVES_AUX RETURNS_AUX BLOCK_BODY
+
+    id              shift and go to state 9
+
+
+state 8
+
+    (3) PROGRAM_AUX -> PROGRAM_AUX BLOCK .
+
+    starting        reduce using rule 3 (PROGRAM_AUX -> PROGRAM_AUX BLOCK .)
+    block           reduce using rule 3 (PROGRAM_AUX -> PROGRAM_AUX BLOCK .)
+    $end            reduce using rule 3 (PROGRAM_AUX -> PROGRAM_AUX BLOCK .)
+
+
+state 9
+
+    (4) BLOCK -> BLOCK_AUX block id . RECEIVES_AUX RETURNS_AUX BLOCK_BODY
+    (7) RECEIVES_AUX -> . receives colon id of_type TYPE RECEIVES_AUX1
+    (8) RECEIVES_AUX -> . empty
+    (90) empty -> .
+
+    receives        shift and go to state 12
+    block_returns   reduce using rule 90 (empty -> .)
+    curlybraces_open reduce using rule 90 (empty -> .)
+
+    RECEIVES_AUX                   shift and go to state 10
+    empty                          shift and go to state 11
+
+state 10
+
+    (4) BLOCK -> BLOCK_AUX block id RECEIVES_AUX . RETURNS_AUX BLOCK_BODY
+    (11) RETURNS_AUX -> . block_returns TYPE
+    (12) RETURNS_AUX -> . empty
+    (90) empty -> .
+
+    block_returns   shift and go to state 15
+    curlybraces_open reduce using rule 90 (empty -> .)
+
+    RETURNS_AUX                    shift and go to state 13
+    empty                          shift and go to state 14
+
+state 11
+
+    (8) RECEIVES_AUX -> empty .
+
+    block_returns   reduce using rule 8 (RECEIVES_AUX -> empty .)
+    curlybraces_open reduce using rule 8 (RECEIVES_AUX -> empty .)
+
+
+state 12
+
+    (7) RECEIVES_AUX -> receives . colon id of_type TYPE RECEIVES_AUX1
+
+    colon           shift and go to state 16
+
+
+state 13
+
+    (4) BLOCK -> BLOCK_AUX block id RECEIVES_AUX RETURNS_AUX . BLOCK_BODY
+    (13) BLOCK_BODY -> . curlybraces_open BLOCK_BODY_AUX curlybraces_close
+
+    curlybraces_open shift and go to state 18
+
+    BLOCK_BODY                     shift and go to state 17
+
+state 14
+
+    (12) RETURNS_AUX -> empty .
+
+    curlybraces_open reduce using rule 12 (RETURNS_AUX -> empty .)
+
+
+state 15
+
+    (11) RETURNS_AUX -> block_returns . TYPE
+    (18) TYPE -> . whole
+    (19) TYPE -> . decimal
+    (20) TYPE -> . words
+    (21) TYPE -> . boolean
+
+    whole           shift and go to state 23
+    decimal         shift and go to state 20
+    words           shift and go to state 22
+    boolean         shift and go to state 21
+
+    TYPE                           shift and go to state 19
+
+state 16
+
+    (7) RECEIVES_AUX -> receives colon . id of_type TYPE RECEIVES_AUX1
+
+    id              shift and go to state 24
+
+
+state 17
+
+    (4) BLOCK -> BLOCK_AUX block id RECEIVES_AUX RETURNS_AUX BLOCK_BODY .
+
+    starting        reduce using rule 4 (BLOCK -> BLOCK_AUX block id RECEIVES_AUX RETURNS_AUX BLOCK_BODY .)
+    block           reduce using rule 4 (BLOCK -> BLOCK_AUX block id RECEIVES_AUX RETURNS_AUX BLOCK_BODY .)
+    $end            reduce using rule 4 (BLOCK -> BLOCK_AUX block id RECEIVES_AUX RETURNS_AUX BLOCK_BODY .)
+
+
+state 18
+
+    (13) BLOCK_BODY -> curlybraces_open . BLOCK_BODY_AUX curlybraces_close
+    (16) BLOCK_BODY_AUX -> . DECLARATIONS BLOCK_BODY_AUX1
+    (17) BLOCK_BODY_AUX -> . BLOCK_BODY_AUX1
+    (38) DECLARATIONS -> . VAR_DECLARATION
+    (39) DECLARATIONS -> . LIST_DECLARATION
+    (14) BLOCK_BODY_AUX1 -> . STATEMENT BLOCK_BODY_AUX1
+    (15) BLOCK_BODY_AUX1 -> . empty
+    (40) VAR_DECLARATION -> . variable id VAR_DECLARATION_AUX of_type TYPE semicolon
+    (43) LIST_DECLARATION -> . variable id squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon
+    (70) STATEMENT -> . ASSIGN
+    (71) STATEMENT -> . CONDITION
+    (72) STATEMENT -> . READ
+    (73) STATEMENT -> . WRITE
+    (74) STATEMENT -> . LOOP
+    (75) STATEMENT -> . RETURN
+    (76) STATEMENT -> . CALL
+    (90) empty -> .
+    (81) ASSIGN -> . id ASSIGN_AUX op_assign EXPRESSION semicolon
+    (25) CONDITION -> . if parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX
+    (84) READ -> . input parenthesis_open id READ_AUX parenthesis_close semicolon
+    (87) WRITE -> . print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon
+    (80) LOOP -> . do BODY until parenthesis_open EXPRESSION parenthesis_close
+    (83) RETURN -> . return_statement EXPRESSION semicolon
+    (77) CALL -> . call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon
+
+    variable        shift and go to state 41
+    curlybraces_close reduce using rule 90 (empty -> .)
+    id              shift and go to state 28
+    if              shift and go to state 29
+    input           shift and go to state 35
+    print           shift and go to state 34
+    do              shift and go to state 39
+    return_statement shift and go to state 32
+    call            shift and go to state 33
+
+    RETURN                         shift and go to state 25
+    STATEMENT                      shift and go to state 26
+    READ                           shift and go to state 27
+    LIST_DECLARATION               shift and go to state 30
+    DECLARATIONS                   shift and go to state 31
+    ASSIGN                         shift and go to state 36
+    CONDITION                      shift and go to state 37
+    BLOCK_BODY_AUX                 shift and go to state 38
+    WRITE                          shift and go to state 40
+    BLOCK_BODY_AUX1                shift and go to state 42
+    VAR_DECLARATION                shift and go to state 43
+    CALL                           shift and go to state 44
+    empty                          shift and go to state 45
+    LOOP                           shift and go to state 46
+
+state 19
+
+    (11) RETURNS_AUX -> block_returns TYPE .
+
+    curlybraces_open reduce using rule 11 (RETURNS_AUX -> block_returns TYPE .)
+
+
+state 20
+
+    (19) TYPE -> decimal .
+
+    semicolon       reduce using rule 19 (TYPE -> decimal .)
+    comma           reduce using rule 19 (TYPE -> decimal .)
+    block_returns   reduce using rule 19 (TYPE -> decimal .)
+    curlybraces_open reduce using rule 19 (TYPE -> decimal .)
+
+
+state 21
+
+    (21) TYPE -> boolean .
+
+    semicolon       reduce using rule 21 (TYPE -> boolean .)
+    comma           reduce using rule 21 (TYPE -> boolean .)
+    block_returns   reduce using rule 21 (TYPE -> boolean .)
+    curlybraces_open reduce using rule 21 (TYPE -> boolean .)
+
+
+state 22
+
+    (20) TYPE -> words .
+
+    semicolon       reduce using rule 20 (TYPE -> words .)
+    comma           reduce using rule 20 (TYPE -> words .)
+    block_returns   reduce using rule 20 (TYPE -> words .)
+    curlybraces_open reduce using rule 20 (TYPE -> words .)
+
+
+state 23
+
+    (18) TYPE -> whole .
+
+    semicolon       reduce using rule 18 (TYPE -> whole .)
+    comma           reduce using rule 18 (TYPE -> whole .)
+    block_returns   reduce using rule 18 (TYPE -> whole .)
+    curlybraces_open reduce using rule 18 (TYPE -> whole .)
+
+
+state 24
+
+    (7) RECEIVES_AUX -> receives colon id . of_type TYPE RECEIVES_AUX1
+
+    of_type         shift and go to state 47
+
+
+state 25
+
+    (75) STATEMENT -> RETURN .
+
+    id              reduce using rule 75 (STATEMENT -> RETURN .)
+    if              reduce using rule 75 (STATEMENT -> RETURN .)
+    input           reduce using rule 75 (STATEMENT -> RETURN .)
+    print           reduce using rule 75 (STATEMENT -> RETURN .)
+    do              reduce using rule 75 (STATEMENT -> RETURN .)
+    return_statement reduce using rule 75 (STATEMENT -> RETURN .)
+    call            reduce using rule 75 (STATEMENT -> RETURN .)
+    curlybraces_close reduce using rule 75 (STATEMENT -> RETURN .)
+
+
+state 26
+
+    (14) BLOCK_BODY_AUX1 -> STATEMENT . BLOCK_BODY_AUX1
+    (14) BLOCK_BODY_AUX1 -> . STATEMENT BLOCK_BODY_AUX1
+    (15) BLOCK_BODY_AUX1 -> . empty
+    (70) STATEMENT -> . ASSIGN
+    (71) STATEMENT -> . CONDITION
+    (72) STATEMENT -> . READ
+    (73) STATEMENT -> . WRITE
+    (74) STATEMENT -> . LOOP
+    (75) STATEMENT -> . RETURN
+    (76) STATEMENT -> . CALL
+    (90) empty -> .
+    (81) ASSIGN -> . id ASSIGN_AUX op_assign EXPRESSION semicolon
+    (25) CONDITION -> . if parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX
+    (84) READ -> . input parenthesis_open id READ_AUX parenthesis_close semicolon
+    (87) WRITE -> . print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon
+    (80) LOOP -> . do BODY until parenthesis_open EXPRESSION parenthesis_close
+    (83) RETURN -> . return_statement EXPRESSION semicolon
+    (77) CALL -> . call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon
+
+    curlybraces_close reduce using rule 90 (empty -> .)
+    id              shift and go to state 28
+    if              shift and go to state 29
+    input           shift and go to state 35
+    print           shift and go to state 34
+    do              shift and go to state 39
+    return_statement shift and go to state 32
+    call            shift and go to state 33
+
+    RETURN                         shift and go to state 25
+    LOOP                           shift and go to state 46
+    READ                           shift and go to state 27
+    BLOCK_BODY_AUX1                shift and go to state 48
+    WRITE                          shift and go to state 40
+    CALL                           shift and go to state 44
+    empty                          shift and go to state 45
+    STATEMENT                      shift and go to state 26
+    ASSIGN                         shift and go to state 36
+    CONDITION                      shift and go to state 37
+
+state 27
+
+    (72) STATEMENT -> READ .
+
+    id              reduce using rule 72 (STATEMENT -> READ .)
+    if              reduce using rule 72 (STATEMENT -> READ .)
+    input           reduce using rule 72 (STATEMENT -> READ .)
+    print           reduce using rule 72 (STATEMENT -> READ .)
+    do              reduce using rule 72 (STATEMENT -> READ .)
+    return_statement reduce using rule 72 (STATEMENT -> READ .)
+    call            reduce using rule 72 (STATEMENT -> READ .)
+    curlybraces_close reduce using rule 72 (STATEMENT -> READ .)
+
+
+state 28
+
+    (81) ASSIGN -> id . ASSIGN_AUX op_assign EXPRESSION semicolon
+    (82) ASSIGN_AUX -> . squarebracket_open EXPRESSION squarebracket_close
+
+    squarebracket_open shift and go to state 50
+
+    ASSIGN_AUX                     shift and go to state 49
+
+state 29
+
+    (25) CONDITION -> if . parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX
+
+    parenthesis_open shift and go to state 51
+
+
+state 30
+
+    (39) DECLARATIONS -> LIST_DECLARATION .
+
+    id              reduce using rule 39 (DECLARATIONS -> LIST_DECLARATION .)
+    if              reduce using rule 39 (DECLARATIONS -> LIST_DECLARATION .)
+    input           reduce using rule 39 (DECLARATIONS -> LIST_DECLARATION .)
+    print           reduce using rule 39 (DECLARATIONS -> LIST_DECLARATION .)
+    do              reduce using rule 39 (DECLARATIONS -> LIST_DECLARATION .)
+    return_statement reduce using rule 39 (DECLARATIONS -> LIST_DECLARATION .)
+    call            reduce using rule 39 (DECLARATIONS -> LIST_DECLARATION .)
+    curlybraces_close reduce using rule 39 (DECLARATIONS -> LIST_DECLARATION .)
+
+
+state 31
+
+    (16) BLOCK_BODY_AUX -> DECLARATIONS . BLOCK_BODY_AUX1
+    (14) BLOCK_BODY_AUX1 -> . STATEMENT BLOCK_BODY_AUX1
+    (15) BLOCK_BODY_AUX1 -> . empty
+    (70) STATEMENT -> . ASSIGN
+    (71) STATEMENT -> . CONDITION
+    (72) STATEMENT -> . READ
+    (73) STATEMENT -> . WRITE
+    (74) STATEMENT -> . LOOP
+    (75) STATEMENT -> . RETURN
+    (76) STATEMENT -> . CALL
+    (90) empty -> .
+    (81) ASSIGN -> . id ASSIGN_AUX op_assign EXPRESSION semicolon
+    (25) CONDITION -> . if parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX
+    (84) READ -> . input parenthesis_open id READ_AUX parenthesis_close semicolon
+    (87) WRITE -> . print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon
+    (80) LOOP -> . do BODY until parenthesis_open EXPRESSION parenthesis_close
+    (83) RETURN -> . return_statement EXPRESSION semicolon
+    (77) CALL -> . call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon
+
+    curlybraces_close reduce using rule 90 (empty -> .)
+    id              shift and go to state 28
+    if              shift and go to state 29
+    input           shift and go to state 35
+    print           shift and go to state 34
+    do              shift and go to state 39
+    return_statement shift and go to state 32
+    call            shift and go to state 33
+
+    RETURN                         shift and go to state 25
+    LOOP                           shift and go to state 46
+    READ                           shift and go to state 27
+    BLOCK_BODY_AUX1                shift and go to state 52
+    WRITE                          shift and go to state 40
+    CALL                           shift and go to state 44
+    empty                          shift and go to state 45
+    STATEMENT                      shift and go to state 26
+    ASSIGN                         shift and go to state 36
+    CONDITION                      shift and go to state 37
+
+state 32
+
+    (83) RETURN -> return_statement . EXPRESSION semicolon
+    (44) EXPRESSION -> . EXPRESSION_AUX EXP EXPRESSION_AUX1
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 54
+    EXPRESSION                     shift and go to state 55
+    empty                          shift and go to state 56
+
+state 33
+
+    (77) CALL -> call . id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon
+
+    id              shift and go to state 57
+
+
+state 34
+
+    (87) WRITE -> print . parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon
+
+    parenthesis_open shift and go to state 58
+
+
+state 35
+
+    (84) READ -> input . parenthesis_open id READ_AUX parenthesis_close semicolon
+
+    parenthesis_open shift and go to state 59
+
+
+state 36
+
+    (70) STATEMENT -> ASSIGN .
+
+    id              reduce using rule 70 (STATEMENT -> ASSIGN .)
+    if              reduce using rule 70 (STATEMENT -> ASSIGN .)
+    input           reduce using rule 70 (STATEMENT -> ASSIGN .)
+    print           reduce using rule 70 (STATEMENT -> ASSIGN .)
+    do              reduce using rule 70 (STATEMENT -> ASSIGN .)
+    return_statement reduce using rule 70 (STATEMENT -> ASSIGN .)
+    call            reduce using rule 70 (STATEMENT -> ASSIGN .)
+    curlybraces_close reduce using rule 70 (STATEMENT -> ASSIGN .)
+
+
+state 37
+
+    (71) STATEMENT -> CONDITION .
+
+    id              reduce using rule 71 (STATEMENT -> CONDITION .)
+    if              reduce using rule 71 (STATEMENT -> CONDITION .)
+    input           reduce using rule 71 (STATEMENT -> CONDITION .)
+    print           reduce using rule 71 (STATEMENT -> CONDITION .)
+    do              reduce using rule 71 (STATEMENT -> CONDITION .)
+    return_statement reduce using rule 71 (STATEMENT -> CONDITION .)
+    call            reduce using rule 71 (STATEMENT -> CONDITION .)
+    curlybraces_close reduce using rule 71 (STATEMENT -> CONDITION .)
+
+
+state 38
+
+    (13) BLOCK_BODY -> curlybraces_open BLOCK_BODY_AUX . curlybraces_close
+
+    curlybraces_close shift and go to state 60
+
+
+state 39
+
+    (80) LOOP -> do . BODY until parenthesis_open EXPRESSION parenthesis_close
+    (22) BODY -> . curlybraces_open BODY_AUX curlybraces_close
+
+    curlybraces_open shift and go to state 62
+
+    BODY                           shift and go to state 61
+
+state 40
+
+    (73) STATEMENT -> WRITE .
+
+    id              reduce using rule 73 (STATEMENT -> WRITE .)
+    if              reduce using rule 73 (STATEMENT -> WRITE .)
+    input           reduce using rule 73 (STATEMENT -> WRITE .)
+    print           reduce using rule 73 (STATEMENT -> WRITE .)
+    do              reduce using rule 73 (STATEMENT -> WRITE .)
+    return_statement reduce using rule 73 (STATEMENT -> WRITE .)
+    call            reduce using rule 73 (STATEMENT -> WRITE .)
+    curlybraces_close reduce using rule 73 (STATEMENT -> WRITE .)
+
+
+state 41
+
+    (40) VAR_DECLARATION -> variable . id VAR_DECLARATION_AUX of_type TYPE semicolon
+    (43) LIST_DECLARATION -> variable . id squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon
+
+    id              shift and go to state 63
+
+
+state 42
+
+    (17) BLOCK_BODY_AUX -> BLOCK_BODY_AUX1 .
+
+    curlybraces_close reduce using rule 17 (BLOCK_BODY_AUX -> BLOCK_BODY_AUX1 .)
+
+
+state 43
+
+    (38) DECLARATIONS -> VAR_DECLARATION .
+
+    id              reduce using rule 38 (DECLARATIONS -> VAR_DECLARATION .)
+    if              reduce using rule 38 (DECLARATIONS -> VAR_DECLARATION .)
+    input           reduce using rule 38 (DECLARATIONS -> VAR_DECLARATION .)
+    print           reduce using rule 38 (DECLARATIONS -> VAR_DECLARATION .)
+    do              reduce using rule 38 (DECLARATIONS -> VAR_DECLARATION .)
+    return_statement reduce using rule 38 (DECLARATIONS -> VAR_DECLARATION .)
+    call            reduce using rule 38 (DECLARATIONS -> VAR_DECLARATION .)
+    curlybraces_close reduce using rule 38 (DECLARATIONS -> VAR_DECLARATION .)
+
+
+state 44
+
+    (76) STATEMENT -> CALL .
+
+    id              reduce using rule 76 (STATEMENT -> CALL .)
+    if              reduce using rule 76 (STATEMENT -> CALL .)
+    input           reduce using rule 76 (STATEMENT -> CALL .)
+    print           reduce using rule 76 (STATEMENT -> CALL .)
+    do              reduce using rule 76 (STATEMENT -> CALL .)
+    return_statement reduce using rule 76 (STATEMENT -> CALL .)
+    call            reduce using rule 76 (STATEMENT -> CALL .)
+    curlybraces_close reduce using rule 76 (STATEMENT -> CALL .)
+
+
+state 45
+
+    (15) BLOCK_BODY_AUX1 -> empty .
+
+    curlybraces_close reduce using rule 15 (BLOCK_BODY_AUX1 -> empty .)
+
+
+state 46
+
+    (74) STATEMENT -> LOOP .
+
+    id              reduce using rule 74 (STATEMENT -> LOOP .)
+    if              reduce using rule 74 (STATEMENT -> LOOP .)
+    input           reduce using rule 74 (STATEMENT -> LOOP .)
+    print           reduce using rule 74 (STATEMENT -> LOOP .)
+    do              reduce using rule 74 (STATEMENT -> LOOP .)
+    return_statement reduce using rule 74 (STATEMENT -> LOOP .)
+    call            reduce using rule 74 (STATEMENT -> LOOP .)
+    curlybraces_close reduce using rule 74 (STATEMENT -> LOOP .)
+
+
+state 47
+
+    (7) RECEIVES_AUX -> receives colon id of_type . TYPE RECEIVES_AUX1
+    (18) TYPE -> . whole
+    (19) TYPE -> . decimal
+    (20) TYPE -> . words
+    (21) TYPE -> . boolean
+
+    whole           shift and go to state 23
+    decimal         shift and go to state 20
+    words           shift and go to state 22
+    boolean         shift and go to state 21
+
+    TYPE                           shift and go to state 64
+
+state 48
+
+    (14) BLOCK_BODY_AUX1 -> STATEMENT BLOCK_BODY_AUX1 .
+
+    curlybraces_close reduce using rule 14 (BLOCK_BODY_AUX1 -> STATEMENT BLOCK_BODY_AUX1 .)
+
+
+state 49
+
+    (81) ASSIGN -> id ASSIGN_AUX . op_assign EXPRESSION semicolon
+
+    op_assign       shift and go to state 65
+
+
+state 50
+
+    (82) ASSIGN_AUX -> squarebracket_open . EXPRESSION squarebracket_close
+    (44) EXPRESSION -> . EXPRESSION_AUX EXP EXPRESSION_AUX1
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 54
+    EXPRESSION                     shift and go to state 66
+    empty                          shift and go to state 56
+
+state 51
+
+    (25) CONDITION -> if parenthesis_open . EXPRESSION parenthesis_close BODY CONDITION_AUX
+    (44) EXPRESSION -> . EXPRESSION_AUX EXP EXPRESSION_AUX1
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 54
+    EXPRESSION                     shift and go to state 67
+    empty                          shift and go to state 56
+
+state 52
+
+    (16) BLOCK_BODY_AUX -> DECLARATIONS BLOCK_BODY_AUX1 .
+
+    curlybraces_close reduce using rule 16 (BLOCK_BODY_AUX -> DECLARATIONS BLOCK_BODY_AUX1 .)
+
+
+state 53
+
+    (45) EXPRESSION_AUX -> op_negation .
+
+    parenthesis_open reduce using rule 45 (EXPRESSION_AUX -> op_negation .)
+    op_addition     reduce using rule 45 (EXPRESSION_AUX -> op_negation .)
+    op_subtraction  reduce using rule 45 (EXPRESSION_AUX -> op_negation .)
+    id              reduce using rule 45 (EXPRESSION_AUX -> op_negation .)
+    cst_whole       reduce using rule 45 (EXPRESSION_AUX -> op_negation .)
+    cst_decimal     reduce using rule 45 (EXPRESSION_AUX -> op_negation .)
+    cst_words       reduce using rule 45 (EXPRESSION_AUX -> op_negation .)
+    cst_boolean     reduce using rule 45 (EXPRESSION_AUX -> op_negation .)
+
+
+state 54
+
+    (44) EXPRESSION -> EXPRESSION_AUX . EXP EXPRESSION_AUX1
+    (49) EXP -> . ITEM EXP_AUX
+    (62) ITEM -> . TERM ITEM_AUX
+    (66) TERM -> . FACTOR TERM_AUX
+    (57) FACTOR -> . parenthesis_open EXPRESSION parenthesis_close
+    (58) FACTOR -> . FACTOR_AUX
+    (59) FACTOR_AUX -> . op_addition CONSTANT
+    (60) FACTOR_AUX -> . op_subtraction CONSTANT
+    (61) FACTOR_AUX -> . CONSTANT
+    (28) CONSTANT -> . id CONSTANT_AUX
+    (29) CONSTANT -> . cst_whole
+    (30) CONSTANT -> . cst_decimal
+    (31) CONSTANT -> . cst_words
+    (32) CONSTANT -> . cst_boolean
+
+    parenthesis_open shift and go to state 74
+    op_addition     shift and go to state 76
+    op_subtraction  shift and go to state 79
+    id              shift and go to state 71
+    cst_whole       shift and go to state 78
+    cst_decimal     shift and go to state 69
+    cst_words       shift and go to state 72
+    cst_boolean     shift and go to state 77
+
+    TERM                           shift and go to state 73
+    CONSTANT                       shift and go to state 68
+    FACTOR_AUX                     shift and go to state 75
+    ITEM                           shift and go to state 80
+    EXP                            shift and go to state 70
+    FACTOR                         shift and go to state 81
+
+state 55
+
+    (83) RETURN -> return_statement EXPRESSION . semicolon
+
+    semicolon       shift and go to state 82
+
+
+state 56
+
+    (46) EXPRESSION_AUX -> empty .
+
+    parenthesis_open reduce using rule 46 (EXPRESSION_AUX -> empty .)
+    op_addition     reduce using rule 46 (EXPRESSION_AUX -> empty .)
+    op_subtraction  reduce using rule 46 (EXPRESSION_AUX -> empty .)
+    id              reduce using rule 46 (EXPRESSION_AUX -> empty .)
+    cst_whole       reduce using rule 46 (EXPRESSION_AUX -> empty .)
+    cst_decimal     reduce using rule 46 (EXPRESSION_AUX -> empty .)
+    cst_words       reduce using rule 46 (EXPRESSION_AUX -> empty .)
+    cst_boolean     reduce using rule 46 (EXPRESSION_AUX -> empty .)
+
+
+state 57
+
+    (77) CALL -> call id . parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon
+
+    parenthesis_open shift and go to state 83
+
+
+state 58
+
+    (87) WRITE -> print parenthesis_open . EXPRESSION WRITE_AUX parenthesis_close semicolon
+    (44) EXPRESSION -> . EXPRESSION_AUX EXP EXPRESSION_AUX1
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 54
+    EXPRESSION                     shift and go to state 84
+    empty                          shift and go to state 56
+
+state 59
+
+    (84) READ -> input parenthesis_open . id READ_AUX parenthesis_close semicolon
+
+    id              shift and go to state 85
+
+
+state 60
+
+    (13) BLOCK_BODY -> curlybraces_open BLOCK_BODY_AUX curlybraces_close .
+
+    starting        reduce using rule 13 (BLOCK_BODY -> curlybraces_open BLOCK_BODY_AUX curlybraces_close .)
+    block           reduce using rule 13 (BLOCK_BODY -> curlybraces_open BLOCK_BODY_AUX curlybraces_close .)
+    $end            reduce using rule 13 (BLOCK_BODY -> curlybraces_open BLOCK_BODY_AUX curlybraces_close .)
+
+
+state 61
+
+    (80) LOOP -> do BODY . until parenthesis_open EXPRESSION parenthesis_close
+
+    until           shift and go to state 86
+
+
+state 62
+
+    (22) BODY -> curlybraces_open . BODY_AUX curlybraces_close
+    (23) BODY_AUX -> . STATEMENT BODY_AUX
+    (24) BODY_AUX -> . empty
+    (70) STATEMENT -> . ASSIGN
+    (71) STATEMENT -> . CONDITION
+    (72) STATEMENT -> . READ
+    (73) STATEMENT -> . WRITE
+    (74) STATEMENT -> . LOOP
+    (75) STATEMENT -> . RETURN
+    (76) STATEMENT -> . CALL
+    (90) empty -> .
+    (81) ASSIGN -> . id ASSIGN_AUX op_assign EXPRESSION semicolon
+    (25) CONDITION -> . if parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX
+    (84) READ -> . input parenthesis_open id READ_AUX parenthesis_close semicolon
+    (87) WRITE -> . print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon
+    (80) LOOP -> . do BODY until parenthesis_open EXPRESSION parenthesis_close
+    (83) RETURN -> . return_statement EXPRESSION semicolon
+    (77) CALL -> . call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon
+
+    curlybraces_close reduce using rule 90 (empty -> .)
+    id              shift and go to state 28
+    if              shift and go to state 29
+    input           shift and go to state 35
+    print           shift and go to state 34
+    do              shift and go to state 39
+    return_statement shift and go to state 32
+    call            shift and go to state 33
+
+    RETURN                         shift and go to state 25
+    BODY_AUX                       shift and go to state 88
+    READ                           shift and go to state 27
+    LOOP                           shift and go to state 46
+    WRITE                          shift and go to state 40
+    CALL                           shift and go to state 44
+    empty                          shift and go to state 89
+    STATEMENT                      shift and go to state 87
+    ASSIGN                         shift and go to state 36
+    CONDITION                      shift and go to state 37
+
+state 63
+
+    (40) VAR_DECLARATION -> variable id . VAR_DECLARATION_AUX of_type TYPE semicolon
+    (43) LIST_DECLARATION -> variable id . squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon
+    (41) VAR_DECLARATION_AUX -> . comma id VAR_DECLARATION_AUX
+    (42) VAR_DECLARATION_AUX -> . empty
+    (90) empty -> .
+
+    squarebracket_open shift and go to state 91
+    comma           shift and go to state 90
+    of_type         reduce using rule 90 (empty -> .)
+
+    empty                          shift and go to state 93
+    VAR_DECLARATION_AUX            shift and go to state 92
+
+state 64
+
+    (7) RECEIVES_AUX -> receives colon id of_type TYPE . RECEIVES_AUX1
+    (9) RECEIVES_AUX1 -> . comma id of_type TYPE RECEIVES_AUX1
+    (10) RECEIVES_AUX1 -> . empty
+    (90) empty -> .
+
+    comma           shift and go to state 94
+    block_returns   reduce using rule 90 (empty -> .)
+    curlybraces_open reduce using rule 90 (empty -> .)
+
+    RECEIVES_AUX1                  shift and go to state 95
+    empty                          shift and go to state 96
+
+state 65
+
+    (81) ASSIGN -> id ASSIGN_AUX op_assign . EXPRESSION semicolon
+    (44) EXPRESSION -> . EXPRESSION_AUX EXP EXPRESSION_AUX1
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 54
+    EXPRESSION                     shift and go to state 97
+    empty                          shift and go to state 56
+
+state 66
+
+    (82) ASSIGN_AUX -> squarebracket_open EXPRESSION . squarebracket_close
+
+    squarebracket_close shift and go to state 98
+
+
+state 67
+
+    (25) CONDITION -> if parenthesis_open EXPRESSION . parenthesis_close BODY CONDITION_AUX
+
+    parenthesis_close shift and go to state 99
+
+
+state 68
+
+    (61) FACTOR_AUX -> CONSTANT .
+
+    op_multiplication reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+    op_division     reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+    op_addition     reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+    op_subtraction  reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+    op_and          reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+    op_or           reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+    semicolon       reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+    squarebracket_close reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+    parenthesis_close reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+    comma           reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+    op_less         reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+    op_less_equal   reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+    op_greater      reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+    op_greater_equal reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+    op_equal        reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+    op_not_equal    reduce using rule 61 (FACTOR_AUX -> CONSTANT .)
+
+
+state 69
+
+    (30) CONSTANT -> cst_decimal .
+
+    op_multiplication reduce using rule 30 (CONSTANT -> cst_decimal .)
+    op_division     reduce using rule 30 (CONSTANT -> cst_decimal .)
+    op_addition     reduce using rule 30 (CONSTANT -> cst_decimal .)
+    op_subtraction  reduce using rule 30 (CONSTANT -> cst_decimal .)
+    op_less         reduce using rule 30 (CONSTANT -> cst_decimal .)
+    op_less_equal   reduce using rule 30 (CONSTANT -> cst_decimal .)
+    op_greater      reduce using rule 30 (CONSTANT -> cst_decimal .)
+    op_greater_equal reduce using rule 30 (CONSTANT -> cst_decimal .)
+    op_equal        reduce using rule 30 (CONSTANT -> cst_decimal .)
+    op_not_equal    reduce using rule 30 (CONSTANT -> cst_decimal .)
+    semicolon       reduce using rule 30 (CONSTANT -> cst_decimal .)
+    squarebracket_close reduce using rule 30 (CONSTANT -> cst_decimal .)
+    parenthesis_close reduce using rule 30 (CONSTANT -> cst_decimal .)
+    comma           reduce using rule 30 (CONSTANT -> cst_decimal .)
+    op_and          reduce using rule 30 (CONSTANT -> cst_decimal .)
+    op_or           reduce using rule 30 (CONSTANT -> cst_decimal .)
+
+
+state 70
+
+    (44) EXPRESSION -> EXPRESSION_AUX EXP . EXPRESSION_AUX1
+    (47) EXPRESSION_AUX1 -> . op_and EXPRESSION_AUX EXP
+    (48) EXPRESSION_AUX1 -> . op_or EXPRESSION_AUX EXP
+
+    op_and          shift and go to state 102
+    op_or           shift and go to state 101
+
+    EXPRESSION_AUX1                shift and go to state 100
+
+state 71
+
+    (28) CONSTANT -> id . CONSTANT_AUX
+    (33) CONSTANT_AUX -> . squarebracket_open EXPRESSION squarebracket_close
+    (34) CONSTANT_AUX -> . parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close
+    (35) CONSTANT_AUX -> . empty
+    (90) empty -> .
+
+    squarebracket_open shift and go to state 103
+    parenthesis_open shift and go to state 106
+    op_multiplication reduce using rule 90 (empty -> .)
+    op_division     reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    op_less         reduce using rule 90 (empty -> .)
+    op_less_equal   reduce using rule 90 (empty -> .)
+    op_greater      reduce using rule 90 (empty -> .)
+    op_greater_equal reduce using rule 90 (empty -> .)
+    op_equal        reduce using rule 90 (empty -> .)
+    op_not_equal    reduce using rule 90 (empty -> .)
+    op_and          reduce using rule 90 (empty -> .)
+    op_or           reduce using rule 90 (empty -> .)
+    semicolon       reduce using rule 90 (empty -> .)
+    squarebracket_close reduce using rule 90 (empty -> .)
+    parenthesis_close reduce using rule 90 (empty -> .)
+    comma           reduce using rule 90 (empty -> .)
+
+    CONSTANT_AUX                   shift and go to state 104
+    empty                          shift and go to state 105
+
+state 72
+
+    (31) CONSTANT -> cst_words .
+
+    op_multiplication reduce using rule 31 (CONSTANT -> cst_words .)
+    op_division     reduce using rule 31 (CONSTANT -> cst_words .)
+    op_addition     reduce using rule 31 (CONSTANT -> cst_words .)
+    op_subtraction  reduce using rule 31 (CONSTANT -> cst_words .)
+    op_less         reduce using rule 31 (CONSTANT -> cst_words .)
+    op_less_equal   reduce using rule 31 (CONSTANT -> cst_words .)
+    op_greater      reduce using rule 31 (CONSTANT -> cst_words .)
+    op_greater_equal reduce using rule 31 (CONSTANT -> cst_words .)
+    op_equal        reduce using rule 31 (CONSTANT -> cst_words .)
+    op_not_equal    reduce using rule 31 (CONSTANT -> cst_words .)
+    semicolon       reduce using rule 31 (CONSTANT -> cst_words .)
+    squarebracket_close reduce using rule 31 (CONSTANT -> cst_words .)
+    parenthesis_close reduce using rule 31 (CONSTANT -> cst_words .)
+    comma           reduce using rule 31 (CONSTANT -> cst_words .)
+    op_and          reduce using rule 31 (CONSTANT -> cst_words .)
+    op_or           reduce using rule 31 (CONSTANT -> cst_words .)
+
+
+state 73
+
+    (62) ITEM -> TERM . ITEM_AUX
+    (63) ITEM_AUX -> . op_addition ITEM
+    (64) ITEM_AUX -> . op_subtraction ITEM
+    (65) ITEM_AUX -> . empty
+    (90) empty -> .
+
+    op_addition     shift and go to state 107
+    op_subtraction  shift and go to state 108
+    op_less         reduce using rule 90 (empty -> .)
+    op_less_equal   reduce using rule 90 (empty -> .)
+    op_greater      reduce using rule 90 (empty -> .)
+    op_greater_equal reduce using rule 90 (empty -> .)
+    op_equal        reduce using rule 90 (empty -> .)
+    op_not_equal    reduce using rule 90 (empty -> .)
+    op_and          reduce using rule 90 (empty -> .)
+    op_or           reduce using rule 90 (empty -> .)
+    semicolon       reduce using rule 90 (empty -> .)
+    squarebracket_close reduce using rule 90 (empty -> .)
+    parenthesis_close reduce using rule 90 (empty -> .)
+    comma           reduce using rule 90 (empty -> .)
+
+    ITEM_AUX                       shift and go to state 109
+    empty                          shift and go to state 110
+
+state 74
+
+    (57) FACTOR -> parenthesis_open . EXPRESSION parenthesis_close
+    (44) EXPRESSION -> . EXPRESSION_AUX EXP EXPRESSION_AUX1
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 54
+    EXPRESSION                     shift and go to state 111
+    empty                          shift and go to state 56
+
+state 75
+
+    (58) FACTOR -> FACTOR_AUX .
+
+    op_multiplication reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+    op_division     reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+    op_addition     reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+    op_subtraction  reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+    op_less         reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+    op_less_equal   reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+    op_greater      reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+    op_greater_equal reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+    op_equal        reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+    op_not_equal    reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+    semicolon       reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+    squarebracket_close reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+    parenthesis_close reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+    comma           reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+    op_and          reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+    op_or           reduce using rule 58 (FACTOR -> FACTOR_AUX .)
+
+
+state 76
+
+    (59) FACTOR_AUX -> op_addition . CONSTANT
+    (28) CONSTANT -> . id CONSTANT_AUX
+    (29) CONSTANT -> . cst_whole
+    (30) CONSTANT -> . cst_decimal
+    (31) CONSTANT -> . cst_words
+    (32) CONSTANT -> . cst_boolean
+
+    id              shift and go to state 71
+    cst_whole       shift and go to state 78
+    cst_decimal     shift and go to state 69
+    cst_words       shift and go to state 72
+    cst_boolean     shift and go to state 77
+
+    CONSTANT                       shift and go to state 112
+
+state 77
+
+    (32) CONSTANT -> cst_boolean .
+
+    op_multiplication reduce using rule 32 (CONSTANT -> cst_boolean .)
+    op_division     reduce using rule 32 (CONSTANT -> cst_boolean .)
+    op_addition     reduce using rule 32 (CONSTANT -> cst_boolean .)
+    op_subtraction  reduce using rule 32 (CONSTANT -> cst_boolean .)
+    op_less         reduce using rule 32 (CONSTANT -> cst_boolean .)
+    op_less_equal   reduce using rule 32 (CONSTANT -> cst_boolean .)
+    op_greater      reduce using rule 32 (CONSTANT -> cst_boolean .)
+    op_greater_equal reduce using rule 32 (CONSTANT -> cst_boolean .)
+    op_equal        reduce using rule 32 (CONSTANT -> cst_boolean .)
+    op_not_equal    reduce using rule 32 (CONSTANT -> cst_boolean .)
+    semicolon       reduce using rule 32 (CONSTANT -> cst_boolean .)
+    squarebracket_close reduce using rule 32 (CONSTANT -> cst_boolean .)
+    parenthesis_close reduce using rule 32 (CONSTANT -> cst_boolean .)
+    comma           reduce using rule 32 (CONSTANT -> cst_boolean .)
+    op_and          reduce using rule 32 (CONSTANT -> cst_boolean .)
+    op_or           reduce using rule 32 (CONSTANT -> cst_boolean .)
+
+
+state 78
+
+    (29) CONSTANT -> cst_whole .
+
+    op_multiplication reduce using rule 29 (CONSTANT -> cst_whole .)
+    op_division     reduce using rule 29 (CONSTANT -> cst_whole .)
+    op_addition     reduce using rule 29 (CONSTANT -> cst_whole .)
+    op_subtraction  reduce using rule 29 (CONSTANT -> cst_whole .)
+    op_less         reduce using rule 29 (CONSTANT -> cst_whole .)
+    op_less_equal   reduce using rule 29 (CONSTANT -> cst_whole .)
+    op_greater      reduce using rule 29 (CONSTANT -> cst_whole .)
+    op_greater_equal reduce using rule 29 (CONSTANT -> cst_whole .)
+    op_equal        reduce using rule 29 (CONSTANT -> cst_whole .)
+    op_not_equal    reduce using rule 29 (CONSTANT -> cst_whole .)
+    semicolon       reduce using rule 29 (CONSTANT -> cst_whole .)
+    squarebracket_close reduce using rule 29 (CONSTANT -> cst_whole .)
+    parenthesis_close reduce using rule 29 (CONSTANT -> cst_whole .)
+    comma           reduce using rule 29 (CONSTANT -> cst_whole .)
+    op_and          reduce using rule 29 (CONSTANT -> cst_whole .)
+    op_or           reduce using rule 29 (CONSTANT -> cst_whole .)
+
+
+state 79
+
+    (60) FACTOR_AUX -> op_subtraction . CONSTANT
+    (28) CONSTANT -> . id CONSTANT_AUX
+    (29) CONSTANT -> . cst_whole
+    (30) CONSTANT -> . cst_decimal
+    (31) CONSTANT -> . cst_words
+    (32) CONSTANT -> . cst_boolean
+
+    id              shift and go to state 71
+    cst_whole       shift and go to state 78
+    cst_decimal     shift and go to state 69
+    cst_words       shift and go to state 72
+    cst_boolean     shift and go to state 77
+
+    CONSTANT                       shift and go to state 113
+
+state 80
+
+    (49) EXP -> ITEM . EXP_AUX
+    (50) EXP_AUX -> . op_less ITEM
+    (51) EXP_AUX -> . op_less_equal ITEM
+    (52) EXP_AUX -> . op_greater ITEM
+    (53) EXP_AUX -> . op_greater_equal ITEM
+    (54) EXP_AUX -> . op_equal ITEM
+    (55) EXP_AUX -> . op_not_equal ITEM
+    (56) EXP_AUX -> . empty
+    (90) empty -> .
+
+    op_less         shift and go to state 119
+    op_less_equal   shift and go to state 114
+    op_greater      shift and go to state 116
+    op_greater_equal shift and go to state 117
+    op_equal        shift and go to state 118
+    op_not_equal    shift and go to state 115
+    op_and          reduce using rule 90 (empty -> .)
+    op_or           reduce using rule 90 (empty -> .)
+    semicolon       reduce using rule 90 (empty -> .)
+    squarebracket_close reduce using rule 90 (empty -> .)
+    parenthesis_close reduce using rule 90 (empty -> .)
+    comma           reduce using rule 90 (empty -> .)
+
+    EXP_AUX                        shift and go to state 120
+    empty                          shift and go to state 121
+
+state 81
+
+    (66) TERM -> FACTOR . TERM_AUX
+    (67) TERM_AUX -> . op_multiplication TERM
+    (68) TERM_AUX -> . op_division TERM
+    (69) TERM_AUX -> . empty
+    (90) empty -> .
+
+    op_multiplication shift and go to state 124
+    op_division     shift and go to state 123
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    op_less         reduce using rule 90 (empty -> .)
+    op_less_equal   reduce using rule 90 (empty -> .)
+    op_greater      reduce using rule 90 (empty -> .)
+    op_greater_equal reduce using rule 90 (empty -> .)
+    op_equal        reduce using rule 90 (empty -> .)
+    op_not_equal    reduce using rule 90 (empty -> .)
+    op_and          reduce using rule 90 (empty -> .)
+    op_or           reduce using rule 90 (empty -> .)
+    semicolon       reduce using rule 90 (empty -> .)
+    squarebracket_close reduce using rule 90 (empty -> .)
+    parenthesis_close reduce using rule 90 (empty -> .)
+    comma           reduce using rule 90 (empty -> .)
+
+    TERM_AUX                       shift and go to state 122
+    empty                          shift and go to state 125
+
+state 82
+
+    (83) RETURN -> return_statement EXPRESSION semicolon .
+
+    id              reduce using rule 83 (RETURN -> return_statement EXPRESSION semicolon .)
+    if              reduce using rule 83 (RETURN -> return_statement EXPRESSION semicolon .)
+    input           reduce using rule 83 (RETURN -> return_statement EXPRESSION semicolon .)
+    print           reduce using rule 83 (RETURN -> return_statement EXPRESSION semicolon .)
+    do              reduce using rule 83 (RETURN -> return_statement EXPRESSION semicolon .)
+    return_statement reduce using rule 83 (RETURN -> return_statement EXPRESSION semicolon .)
+    call            reduce using rule 83 (RETURN -> return_statement EXPRESSION semicolon .)
+    curlybraces_close reduce using rule 83 (RETURN -> return_statement EXPRESSION semicolon .)
+
+
+state 83
+
+    (77) CALL -> call id parenthesis_open . EXPRESSION CALL_AUX parenthesis_close semicolon
+    (44) EXPRESSION -> . EXPRESSION_AUX EXP EXPRESSION_AUX1
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 54
+    EXPRESSION                     shift and go to state 126
+    empty                          shift and go to state 56
+
+state 84
+
+    (87) WRITE -> print parenthesis_open EXPRESSION . WRITE_AUX parenthesis_close semicolon
+    (88) WRITE_AUX -> . comma EXPRESSION WRITE_AUX
+    (89) WRITE_AUX -> . empty
+    (90) empty -> .
+
+    comma           shift and go to state 128
+    parenthesis_close reduce using rule 90 (empty -> .)
+
+    WRITE_AUX                      shift and go to state 127
+    empty                          shift and go to state 129
+
+state 85
+
+    (84) READ -> input parenthesis_open id . READ_AUX parenthesis_close semicolon
+    (85) READ_AUX -> . squarebracket_open EXPRESSION squarebracket_close
+    (86) READ_AUX -> . empty
+    (90) empty -> .
+
+    squarebracket_open shift and go to state 130
+    parenthesis_close reduce using rule 90 (empty -> .)
+
+    empty                          shift and go to state 131
+    READ_AUX                       shift and go to state 132
+
+state 86
+
+    (80) LOOP -> do BODY until . parenthesis_open EXPRESSION parenthesis_close
+
+    parenthesis_open shift and go to state 133
+
+
+state 87
+
+    (23) BODY_AUX -> STATEMENT . BODY_AUX
+    (23) BODY_AUX -> . STATEMENT BODY_AUX
+    (24) BODY_AUX -> . empty
+    (70) STATEMENT -> . ASSIGN
+    (71) STATEMENT -> . CONDITION
+    (72) STATEMENT -> . READ
+    (73) STATEMENT -> . WRITE
+    (74) STATEMENT -> . LOOP
+    (75) STATEMENT -> . RETURN
+    (76) STATEMENT -> . CALL
+    (90) empty -> .
+    (81) ASSIGN -> . id ASSIGN_AUX op_assign EXPRESSION semicolon
+    (25) CONDITION -> . if parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX
+    (84) READ -> . input parenthesis_open id READ_AUX parenthesis_close semicolon
+    (87) WRITE -> . print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon
+    (80) LOOP -> . do BODY until parenthesis_open EXPRESSION parenthesis_close
+    (83) RETURN -> . return_statement EXPRESSION semicolon
+    (77) CALL -> . call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon
+
+    curlybraces_close reduce using rule 90 (empty -> .)
+    id              shift and go to state 28
+    if              shift and go to state 29
+    input           shift and go to state 35
+    print           shift and go to state 34
+    do              shift and go to state 39
+    return_statement shift and go to state 32
+    call            shift and go to state 33
+
+    RETURN                         shift and go to state 25
+    BODY_AUX                       shift and go to state 134
+    READ                           shift and go to state 27
+    LOOP                           shift and go to state 46
+    WRITE                          shift and go to state 40
+    CALL                           shift and go to state 44
+    empty                          shift and go to state 89
+    STATEMENT                      shift and go to state 87
+    ASSIGN                         shift and go to state 36
+    CONDITION                      shift and go to state 37
+
+state 88
+
+    (22) BODY -> curlybraces_open BODY_AUX . curlybraces_close
+
+    curlybraces_close shift and go to state 135
+
+
+state 89
+
+    (24) BODY_AUX -> empty .
+
+    curlybraces_close reduce using rule 24 (BODY_AUX -> empty .)
+
+
+state 90
+
+    (41) VAR_DECLARATION_AUX -> comma . id VAR_DECLARATION_AUX
+
+    id              shift and go to state 136
+
+
+state 91
+
+    (43) LIST_DECLARATION -> variable id squarebracket_open . EXPRESSION squarebracket_close of_type TYPE semicolon
+    (44) EXPRESSION -> . EXPRESSION_AUX EXP EXPRESSION_AUX1
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION                     shift and go to state 137
+    EXPRESSION_AUX                 shift and go to state 54
+    empty                          shift and go to state 56
+
+state 92
+
+    (40) VAR_DECLARATION -> variable id VAR_DECLARATION_AUX . of_type TYPE semicolon
+
+    of_type         shift and go to state 138
+
+
+state 93
+
+    (42) VAR_DECLARATION_AUX -> empty .
+
+    of_type         reduce using rule 42 (VAR_DECLARATION_AUX -> empty .)
+
+
+state 94
+
+    (9) RECEIVES_AUX1 -> comma . id of_type TYPE RECEIVES_AUX1
+
+    id              shift and go to state 139
+
+
+state 95
+
+    (7) RECEIVES_AUX -> receives colon id of_type TYPE RECEIVES_AUX1 .
+
+    block_returns   reduce using rule 7 (RECEIVES_AUX -> receives colon id of_type TYPE RECEIVES_AUX1 .)
+    curlybraces_open reduce using rule 7 (RECEIVES_AUX -> receives colon id of_type TYPE RECEIVES_AUX1 .)
+
+
+state 96
+
+    (10) RECEIVES_AUX1 -> empty .
+
+    block_returns   reduce using rule 10 (RECEIVES_AUX1 -> empty .)
+    curlybraces_open reduce using rule 10 (RECEIVES_AUX1 -> empty .)
+
+
+state 97
+
+    (81) ASSIGN -> id ASSIGN_AUX op_assign EXPRESSION . semicolon
+
+    semicolon       shift and go to state 140
+
+
+state 98
+
+    (82) ASSIGN_AUX -> squarebracket_open EXPRESSION squarebracket_close .
+
+    op_assign       reduce using rule 82 (ASSIGN_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+
+
+state 99
+
+    (25) CONDITION -> if parenthesis_open EXPRESSION parenthesis_close . BODY CONDITION_AUX
+    (22) BODY -> . curlybraces_open BODY_AUX curlybraces_close
+
+    curlybraces_open shift and go to state 62
+
+    BODY                           shift and go to state 141
+
+state 100
+
+    (44) EXPRESSION -> EXPRESSION_AUX EXP EXPRESSION_AUX1 .
+
+    comma           reduce using rule 44 (EXPRESSION -> EXPRESSION_AUX EXP EXPRESSION_AUX1 .)
+    parenthesis_close reduce using rule 44 (EXPRESSION -> EXPRESSION_AUX EXP EXPRESSION_AUX1 .)
+    squarebracket_close reduce using rule 44 (EXPRESSION -> EXPRESSION_AUX EXP EXPRESSION_AUX1 .)
+    semicolon       reduce using rule 44 (EXPRESSION -> EXPRESSION_AUX EXP EXPRESSION_AUX1 .)
+
+
+state 101
+
+    (48) EXPRESSION_AUX1 -> op_or . EXPRESSION_AUX EXP
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 142
+    empty                          shift and go to state 56
+
+state 102
+
+    (47) EXPRESSION_AUX1 -> op_and . EXPRESSION_AUX EXP
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 143
+    empty                          shift and go to state 56
+
+state 103
+
+    (33) CONSTANT_AUX -> squarebracket_open . EXPRESSION squarebracket_close
+    (44) EXPRESSION -> . EXPRESSION_AUX EXP EXPRESSION_AUX1
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 54
+    EXPRESSION                     shift and go to state 144
+    empty                          shift and go to state 56
+
+state 104
+
+    (28) CONSTANT -> id CONSTANT_AUX .
+
+    op_multiplication reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+    op_division     reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+    op_addition     reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+    op_subtraction  reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+    op_less         reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+    op_less_equal   reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+    op_greater      reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+    op_greater_equal reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+    op_equal        reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+    op_not_equal    reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+    semicolon       reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+    squarebracket_close reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+    parenthesis_close reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+    comma           reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+    op_and          reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+    op_or           reduce using rule 28 (CONSTANT -> id CONSTANT_AUX .)
+
+
+state 105
+
+    (35) CONSTANT_AUX -> empty .
+
+    op_multiplication reduce using rule 35 (CONSTANT_AUX -> empty .)
+    op_division     reduce using rule 35 (CONSTANT_AUX -> empty .)
+    op_addition     reduce using rule 35 (CONSTANT_AUX -> empty .)
+    op_subtraction  reduce using rule 35 (CONSTANT_AUX -> empty .)
+    op_less         reduce using rule 35 (CONSTANT_AUX -> empty .)
+    op_less_equal   reduce using rule 35 (CONSTANT_AUX -> empty .)
+    op_greater      reduce using rule 35 (CONSTANT_AUX -> empty .)
+    op_greater_equal reduce using rule 35 (CONSTANT_AUX -> empty .)
+    op_equal        reduce using rule 35 (CONSTANT_AUX -> empty .)
+    op_not_equal    reduce using rule 35 (CONSTANT_AUX -> empty .)
+    op_and          reduce using rule 35 (CONSTANT_AUX -> empty .)
+    op_or           reduce using rule 35 (CONSTANT_AUX -> empty .)
+    semicolon       reduce using rule 35 (CONSTANT_AUX -> empty .)
+    squarebracket_close reduce using rule 35 (CONSTANT_AUX -> empty .)
+    parenthesis_close reduce using rule 35 (CONSTANT_AUX -> empty .)
+    comma           reduce using rule 35 (CONSTANT_AUX -> empty .)
+
+
+state 106
+
+    (34) CONSTANT_AUX -> parenthesis_open . EXPRESSION CONSTANT_AUX1 parenthesis_close
+    (44) EXPRESSION -> . EXPRESSION_AUX EXP EXPRESSION_AUX1
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 54
+    EXPRESSION                     shift and go to state 145
+    empty                          shift and go to state 56
+
+state 107
+
+    (63) ITEM_AUX -> op_addition . ITEM
+    (62) ITEM -> . TERM ITEM_AUX
+    (66) TERM -> . FACTOR TERM_AUX
+    (57) FACTOR -> . parenthesis_open EXPRESSION parenthesis_close
+    (58) FACTOR -> . FACTOR_AUX
+    (59) FACTOR_AUX -> . op_addition CONSTANT
+    (60) FACTOR_AUX -> . op_subtraction CONSTANT
+    (61) FACTOR_AUX -> . CONSTANT
+    (28) CONSTANT -> . id CONSTANT_AUX
+    (29) CONSTANT -> . cst_whole
+    (30) CONSTANT -> . cst_decimal
+    (31) CONSTANT -> . cst_words
+    (32) CONSTANT -> . cst_boolean
+
+    parenthesis_open shift and go to state 74
+    op_addition     shift and go to state 76
+    op_subtraction  shift and go to state 79
+    id              shift and go to state 71
+    cst_whole       shift and go to state 78
+    cst_decimal     shift and go to state 69
+    cst_words       shift and go to state 72
+    cst_boolean     shift and go to state 77
+
+    TERM                           shift and go to state 73
+    CONSTANT                       shift and go to state 68
+    FACTOR_AUX                     shift and go to state 75
+    ITEM                           shift and go to state 146
+    FACTOR                         shift and go to state 81
+
+state 108
+
+    (64) ITEM_AUX -> op_subtraction . ITEM
+    (62) ITEM -> . TERM ITEM_AUX
+    (66) TERM -> . FACTOR TERM_AUX
+    (57) FACTOR -> . parenthesis_open EXPRESSION parenthesis_close
+    (58) FACTOR -> . FACTOR_AUX
+    (59) FACTOR_AUX -> . op_addition CONSTANT
+    (60) FACTOR_AUX -> . op_subtraction CONSTANT
+    (61) FACTOR_AUX -> . CONSTANT
+    (28) CONSTANT -> . id CONSTANT_AUX
+    (29) CONSTANT -> . cst_whole
+    (30) CONSTANT -> . cst_decimal
+    (31) CONSTANT -> . cst_words
+    (32) CONSTANT -> . cst_boolean
+
+    parenthesis_open shift and go to state 74
+    op_addition     shift and go to state 76
+    op_subtraction  shift and go to state 79
+    id              shift and go to state 71
+    cst_whole       shift and go to state 78
+    cst_decimal     shift and go to state 69
+    cst_words       shift and go to state 72
+    cst_boolean     shift and go to state 77
+
+    TERM                           shift and go to state 73
+    CONSTANT                       shift and go to state 68
+    FACTOR_AUX                     shift and go to state 75
+    ITEM                           shift and go to state 147
+    FACTOR                         shift and go to state 81
+
+state 109
+
+    (62) ITEM -> TERM ITEM_AUX .
+
+    op_and          reduce using rule 62 (ITEM -> TERM ITEM_AUX .)
+    op_or           reduce using rule 62 (ITEM -> TERM ITEM_AUX .)
+    semicolon       reduce using rule 62 (ITEM -> TERM ITEM_AUX .)
+    squarebracket_close reduce using rule 62 (ITEM -> TERM ITEM_AUX .)
+    parenthesis_close reduce using rule 62 (ITEM -> TERM ITEM_AUX .)
+    comma           reduce using rule 62 (ITEM -> TERM ITEM_AUX .)
+    op_less         reduce using rule 62 (ITEM -> TERM ITEM_AUX .)
+    op_less_equal   reduce using rule 62 (ITEM -> TERM ITEM_AUX .)
+    op_greater      reduce using rule 62 (ITEM -> TERM ITEM_AUX .)
+    op_greater_equal reduce using rule 62 (ITEM -> TERM ITEM_AUX .)
+    op_equal        reduce using rule 62 (ITEM -> TERM ITEM_AUX .)
+    op_not_equal    reduce using rule 62 (ITEM -> TERM ITEM_AUX .)
+
+
+state 110
+
+    (65) ITEM_AUX -> empty .
+
+    op_less         reduce using rule 65 (ITEM_AUX -> empty .)
+    op_less_equal   reduce using rule 65 (ITEM_AUX -> empty .)
+    op_greater      reduce using rule 65 (ITEM_AUX -> empty .)
+    op_greater_equal reduce using rule 65 (ITEM_AUX -> empty .)
+    op_equal        reduce using rule 65 (ITEM_AUX -> empty .)
+    op_not_equal    reduce using rule 65 (ITEM_AUX -> empty .)
+    op_and          reduce using rule 65 (ITEM_AUX -> empty .)
+    op_or           reduce using rule 65 (ITEM_AUX -> empty .)
+    semicolon       reduce using rule 65 (ITEM_AUX -> empty .)
+    squarebracket_close reduce using rule 65 (ITEM_AUX -> empty .)
+    parenthesis_close reduce using rule 65 (ITEM_AUX -> empty .)
+    comma           reduce using rule 65 (ITEM_AUX -> empty .)
+
+
+state 111
+
+    (57) FACTOR -> parenthesis_open EXPRESSION . parenthesis_close
+
+    parenthesis_close shift and go to state 148
+
+
+state 112
+
+    (59) FACTOR_AUX -> op_addition CONSTANT .
+
+    op_multiplication reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+    op_division     reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+    op_addition     reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+    op_subtraction  reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+    op_and          reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+    op_or           reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+    semicolon       reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+    squarebracket_close reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+    parenthesis_close reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+    comma           reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+    op_less         reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+    op_less_equal   reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+    op_greater      reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+    op_greater_equal reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+    op_equal        reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+    op_not_equal    reduce using rule 59 (FACTOR_AUX -> op_addition CONSTANT .)
+
+
+state 113
+
+    (60) FACTOR_AUX -> op_subtraction CONSTANT .
+
+    op_multiplication reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+    op_division     reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+    op_addition     reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+    op_subtraction  reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+    op_and          reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+    op_or           reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+    semicolon       reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+    squarebracket_close reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+    parenthesis_close reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+    comma           reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+    op_less         reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+    op_less_equal   reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+    op_greater      reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+    op_greater_equal reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+    op_equal        reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+    op_not_equal    reduce using rule 60 (FACTOR_AUX -> op_subtraction CONSTANT .)
+
+
+state 114
+
+    (51) EXP_AUX -> op_less_equal . ITEM
+    (62) ITEM -> . TERM ITEM_AUX
+    (66) TERM -> . FACTOR TERM_AUX
+    (57) FACTOR -> . parenthesis_open EXPRESSION parenthesis_close
+    (58) FACTOR -> . FACTOR_AUX
+    (59) FACTOR_AUX -> . op_addition CONSTANT
+    (60) FACTOR_AUX -> . op_subtraction CONSTANT
+    (61) FACTOR_AUX -> . CONSTANT
+    (28) CONSTANT -> . id CONSTANT_AUX
+    (29) CONSTANT -> . cst_whole
+    (30) CONSTANT -> . cst_decimal
+    (31) CONSTANT -> . cst_words
+    (32) CONSTANT -> . cst_boolean
+
+    parenthesis_open shift and go to state 74
+    op_addition     shift and go to state 76
+    op_subtraction  shift and go to state 79
+    id              shift and go to state 71
+    cst_whole       shift and go to state 78
+    cst_decimal     shift and go to state 69
+    cst_words       shift and go to state 72
+    cst_boolean     shift and go to state 77
+
+    TERM                           shift and go to state 73
+    CONSTANT                       shift and go to state 68
+    FACTOR_AUX                     shift and go to state 75
+    ITEM                           shift and go to state 149
+    FACTOR                         shift and go to state 81
+
+state 115
+
+    (55) EXP_AUX -> op_not_equal . ITEM
+    (62) ITEM -> . TERM ITEM_AUX
+    (66) TERM -> . FACTOR TERM_AUX
+    (57) FACTOR -> . parenthesis_open EXPRESSION parenthesis_close
+    (58) FACTOR -> . FACTOR_AUX
+    (59) FACTOR_AUX -> . op_addition CONSTANT
+    (60) FACTOR_AUX -> . op_subtraction CONSTANT
+    (61) FACTOR_AUX -> . CONSTANT
+    (28) CONSTANT -> . id CONSTANT_AUX
+    (29) CONSTANT -> . cst_whole
+    (30) CONSTANT -> . cst_decimal
+    (31) CONSTANT -> . cst_words
+    (32) CONSTANT -> . cst_boolean
+
+    parenthesis_open shift and go to state 74
+    op_addition     shift and go to state 76
+    op_subtraction  shift and go to state 79
+    id              shift and go to state 71
+    cst_whole       shift and go to state 78
+    cst_decimal     shift and go to state 69
+    cst_words       shift and go to state 72
+    cst_boolean     shift and go to state 77
+
+    TERM                           shift and go to state 73
+    CONSTANT                       shift and go to state 68
+    FACTOR_AUX                     shift and go to state 75
+    ITEM                           shift and go to state 150
+    FACTOR                         shift and go to state 81
+
+state 116
+
+    (52) EXP_AUX -> op_greater . ITEM
+    (62) ITEM -> . TERM ITEM_AUX
+    (66) TERM -> . FACTOR TERM_AUX
+    (57) FACTOR -> . parenthesis_open EXPRESSION parenthesis_close
+    (58) FACTOR -> . FACTOR_AUX
+    (59) FACTOR_AUX -> . op_addition CONSTANT
+    (60) FACTOR_AUX -> . op_subtraction CONSTANT
+    (61) FACTOR_AUX -> . CONSTANT
+    (28) CONSTANT -> . id CONSTANT_AUX
+    (29) CONSTANT -> . cst_whole
+    (30) CONSTANT -> . cst_decimal
+    (31) CONSTANT -> . cst_words
+    (32) CONSTANT -> . cst_boolean
+
+    parenthesis_open shift and go to state 74
+    op_addition     shift and go to state 76
+    op_subtraction  shift and go to state 79
+    id              shift and go to state 71
+    cst_whole       shift and go to state 78
+    cst_decimal     shift and go to state 69
+    cst_words       shift and go to state 72
+    cst_boolean     shift and go to state 77
+
+    TERM                           shift and go to state 73
+    CONSTANT                       shift and go to state 68
+    FACTOR_AUX                     shift and go to state 75
+    ITEM                           shift and go to state 151
+    FACTOR                         shift and go to state 81
+
+state 117
+
+    (53) EXP_AUX -> op_greater_equal . ITEM
+    (62) ITEM -> . TERM ITEM_AUX
+    (66) TERM -> . FACTOR TERM_AUX
+    (57) FACTOR -> . parenthesis_open EXPRESSION parenthesis_close
+    (58) FACTOR -> . FACTOR_AUX
+    (59) FACTOR_AUX -> . op_addition CONSTANT
+    (60) FACTOR_AUX -> . op_subtraction CONSTANT
+    (61) FACTOR_AUX -> . CONSTANT
+    (28) CONSTANT -> . id CONSTANT_AUX
+    (29) CONSTANT -> . cst_whole
+    (30) CONSTANT -> . cst_decimal
+    (31) CONSTANT -> . cst_words
+    (32) CONSTANT -> . cst_boolean
+
+    parenthesis_open shift and go to state 74
+    op_addition     shift and go to state 76
+    op_subtraction  shift and go to state 79
+    id              shift and go to state 71
+    cst_whole       shift and go to state 78
+    cst_decimal     shift and go to state 69
+    cst_words       shift and go to state 72
+    cst_boolean     shift and go to state 77
+
+    TERM                           shift and go to state 73
+    CONSTANT                       shift and go to state 68
+    FACTOR_AUX                     shift and go to state 75
+    ITEM                           shift and go to state 152
+    FACTOR                         shift and go to state 81
+
+state 118
+
+    (54) EXP_AUX -> op_equal . ITEM
+    (62) ITEM -> . TERM ITEM_AUX
+    (66) TERM -> . FACTOR TERM_AUX
+    (57) FACTOR -> . parenthesis_open EXPRESSION parenthesis_close
+    (58) FACTOR -> . FACTOR_AUX
+    (59) FACTOR_AUX -> . op_addition CONSTANT
+    (60) FACTOR_AUX -> . op_subtraction CONSTANT
+    (61) FACTOR_AUX -> . CONSTANT
+    (28) CONSTANT -> . id CONSTANT_AUX
+    (29) CONSTANT -> . cst_whole
+    (30) CONSTANT -> . cst_decimal
+    (31) CONSTANT -> . cst_words
+    (32) CONSTANT -> . cst_boolean
+
+    parenthesis_open shift and go to state 74
+    op_addition     shift and go to state 76
+    op_subtraction  shift and go to state 79
+    id              shift and go to state 71
+    cst_whole       shift and go to state 78
+    cst_decimal     shift and go to state 69
+    cst_words       shift and go to state 72
+    cst_boolean     shift and go to state 77
+
+    TERM                           shift and go to state 73
+    CONSTANT                       shift and go to state 68
+    FACTOR_AUX                     shift and go to state 75
+    ITEM                           shift and go to state 153
+    FACTOR                         shift and go to state 81
+
+state 119
+
+    (50) EXP_AUX -> op_less . ITEM
+    (62) ITEM -> . TERM ITEM_AUX
+    (66) TERM -> . FACTOR TERM_AUX
+    (57) FACTOR -> . parenthesis_open EXPRESSION parenthesis_close
+    (58) FACTOR -> . FACTOR_AUX
+    (59) FACTOR_AUX -> . op_addition CONSTANT
+    (60) FACTOR_AUX -> . op_subtraction CONSTANT
+    (61) FACTOR_AUX -> . CONSTANT
+    (28) CONSTANT -> . id CONSTANT_AUX
+    (29) CONSTANT -> . cst_whole
+    (30) CONSTANT -> . cst_decimal
+    (31) CONSTANT -> . cst_words
+    (32) CONSTANT -> . cst_boolean
+
+    parenthesis_open shift and go to state 74
+    op_addition     shift and go to state 76
+    op_subtraction  shift and go to state 79
+    id              shift and go to state 71
+    cst_whole       shift and go to state 78
+    cst_decimal     shift and go to state 69
+    cst_words       shift and go to state 72
+    cst_boolean     shift and go to state 77
+
+    TERM                           shift and go to state 73
+    CONSTANT                       shift and go to state 68
+    FACTOR_AUX                     shift and go to state 75
+    ITEM                           shift and go to state 154
+    FACTOR                         shift and go to state 81
+
+state 120
+
+    (49) EXP -> ITEM EXP_AUX .
+
+    semicolon       reduce using rule 49 (EXP -> ITEM EXP_AUX .)
+    squarebracket_close reduce using rule 49 (EXP -> ITEM EXP_AUX .)
+    parenthesis_close reduce using rule 49 (EXP -> ITEM EXP_AUX .)
+    comma           reduce using rule 49 (EXP -> ITEM EXP_AUX .)
+    op_and          reduce using rule 49 (EXP -> ITEM EXP_AUX .)
+    op_or           reduce using rule 49 (EXP -> ITEM EXP_AUX .)
+
+
+state 121
+
+    (56) EXP_AUX -> empty .
+
+    op_and          reduce using rule 56 (EXP_AUX -> empty .)
+    op_or           reduce using rule 56 (EXP_AUX -> empty .)
+    semicolon       reduce using rule 56 (EXP_AUX -> empty .)
+    squarebracket_close reduce using rule 56 (EXP_AUX -> empty .)
+    parenthesis_close reduce using rule 56 (EXP_AUX -> empty .)
+    comma           reduce using rule 56 (EXP_AUX -> empty .)
+
+
+state 122
+
+    (66) TERM -> FACTOR TERM_AUX .
+
+    op_addition     reduce using rule 66 (TERM -> FACTOR TERM_AUX .)
+    op_subtraction  reduce using rule 66 (TERM -> FACTOR TERM_AUX .)
+    op_less         reduce using rule 66 (TERM -> FACTOR TERM_AUX .)
+    op_less_equal   reduce using rule 66 (TERM -> FACTOR TERM_AUX .)
+    op_greater      reduce using rule 66 (TERM -> FACTOR TERM_AUX .)
+    op_greater_equal reduce using rule 66 (TERM -> FACTOR TERM_AUX .)
+    op_equal        reduce using rule 66 (TERM -> FACTOR TERM_AUX .)
+    op_not_equal    reduce using rule 66 (TERM -> FACTOR TERM_AUX .)
+    op_and          reduce using rule 66 (TERM -> FACTOR TERM_AUX .)
+    op_or           reduce using rule 66 (TERM -> FACTOR TERM_AUX .)
+    semicolon       reduce using rule 66 (TERM -> FACTOR TERM_AUX .)
+    squarebracket_close reduce using rule 66 (TERM -> FACTOR TERM_AUX .)
+    parenthesis_close reduce using rule 66 (TERM -> FACTOR TERM_AUX .)
+    comma           reduce using rule 66 (TERM -> FACTOR TERM_AUX .)
+
+
+state 123
+
+    (68) TERM_AUX -> op_division . TERM
+    (66) TERM -> . FACTOR TERM_AUX
+    (57) FACTOR -> . parenthesis_open EXPRESSION parenthesis_close
+    (58) FACTOR -> . FACTOR_AUX
+    (59) FACTOR_AUX -> . op_addition CONSTANT
+    (60) FACTOR_AUX -> . op_subtraction CONSTANT
+    (61) FACTOR_AUX -> . CONSTANT
+    (28) CONSTANT -> . id CONSTANT_AUX
+    (29) CONSTANT -> . cst_whole
+    (30) CONSTANT -> . cst_decimal
+    (31) CONSTANT -> . cst_words
+    (32) CONSTANT -> . cst_boolean
+
+    parenthesis_open shift and go to state 74
+    op_addition     shift and go to state 76
+    op_subtraction  shift and go to state 79
+    id              shift and go to state 71
+    cst_whole       shift and go to state 78
+    cst_decimal     shift and go to state 69
+    cst_words       shift and go to state 72
+    cst_boolean     shift and go to state 77
+
+    TERM                           shift and go to state 155
+    CONSTANT                       shift and go to state 68
+    FACTOR                         shift and go to state 81
+    FACTOR_AUX                     shift and go to state 75
+
+state 124
+
+    (67) TERM_AUX -> op_multiplication . TERM
+    (66) TERM -> . FACTOR TERM_AUX
+    (57) FACTOR -> . parenthesis_open EXPRESSION parenthesis_close
+    (58) FACTOR -> . FACTOR_AUX
+    (59) FACTOR_AUX -> . op_addition CONSTANT
+    (60) FACTOR_AUX -> . op_subtraction CONSTANT
+    (61) FACTOR_AUX -> . CONSTANT
+    (28) CONSTANT -> . id CONSTANT_AUX
+    (29) CONSTANT -> . cst_whole
+    (30) CONSTANT -> . cst_decimal
+    (31) CONSTANT -> . cst_words
+    (32) CONSTANT -> . cst_boolean
+
+    parenthesis_open shift and go to state 74
+    op_addition     shift and go to state 76
+    op_subtraction  shift and go to state 79
+    id              shift and go to state 71
+    cst_whole       shift and go to state 78
+    cst_decimal     shift and go to state 69
+    cst_words       shift and go to state 72
+    cst_boolean     shift and go to state 77
+
+    TERM                           shift and go to state 156
+    CONSTANT                       shift and go to state 68
+    FACTOR                         shift and go to state 81
+    FACTOR_AUX                     shift and go to state 75
+
+state 125
+
+    (69) TERM_AUX -> empty .
+
+    op_addition     reduce using rule 69 (TERM_AUX -> empty .)
+    op_subtraction  reduce using rule 69 (TERM_AUX -> empty .)
+    op_less         reduce using rule 69 (TERM_AUX -> empty .)
+    op_less_equal   reduce using rule 69 (TERM_AUX -> empty .)
+    op_greater      reduce using rule 69 (TERM_AUX -> empty .)
+    op_greater_equal reduce using rule 69 (TERM_AUX -> empty .)
+    op_equal        reduce using rule 69 (TERM_AUX -> empty .)
+    op_not_equal    reduce using rule 69 (TERM_AUX -> empty .)
+    op_and          reduce using rule 69 (TERM_AUX -> empty .)
+    op_or           reduce using rule 69 (TERM_AUX -> empty .)
+    semicolon       reduce using rule 69 (TERM_AUX -> empty .)
+    squarebracket_close reduce using rule 69 (TERM_AUX -> empty .)
+    parenthesis_close reduce using rule 69 (TERM_AUX -> empty .)
+    comma           reduce using rule 69 (TERM_AUX -> empty .)
+
+
+state 126
+
+    (77) CALL -> call id parenthesis_open EXPRESSION . CALL_AUX parenthesis_close semicolon
+    (78) CALL_AUX -> . comma EXPRESSION CALL_AUX
+    (79) CALL_AUX -> . empty
+    (90) empty -> .
+
+    comma           shift and go to state 158
+    parenthesis_close reduce using rule 90 (empty -> .)
+
+    CALL_AUX                       shift and go to state 157
+    empty                          shift and go to state 159
+
+state 127
+
+    (87) WRITE -> print parenthesis_open EXPRESSION WRITE_AUX . parenthesis_close semicolon
+
+    parenthesis_close shift and go to state 160
+
+
+state 128
+
+    (88) WRITE_AUX -> comma . EXPRESSION WRITE_AUX
+    (44) EXPRESSION -> . EXPRESSION_AUX EXP EXPRESSION_AUX1
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 54
+    EXPRESSION                     shift and go to state 161
+    empty                          shift and go to state 56
+
+state 129
+
+    (89) WRITE_AUX -> empty .
+
+    parenthesis_close reduce using rule 89 (WRITE_AUX -> empty .)
+
+
+state 130
+
+    (85) READ_AUX -> squarebracket_open . EXPRESSION squarebracket_close
+    (44) EXPRESSION -> . EXPRESSION_AUX EXP EXPRESSION_AUX1
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 54
+    EXPRESSION                     shift and go to state 162
+    empty                          shift and go to state 56
+
+state 131
+
+    (86) READ_AUX -> empty .
+
+    parenthesis_close reduce using rule 86 (READ_AUX -> empty .)
+
+
+state 132
+
+    (84) READ -> input parenthesis_open id READ_AUX . parenthesis_close semicolon
+
+    parenthesis_close shift and go to state 163
+
+
+state 133
+
+    (80) LOOP -> do BODY until parenthesis_open . EXPRESSION parenthesis_close
+    (44) EXPRESSION -> . EXPRESSION_AUX EXP EXPRESSION_AUX1
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 54
+    EXPRESSION                     shift and go to state 164
+    empty                          shift and go to state 56
+
+state 134
+
+    (23) BODY_AUX -> STATEMENT BODY_AUX .
+
+    curlybraces_close reduce using rule 23 (BODY_AUX -> STATEMENT BODY_AUX .)
+
+
+state 135
+
+    (22) BODY -> curlybraces_open BODY_AUX curlybraces_close .
+
+    id              reduce using rule 22 (BODY -> curlybraces_open BODY_AUX curlybraces_close .)
+    if              reduce using rule 22 (BODY -> curlybraces_open BODY_AUX curlybraces_close .)
+    input           reduce using rule 22 (BODY -> curlybraces_open BODY_AUX curlybraces_close .)
+    print           reduce using rule 22 (BODY -> curlybraces_open BODY_AUX curlybraces_close .)
+    do              reduce using rule 22 (BODY -> curlybraces_open BODY_AUX curlybraces_close .)
+    return_statement reduce using rule 22 (BODY -> curlybraces_open BODY_AUX curlybraces_close .)
+    call            reduce using rule 22 (BODY -> curlybraces_open BODY_AUX curlybraces_close .)
+    curlybraces_close reduce using rule 22 (BODY -> curlybraces_open BODY_AUX curlybraces_close .)
+    until           reduce using rule 22 (BODY -> curlybraces_open BODY_AUX curlybraces_close .)
+    else            reduce using rule 22 (BODY -> curlybraces_open BODY_AUX curlybraces_close .)
+
+
+state 136
+
+    (41) VAR_DECLARATION_AUX -> comma id . VAR_DECLARATION_AUX
+    (41) VAR_DECLARATION_AUX -> . comma id VAR_DECLARATION_AUX
+    (42) VAR_DECLARATION_AUX -> . empty
+    (90) empty -> .
+
+    comma           shift and go to state 90
+    of_type         reduce using rule 90 (empty -> .)
+
+    empty                          shift and go to state 93
+    VAR_DECLARATION_AUX            shift and go to state 165
+
+state 137
+
+    (43) LIST_DECLARATION -> variable id squarebracket_open EXPRESSION . squarebracket_close of_type TYPE semicolon
+
+    squarebracket_close shift and go to state 166
+
+
+state 138
+
+    (40) VAR_DECLARATION -> variable id VAR_DECLARATION_AUX of_type . TYPE semicolon
+    (18) TYPE -> . whole
+    (19) TYPE -> . decimal
+    (20) TYPE -> . words
+    (21) TYPE -> . boolean
+
+    whole           shift and go to state 23
+    decimal         shift and go to state 20
+    words           shift and go to state 22
+    boolean         shift and go to state 21
+
+    TYPE                           shift and go to state 167
+
+state 139
+
+    (9) RECEIVES_AUX1 -> comma id . of_type TYPE RECEIVES_AUX1
+
+    of_type         shift and go to state 168
+
+
+state 140
+
+    (81) ASSIGN -> id ASSIGN_AUX op_assign EXPRESSION semicolon .
+
+    id              reduce using rule 81 (ASSIGN -> id ASSIGN_AUX op_assign EXPRESSION semicolon .)
+    if              reduce using rule 81 (ASSIGN -> id ASSIGN_AUX op_assign EXPRESSION semicolon .)
+    input           reduce using rule 81 (ASSIGN -> id ASSIGN_AUX op_assign EXPRESSION semicolon .)
+    print           reduce using rule 81 (ASSIGN -> id ASSIGN_AUX op_assign EXPRESSION semicolon .)
+    do              reduce using rule 81 (ASSIGN -> id ASSIGN_AUX op_assign EXPRESSION semicolon .)
+    return_statement reduce using rule 81 (ASSIGN -> id ASSIGN_AUX op_assign EXPRESSION semicolon .)
+    call            reduce using rule 81 (ASSIGN -> id ASSIGN_AUX op_assign EXPRESSION semicolon .)
+    curlybraces_close reduce using rule 81 (ASSIGN -> id ASSIGN_AUX op_assign EXPRESSION semicolon .)
+
+
+state 141
+
+    (25) CONDITION -> if parenthesis_open EXPRESSION parenthesis_close BODY . CONDITION_AUX
+    (26) CONDITION_AUX -> . else BODY
+    (27) CONDITION_AUX -> . empty
+    (90) empty -> .
+
+    else            shift and go to state 169
+    id              reduce using rule 90 (empty -> .)
+    if              reduce using rule 90 (empty -> .)
+    input           reduce using rule 90 (empty -> .)
+    print           reduce using rule 90 (empty -> .)
+    do              reduce using rule 90 (empty -> .)
+    return_statement reduce using rule 90 (empty -> .)
+    call            reduce using rule 90 (empty -> .)
+    curlybraces_close reduce using rule 90 (empty -> .)
+
+    CONDITION_AUX                  shift and go to state 170
+    empty                          shift and go to state 171
+
+state 142
+
+    (48) EXPRESSION_AUX1 -> op_or EXPRESSION_AUX . EXP
+    (49) EXP -> . ITEM EXP_AUX
+    (62) ITEM -> . TERM ITEM_AUX
+    (66) TERM -> . FACTOR TERM_AUX
+    (57) FACTOR -> . parenthesis_open EXPRESSION parenthesis_close
+    (58) FACTOR -> . FACTOR_AUX
+    (59) FACTOR_AUX -> . op_addition CONSTANT
+    (60) FACTOR_AUX -> . op_subtraction CONSTANT
+    (61) FACTOR_AUX -> . CONSTANT
+    (28) CONSTANT -> . id CONSTANT_AUX
+    (29) CONSTANT -> . cst_whole
+    (30) CONSTANT -> . cst_decimal
+    (31) CONSTANT -> . cst_words
+    (32) CONSTANT -> . cst_boolean
+
+    parenthesis_open shift and go to state 74
+    op_addition     shift and go to state 76
+    op_subtraction  shift and go to state 79
+    id              shift and go to state 71
+    cst_whole       shift and go to state 78
+    cst_decimal     shift and go to state 69
+    cst_words       shift and go to state 72
+    cst_boolean     shift and go to state 77
+
+    TERM                           shift and go to state 73
+    CONSTANT                       shift and go to state 68
+    FACTOR_AUX                     shift and go to state 75
+    ITEM                           shift and go to state 80
+    EXP                            shift and go to state 172
+    FACTOR                         shift and go to state 81
+
+state 143
+
+    (47) EXPRESSION_AUX1 -> op_and EXPRESSION_AUX . EXP
+    (49) EXP -> . ITEM EXP_AUX
+    (62) ITEM -> . TERM ITEM_AUX
+    (66) TERM -> . FACTOR TERM_AUX
+    (57) FACTOR -> . parenthesis_open EXPRESSION parenthesis_close
+    (58) FACTOR -> . FACTOR_AUX
+    (59) FACTOR_AUX -> . op_addition CONSTANT
+    (60) FACTOR_AUX -> . op_subtraction CONSTANT
+    (61) FACTOR_AUX -> . CONSTANT
+    (28) CONSTANT -> . id CONSTANT_AUX
+    (29) CONSTANT -> . cst_whole
+    (30) CONSTANT -> . cst_decimal
+    (31) CONSTANT -> . cst_words
+    (32) CONSTANT -> . cst_boolean
+
+    parenthesis_open shift and go to state 74
+    op_addition     shift and go to state 76
+    op_subtraction  shift and go to state 79
+    id              shift and go to state 71
+    cst_whole       shift and go to state 78
+    cst_decimal     shift and go to state 69
+    cst_words       shift and go to state 72
+    cst_boolean     shift and go to state 77
+
+    TERM                           shift and go to state 73
+    CONSTANT                       shift and go to state 68
+    FACTOR_AUX                     shift and go to state 75
+    ITEM                           shift and go to state 80
+    EXP                            shift and go to state 173
+    FACTOR                         shift and go to state 81
+
+state 144
+
+    (33) CONSTANT_AUX -> squarebracket_open EXPRESSION . squarebracket_close
+
+    squarebracket_close shift and go to state 174
+
+
+state 145
+
+    (34) CONSTANT_AUX -> parenthesis_open EXPRESSION . CONSTANT_AUX1 parenthesis_close
+    (36) CONSTANT_AUX1 -> . comma EXPRESSION CONSTANT_AUX1
+    (37) CONSTANT_AUX1 -> . empty
+    (90) empty -> .
+
+    comma           shift and go to state 175
+    parenthesis_close reduce using rule 90 (empty -> .)
+
+    CONSTANT_AUX1                  shift and go to state 176
+    empty                          shift and go to state 177
+
+state 146
+
+    (63) ITEM_AUX -> op_addition ITEM .
+
+    op_less         reduce using rule 63 (ITEM_AUX -> op_addition ITEM .)
+    op_less_equal   reduce using rule 63 (ITEM_AUX -> op_addition ITEM .)
+    op_greater      reduce using rule 63 (ITEM_AUX -> op_addition ITEM .)
+    op_greater_equal reduce using rule 63 (ITEM_AUX -> op_addition ITEM .)
+    op_equal        reduce using rule 63 (ITEM_AUX -> op_addition ITEM .)
+    op_not_equal    reduce using rule 63 (ITEM_AUX -> op_addition ITEM .)
+    op_and          reduce using rule 63 (ITEM_AUX -> op_addition ITEM .)
+    op_or           reduce using rule 63 (ITEM_AUX -> op_addition ITEM .)
+    semicolon       reduce using rule 63 (ITEM_AUX -> op_addition ITEM .)
+    squarebracket_close reduce using rule 63 (ITEM_AUX -> op_addition ITEM .)
+    parenthesis_close reduce using rule 63 (ITEM_AUX -> op_addition ITEM .)
+    comma           reduce using rule 63 (ITEM_AUX -> op_addition ITEM .)
+
+
+state 147
+
+    (64) ITEM_AUX -> op_subtraction ITEM .
+
+    op_less         reduce using rule 64 (ITEM_AUX -> op_subtraction ITEM .)
+    op_less_equal   reduce using rule 64 (ITEM_AUX -> op_subtraction ITEM .)
+    op_greater      reduce using rule 64 (ITEM_AUX -> op_subtraction ITEM .)
+    op_greater_equal reduce using rule 64 (ITEM_AUX -> op_subtraction ITEM .)
+    op_equal        reduce using rule 64 (ITEM_AUX -> op_subtraction ITEM .)
+    op_not_equal    reduce using rule 64 (ITEM_AUX -> op_subtraction ITEM .)
+    op_and          reduce using rule 64 (ITEM_AUX -> op_subtraction ITEM .)
+    op_or           reduce using rule 64 (ITEM_AUX -> op_subtraction ITEM .)
+    semicolon       reduce using rule 64 (ITEM_AUX -> op_subtraction ITEM .)
+    squarebracket_close reduce using rule 64 (ITEM_AUX -> op_subtraction ITEM .)
+    parenthesis_close reduce using rule 64 (ITEM_AUX -> op_subtraction ITEM .)
+    comma           reduce using rule 64 (ITEM_AUX -> op_subtraction ITEM .)
+
+
+state 148
+
+    (57) FACTOR -> parenthesis_open EXPRESSION parenthesis_close .
+
+    op_multiplication reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+    op_division     reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+    op_addition     reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+    op_subtraction  reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+    op_less         reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+    op_less_equal   reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+    op_greater      reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+    op_greater_equal reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+    op_equal        reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+    op_not_equal    reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+    semicolon       reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+    squarebracket_close reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+    parenthesis_close reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+    comma           reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+    op_and          reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+    op_or           reduce using rule 57 (FACTOR -> parenthesis_open EXPRESSION parenthesis_close .)
+
+
+state 149
+
+    (51) EXP_AUX -> op_less_equal ITEM .
+
+    op_and          reduce using rule 51 (EXP_AUX -> op_less_equal ITEM .)
+    op_or           reduce using rule 51 (EXP_AUX -> op_less_equal ITEM .)
+    semicolon       reduce using rule 51 (EXP_AUX -> op_less_equal ITEM .)
+    squarebracket_close reduce using rule 51 (EXP_AUX -> op_less_equal ITEM .)
+    parenthesis_close reduce using rule 51 (EXP_AUX -> op_less_equal ITEM .)
+    comma           reduce using rule 51 (EXP_AUX -> op_less_equal ITEM .)
+
+
+state 150
+
+    (55) EXP_AUX -> op_not_equal ITEM .
+
+    op_and          reduce using rule 55 (EXP_AUX -> op_not_equal ITEM .)
+    op_or           reduce using rule 55 (EXP_AUX -> op_not_equal ITEM .)
+    semicolon       reduce using rule 55 (EXP_AUX -> op_not_equal ITEM .)
+    squarebracket_close reduce using rule 55 (EXP_AUX -> op_not_equal ITEM .)
+    parenthesis_close reduce using rule 55 (EXP_AUX -> op_not_equal ITEM .)
+    comma           reduce using rule 55 (EXP_AUX -> op_not_equal ITEM .)
+
+
+state 151
+
+    (52) EXP_AUX -> op_greater ITEM .
+
+    op_and          reduce using rule 52 (EXP_AUX -> op_greater ITEM .)
+    op_or           reduce using rule 52 (EXP_AUX -> op_greater ITEM .)
+    semicolon       reduce using rule 52 (EXP_AUX -> op_greater ITEM .)
+    squarebracket_close reduce using rule 52 (EXP_AUX -> op_greater ITEM .)
+    parenthesis_close reduce using rule 52 (EXP_AUX -> op_greater ITEM .)
+    comma           reduce using rule 52 (EXP_AUX -> op_greater ITEM .)
+
+
+state 152
+
+    (53) EXP_AUX -> op_greater_equal ITEM .
+
+    op_and          reduce using rule 53 (EXP_AUX -> op_greater_equal ITEM .)
+    op_or           reduce using rule 53 (EXP_AUX -> op_greater_equal ITEM .)
+    semicolon       reduce using rule 53 (EXP_AUX -> op_greater_equal ITEM .)
+    squarebracket_close reduce using rule 53 (EXP_AUX -> op_greater_equal ITEM .)
+    parenthesis_close reduce using rule 53 (EXP_AUX -> op_greater_equal ITEM .)
+    comma           reduce using rule 53 (EXP_AUX -> op_greater_equal ITEM .)
+
+
+state 153
+
+    (54) EXP_AUX -> op_equal ITEM .
+
+    op_and          reduce using rule 54 (EXP_AUX -> op_equal ITEM .)
+    op_or           reduce using rule 54 (EXP_AUX -> op_equal ITEM .)
+    semicolon       reduce using rule 54 (EXP_AUX -> op_equal ITEM .)
+    squarebracket_close reduce using rule 54 (EXP_AUX -> op_equal ITEM .)
+    parenthesis_close reduce using rule 54 (EXP_AUX -> op_equal ITEM .)
+    comma           reduce using rule 54 (EXP_AUX -> op_equal ITEM .)
+
+
+state 154
+
+    (50) EXP_AUX -> op_less ITEM .
+
+    op_and          reduce using rule 50 (EXP_AUX -> op_less ITEM .)
+    op_or           reduce using rule 50 (EXP_AUX -> op_less ITEM .)
+    semicolon       reduce using rule 50 (EXP_AUX -> op_less ITEM .)
+    squarebracket_close reduce using rule 50 (EXP_AUX -> op_less ITEM .)
+    parenthesis_close reduce using rule 50 (EXP_AUX -> op_less ITEM .)
+    comma           reduce using rule 50 (EXP_AUX -> op_less ITEM .)
+
+
+state 155
+
+    (68) TERM_AUX -> op_division TERM .
+
+    op_addition     reduce using rule 68 (TERM_AUX -> op_division TERM .)
+    op_subtraction  reduce using rule 68 (TERM_AUX -> op_division TERM .)
+    op_less         reduce using rule 68 (TERM_AUX -> op_division TERM .)
+    op_less_equal   reduce using rule 68 (TERM_AUX -> op_division TERM .)
+    op_greater      reduce using rule 68 (TERM_AUX -> op_division TERM .)
+    op_greater_equal reduce using rule 68 (TERM_AUX -> op_division TERM .)
+    op_equal        reduce using rule 68 (TERM_AUX -> op_division TERM .)
+    op_not_equal    reduce using rule 68 (TERM_AUX -> op_division TERM .)
+    op_and          reduce using rule 68 (TERM_AUX -> op_division TERM .)
+    op_or           reduce using rule 68 (TERM_AUX -> op_division TERM .)
+    semicolon       reduce using rule 68 (TERM_AUX -> op_division TERM .)
+    squarebracket_close reduce using rule 68 (TERM_AUX -> op_division TERM .)
+    parenthesis_close reduce using rule 68 (TERM_AUX -> op_division TERM .)
+    comma           reduce using rule 68 (TERM_AUX -> op_division TERM .)
+
+
+state 156
+
+    (67) TERM_AUX -> op_multiplication TERM .
+
+    op_addition     reduce using rule 67 (TERM_AUX -> op_multiplication TERM .)
+    op_subtraction  reduce using rule 67 (TERM_AUX -> op_multiplication TERM .)
+    op_less         reduce using rule 67 (TERM_AUX -> op_multiplication TERM .)
+    op_less_equal   reduce using rule 67 (TERM_AUX -> op_multiplication TERM .)
+    op_greater      reduce using rule 67 (TERM_AUX -> op_multiplication TERM .)
+    op_greater_equal reduce using rule 67 (TERM_AUX -> op_multiplication TERM .)
+    op_equal        reduce using rule 67 (TERM_AUX -> op_multiplication TERM .)
+    op_not_equal    reduce using rule 67 (TERM_AUX -> op_multiplication TERM .)
+    op_and          reduce using rule 67 (TERM_AUX -> op_multiplication TERM .)
+    op_or           reduce using rule 67 (TERM_AUX -> op_multiplication TERM .)
+    semicolon       reduce using rule 67 (TERM_AUX -> op_multiplication TERM .)
+    squarebracket_close reduce using rule 67 (TERM_AUX -> op_multiplication TERM .)
+    parenthesis_close reduce using rule 67 (TERM_AUX -> op_multiplication TERM .)
+    comma           reduce using rule 67 (TERM_AUX -> op_multiplication TERM .)
+
+
+state 157
+
+    (77) CALL -> call id parenthesis_open EXPRESSION CALL_AUX . parenthesis_close semicolon
+
+    parenthesis_close shift and go to state 178
+
+
+state 158
+
+    (78) CALL_AUX -> comma . EXPRESSION CALL_AUX
+    (44) EXPRESSION -> . EXPRESSION_AUX EXP EXPRESSION_AUX1
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 54
+    EXPRESSION                     shift and go to state 179
+    empty                          shift and go to state 56
+
+state 159
+
+    (79) CALL_AUX -> empty .
+
+    parenthesis_close reduce using rule 79 (CALL_AUX -> empty .)
+
+
+state 160
+
+    (87) WRITE -> print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close . semicolon
+
+    semicolon       shift and go to state 180
+
+
+state 161
+
+    (88) WRITE_AUX -> comma EXPRESSION . WRITE_AUX
+    (88) WRITE_AUX -> . comma EXPRESSION WRITE_AUX
+    (89) WRITE_AUX -> . empty
+    (90) empty -> .
+
+    comma           shift and go to state 128
+    parenthesis_close reduce using rule 90 (empty -> .)
+
+    WRITE_AUX                      shift and go to state 181
+    empty                          shift and go to state 129
+
+state 162
+
+    (85) READ_AUX -> squarebracket_open EXPRESSION . squarebracket_close
+
+    squarebracket_close shift and go to state 182
+
+
+state 163
+
+    (84) READ -> input parenthesis_open id READ_AUX parenthesis_close . semicolon
+
+    semicolon       shift and go to state 183
+
+
+state 164
+
+    (80) LOOP -> do BODY until parenthesis_open EXPRESSION . parenthesis_close
+
+    parenthesis_close shift and go to state 184
+
+
+state 165
+
+    (41) VAR_DECLARATION_AUX -> comma id VAR_DECLARATION_AUX .
+
+    of_type         reduce using rule 41 (VAR_DECLARATION_AUX -> comma id VAR_DECLARATION_AUX .)
+
+
+state 166
+
+    (43) LIST_DECLARATION -> variable id squarebracket_open EXPRESSION squarebracket_close . of_type TYPE semicolon
+
+    of_type         shift and go to state 185
+
+
+state 167
+
+    (40) VAR_DECLARATION -> variable id VAR_DECLARATION_AUX of_type TYPE . semicolon
+
+    semicolon       shift and go to state 186
+
+
+state 168
+
+    (9) RECEIVES_AUX1 -> comma id of_type . TYPE RECEIVES_AUX1
+    (18) TYPE -> . whole
+    (19) TYPE -> . decimal
+    (20) TYPE -> . words
+    (21) TYPE -> . boolean
+
+    whole           shift and go to state 23
+    decimal         shift and go to state 20
+    words           shift and go to state 22
+    boolean         shift and go to state 21
+
+    TYPE                           shift and go to state 187
+
+state 169
+
+    (26) CONDITION_AUX -> else . BODY
+    (22) BODY -> . curlybraces_open BODY_AUX curlybraces_close
+
+    curlybraces_open shift and go to state 62
+
+    BODY                           shift and go to state 188
+
+state 170
+
+    (25) CONDITION -> if parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX .
+
+    id              reduce using rule 25 (CONDITION -> if parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX .)
+    if              reduce using rule 25 (CONDITION -> if parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX .)
+    input           reduce using rule 25 (CONDITION -> if parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX .)
+    print           reduce using rule 25 (CONDITION -> if parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX .)
+    do              reduce using rule 25 (CONDITION -> if parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX .)
+    return_statement reduce using rule 25 (CONDITION -> if parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX .)
+    call            reduce using rule 25 (CONDITION -> if parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX .)
+    curlybraces_close reduce using rule 25 (CONDITION -> if parenthesis_open EXPRESSION parenthesis_close BODY CONDITION_AUX .)
+
+
+state 171
+
+    (27) CONDITION_AUX -> empty .
+
+    id              reduce using rule 27 (CONDITION_AUX -> empty .)
+    if              reduce using rule 27 (CONDITION_AUX -> empty .)
+    input           reduce using rule 27 (CONDITION_AUX -> empty .)
+    print           reduce using rule 27 (CONDITION_AUX -> empty .)
+    do              reduce using rule 27 (CONDITION_AUX -> empty .)
+    return_statement reduce using rule 27 (CONDITION_AUX -> empty .)
+    call            reduce using rule 27 (CONDITION_AUX -> empty .)
+    curlybraces_close reduce using rule 27 (CONDITION_AUX -> empty .)
+
+
+state 172
+
+    (48) EXPRESSION_AUX1 -> op_or EXPRESSION_AUX EXP .
+
+    semicolon       reduce using rule 48 (EXPRESSION_AUX1 -> op_or EXPRESSION_AUX EXP .)
+    squarebracket_close reduce using rule 48 (EXPRESSION_AUX1 -> op_or EXPRESSION_AUX EXP .)
+    parenthesis_close reduce using rule 48 (EXPRESSION_AUX1 -> op_or EXPRESSION_AUX EXP .)
+    comma           reduce using rule 48 (EXPRESSION_AUX1 -> op_or EXPRESSION_AUX EXP .)
+
+
+state 173
+
+    (47) EXPRESSION_AUX1 -> op_and EXPRESSION_AUX EXP .
+
+    semicolon       reduce using rule 47 (EXPRESSION_AUX1 -> op_and EXPRESSION_AUX EXP .)
+    squarebracket_close reduce using rule 47 (EXPRESSION_AUX1 -> op_and EXPRESSION_AUX EXP .)
+    parenthesis_close reduce using rule 47 (EXPRESSION_AUX1 -> op_and EXPRESSION_AUX EXP .)
+    comma           reduce using rule 47 (EXPRESSION_AUX1 -> op_and EXPRESSION_AUX EXP .)
+
+
+state 174
+
+    (33) CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .
+
+    op_multiplication reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+    op_division     reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+    op_addition     reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+    op_subtraction  reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+    op_less         reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+    op_less_equal   reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+    op_greater      reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+    op_greater_equal reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+    op_equal        reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+    op_not_equal    reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+    op_and          reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+    op_or           reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+    semicolon       reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+    squarebracket_close reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+    parenthesis_close reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+    comma           reduce using rule 33 (CONSTANT_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+
+
+state 175
+
+    (36) CONSTANT_AUX1 -> comma . EXPRESSION CONSTANT_AUX1
+    (44) EXPRESSION -> . EXPRESSION_AUX EXP EXPRESSION_AUX1
+    (45) EXPRESSION_AUX -> . op_negation
+    (46) EXPRESSION_AUX -> . empty
+    (90) empty -> .
+
+    op_negation     shift and go to state 53
+    parenthesis_open reduce using rule 90 (empty -> .)
+    op_addition     reduce using rule 90 (empty -> .)
+    op_subtraction  reduce using rule 90 (empty -> .)
+    id              reduce using rule 90 (empty -> .)
+    cst_whole       reduce using rule 90 (empty -> .)
+    cst_decimal     reduce using rule 90 (empty -> .)
+    cst_words       reduce using rule 90 (empty -> .)
+    cst_boolean     reduce using rule 90 (empty -> .)
+
+    EXPRESSION_AUX                 shift and go to state 54
+    EXPRESSION                     shift and go to state 189
+    empty                          shift and go to state 56
+
+state 176
+
+    (34) CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 . parenthesis_close
+
+    parenthesis_close shift and go to state 190
+
+
+state 177
+
+    (37) CONSTANT_AUX1 -> empty .
+
+    parenthesis_close reduce using rule 37 (CONSTANT_AUX1 -> empty .)
+
+
+state 178
+
+    (77) CALL -> call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close . semicolon
+
+    semicolon       shift and go to state 191
+
+
+state 179
+
+    (78) CALL_AUX -> comma EXPRESSION . CALL_AUX
+    (78) CALL_AUX -> . comma EXPRESSION CALL_AUX
+    (79) CALL_AUX -> . empty
+    (90) empty -> .
+
+    comma           shift and go to state 158
+    parenthesis_close reduce using rule 90 (empty -> .)
+
+    CALL_AUX                       shift and go to state 192
+    empty                          shift and go to state 159
+
+state 180
+
+    (87) WRITE -> print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon .
+
+    id              reduce using rule 87 (WRITE -> print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon .)
+    if              reduce using rule 87 (WRITE -> print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon .)
+    input           reduce using rule 87 (WRITE -> print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon .)
+    print           reduce using rule 87 (WRITE -> print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon .)
+    do              reduce using rule 87 (WRITE -> print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon .)
+    return_statement reduce using rule 87 (WRITE -> print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon .)
+    call            reduce using rule 87 (WRITE -> print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon .)
+    curlybraces_close reduce using rule 87 (WRITE -> print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon .)
+
+
+state 181
+
+    (88) WRITE_AUX -> comma EXPRESSION WRITE_AUX .
+
+    parenthesis_close reduce using rule 88 (WRITE_AUX -> comma EXPRESSION WRITE_AUX .)
+
+
+state 182
+
+    (85) READ_AUX -> squarebracket_open EXPRESSION squarebracket_close .
+
+    parenthesis_close reduce using rule 85 (READ_AUX -> squarebracket_open EXPRESSION squarebracket_close .)
+
+
+state 183
+
+    (84) READ -> input parenthesis_open id READ_AUX parenthesis_close semicolon .
+
+    id              reduce using rule 84 (READ -> input parenthesis_open id READ_AUX parenthesis_close semicolon .)
+    if              reduce using rule 84 (READ -> input parenthesis_open id READ_AUX parenthesis_close semicolon .)
+    input           reduce using rule 84 (READ -> input parenthesis_open id READ_AUX parenthesis_close semicolon .)
+    print           reduce using rule 84 (READ -> input parenthesis_open id READ_AUX parenthesis_close semicolon .)
+    do              reduce using rule 84 (READ -> input parenthesis_open id READ_AUX parenthesis_close semicolon .)
+    return_statement reduce using rule 84 (READ -> input parenthesis_open id READ_AUX parenthesis_close semicolon .)
+    call            reduce using rule 84 (READ -> input parenthesis_open id READ_AUX parenthesis_close semicolon .)
+    curlybraces_close reduce using rule 84 (READ -> input parenthesis_open id READ_AUX parenthesis_close semicolon .)
+
+
+state 184
+
+    (80) LOOP -> do BODY until parenthesis_open EXPRESSION parenthesis_close .
+
+    id              reduce using rule 80 (LOOP -> do BODY until parenthesis_open EXPRESSION parenthesis_close .)
+    if              reduce using rule 80 (LOOP -> do BODY until parenthesis_open EXPRESSION parenthesis_close .)
+    input           reduce using rule 80 (LOOP -> do BODY until parenthesis_open EXPRESSION parenthesis_close .)
+    print           reduce using rule 80 (LOOP -> do BODY until parenthesis_open EXPRESSION parenthesis_close .)
+    do              reduce using rule 80 (LOOP -> do BODY until parenthesis_open EXPRESSION parenthesis_close .)
+    return_statement reduce using rule 80 (LOOP -> do BODY until parenthesis_open EXPRESSION parenthesis_close .)
+    call            reduce using rule 80 (LOOP -> do BODY until parenthesis_open EXPRESSION parenthesis_close .)
+    curlybraces_close reduce using rule 80 (LOOP -> do BODY until parenthesis_open EXPRESSION parenthesis_close .)
+
+
+state 185
+
+    (43) LIST_DECLARATION -> variable id squarebracket_open EXPRESSION squarebracket_close of_type . TYPE semicolon
+    (18) TYPE -> . whole
+    (19) TYPE -> . decimal
+    (20) TYPE -> . words
+    (21) TYPE -> . boolean
+
+    whole           shift and go to state 23
+    decimal         shift and go to state 20
+    words           shift and go to state 22
+    boolean         shift and go to state 21
+
+    TYPE                           shift and go to state 193
+
+state 186
+
+    (40) VAR_DECLARATION -> variable id VAR_DECLARATION_AUX of_type TYPE semicolon .
+
+    id              reduce using rule 40 (VAR_DECLARATION -> variable id VAR_DECLARATION_AUX of_type TYPE semicolon .)
+    if              reduce using rule 40 (VAR_DECLARATION -> variable id VAR_DECLARATION_AUX of_type TYPE semicolon .)
+    input           reduce using rule 40 (VAR_DECLARATION -> variable id VAR_DECLARATION_AUX of_type TYPE semicolon .)
+    print           reduce using rule 40 (VAR_DECLARATION -> variable id VAR_DECLARATION_AUX of_type TYPE semicolon .)
+    do              reduce using rule 40 (VAR_DECLARATION -> variable id VAR_DECLARATION_AUX of_type TYPE semicolon .)
+    return_statement reduce using rule 40 (VAR_DECLARATION -> variable id VAR_DECLARATION_AUX of_type TYPE semicolon .)
+    call            reduce using rule 40 (VAR_DECLARATION -> variable id VAR_DECLARATION_AUX of_type TYPE semicolon .)
+    curlybraces_close reduce using rule 40 (VAR_DECLARATION -> variable id VAR_DECLARATION_AUX of_type TYPE semicolon .)
+
+
+state 187
+
+    (9) RECEIVES_AUX1 -> comma id of_type TYPE . RECEIVES_AUX1
+    (9) RECEIVES_AUX1 -> . comma id of_type TYPE RECEIVES_AUX1
+    (10) RECEIVES_AUX1 -> . empty
+    (90) empty -> .
+
+    comma           shift and go to state 94
+    block_returns   reduce using rule 90 (empty -> .)
+    curlybraces_open reduce using rule 90 (empty -> .)
+
+    RECEIVES_AUX1                  shift and go to state 194
+    empty                          shift and go to state 96
+
+state 188
+
+    (26) CONDITION_AUX -> else BODY .
+
+    id              reduce using rule 26 (CONDITION_AUX -> else BODY .)
+    if              reduce using rule 26 (CONDITION_AUX -> else BODY .)
+    input           reduce using rule 26 (CONDITION_AUX -> else BODY .)
+    print           reduce using rule 26 (CONDITION_AUX -> else BODY .)
+    do              reduce using rule 26 (CONDITION_AUX -> else BODY .)
+    return_statement reduce using rule 26 (CONDITION_AUX -> else BODY .)
+    call            reduce using rule 26 (CONDITION_AUX -> else BODY .)
+    curlybraces_close reduce using rule 26 (CONDITION_AUX -> else BODY .)
+
+
+state 189
+
+    (36) CONSTANT_AUX1 -> comma EXPRESSION . CONSTANT_AUX1
+    (36) CONSTANT_AUX1 -> . comma EXPRESSION CONSTANT_AUX1
+    (37) CONSTANT_AUX1 -> . empty
+    (90) empty -> .
+
+    comma           shift and go to state 175
+    parenthesis_close reduce using rule 90 (empty -> .)
+
+    CONSTANT_AUX1                  shift and go to state 195
+    empty                          shift and go to state 177
+
+state 190
+
+    (34) CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .
+
+    op_multiplication reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+    op_division     reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+    op_addition     reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+    op_subtraction  reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+    op_less         reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+    op_less_equal   reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+    op_greater      reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+    op_greater_equal reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+    op_equal        reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+    op_not_equal    reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+    op_and          reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+    op_or           reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+    semicolon       reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+    squarebracket_close reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+    parenthesis_close reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+    comma           reduce using rule 34 (CONSTANT_AUX -> parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close .)
+
+
+state 191
+
+    (77) CALL -> call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon .
+
+    id              reduce using rule 77 (CALL -> call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon .)
+    if              reduce using rule 77 (CALL -> call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon .)
+    input           reduce using rule 77 (CALL -> call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon .)
+    print           reduce using rule 77 (CALL -> call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon .)
+    do              reduce using rule 77 (CALL -> call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon .)
+    return_statement reduce using rule 77 (CALL -> call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon .)
+    call            reduce using rule 77 (CALL -> call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon .)
+    curlybraces_close reduce using rule 77 (CALL -> call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon .)
+
+
+state 192
+
+    (78) CALL_AUX -> comma EXPRESSION CALL_AUX .
+
+    parenthesis_close reduce using rule 78 (CALL_AUX -> comma EXPRESSION CALL_AUX .)
+
+
+state 193
+
+    (43) LIST_DECLARATION -> variable id squarebracket_open EXPRESSION squarebracket_close of_type TYPE . semicolon
+
+    semicolon       shift and go to state 196
+
+
+state 194
+
+    (9) RECEIVES_AUX1 -> comma id of_type TYPE RECEIVES_AUX1 .
+
+    block_returns   reduce using rule 9 (RECEIVES_AUX1 -> comma id of_type TYPE RECEIVES_AUX1 .)
+    curlybraces_open reduce using rule 9 (RECEIVES_AUX1 -> comma id of_type TYPE RECEIVES_AUX1 .)
+
+
+state 195
+
+    (36) CONSTANT_AUX1 -> comma EXPRESSION CONSTANT_AUX1 .
+
+    parenthesis_close reduce using rule 36 (CONSTANT_AUX1 -> comma EXPRESSION CONSTANT_AUX1 .)
+
+
+state 196
+
+    (43) LIST_DECLARATION -> variable id squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon .
+
+    id              reduce using rule 43 (LIST_DECLARATION -> variable id squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon .)
+    if              reduce using rule 43 (LIST_DECLARATION -> variable id squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon .)
+    input           reduce using rule 43 (LIST_DECLARATION -> variable id squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon .)
+    print           reduce using rule 43 (LIST_DECLARATION -> variable id squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon .)
+    do              reduce using rule 43 (LIST_DECLARATION -> variable id squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon .)
+    return_statement reduce using rule 43 (LIST_DECLARATION -> variable id squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon .)
+    call            reduce using rule 43 (LIST_DECLARATION -> variable id squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon .)
+    curlybraces_close reduce using rule 43 (LIST_DECLARATION -> variable id squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon .)
+
