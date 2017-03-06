@@ -278,7 +278,6 @@ def p_error(p):
 
 yacc.yacc()
 
-data = '''starting block bl1 { }'''
-
-yacc.parse(data)
+#data = '''starting block bl1 {  }'''
+#yacc.parse(data)
 
