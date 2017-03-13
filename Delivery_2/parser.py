@@ -9,6 +9,9 @@ is_starting_block = False
 current_block_id = ""
 current_var_id = ""
 var_names = []
+current_list_id = ""
+current_list_size = ""
+current_list_type = ""
 
 def stop_exec(message):
 	sys.exit(message)
@@ -36,7 +39,25 @@ def p_BLOCK_AUX(p):
 				| empty
 	'''
 
-#Block punto 1
+def p_RECEIVES_AUX(p):
+	'''
+	RECEIVES_AUX : receives colon id SEEN_PARAM_ID of_type TYPE SEEN_TYPE RECEIVES_AUX1
+				   | empty
+	'''
+
+def p_RECEIVES_AUX1(p):
+	'''
+	RECEIVES_AUX1 : comma id SEEN_PARAM_ID of_type TYPE SEEN_TYPE RECEIVES_AUX1
+					| empty
+	'''
+
+def p_RETURNS_AUX(p):
+	'''
+	RETURNS_AUX : block_returns TYPE SEEN_RETURN_TYPE
+				  | empty
+	'''
+
+#BLOCK action 1
 def p_SEEN_STARTING(p):
 	"SEEN_STARTING : "
 	if function_directory._starting_block_key != "-1":
@@ -44,7 +65,7 @@ def p_SEEN_STARTING(p):
 	else:
 		stop_exec("ERROR: Starting block is already defined")
 
-#Block punto 2
+#BLOCK action 2
 def p_SEEN_BLOCK_ID(p):
 	"SEEN_BLOCK_ID : "
 	current_block_id = p[-1]
@@ -56,41 +77,25 @@ def p_SEEN_BLOCK_ID(p):
 	else:
 		stop_exec("ERROR: Block name is already defined")
 
-def p_RECEIVES_AUX(p):
-	'''
-	RECEIVES_AUX : receives colon id SEEN_VAR_ID of_type TYPE SEEN_TYPE RECEIVES_AUX1
-				   | empty
-	'''
-
-def p_RECEIVES_AUX1(p):
-	'''
-	RECEIVES_AUX1 : comma id SEEN_VAR_ID of_type TYPE SEEN_TYPE RECEIVES_AUX1
-					| empty
-	'''
-
-#Block punto 3
+#BLOCK action 3
 def p_SEEN_TYPE(p):
 	"SEEN_TYPE : "
-	#Find the current_var_id in primitives dictionary for current_block_id row
-	if current_var_id not in function_directory.function_reference_table[current_block_id][1][0]
-		
+	#Find current_var_id in primitives dictionary for current_block_id row
+	if current_var_id not in function_directory.function_reference_table[current_block_id][1][0]:
+		function_directory.add_parameter_type(current_block_id, p[-1])
+		function_directory.add_primitive(current_block_id, current_var_id, p[-1])
 	else:
 		stop_exec("ERROR: Parameter name is already defined")
-		
-#Block punto 5
-def p_SEEN_VAR_ID(p):
-	"SEEN_VAR_ID : "
-	current_var_id = p[-1]
 
-def p_RETURNS_AUX(p):
-	'''
-	RETURNS_AUX : block_returns TYPE SEEN_RETURN_TYPE
-				  | empty
-	'''
-
+#BLOCK action 4
 def p_SEEN_RETURN_TYPE(p):
 	"SEEN_RETURN_TYPE : "
-	FRT[current_block_id][0] = p[-1]
+	function_directory.add_block_return_type(current_block_id, p[-1])
+
+#BLOCK action 5
+def p_SEEN_PARAM_ID(p):
+	"SEEN_PARAM_ID : "
+	current_var_id = p[-1]
 
 def p_BLOCK_BODY(p):
 	'''
@@ -169,7 +174,7 @@ def p_DECLARATIONS(p):
 
 def p_VAR_DECLARATION(p):
 	'''
-	VAR_DECLARATION : variable id SEEN_VAR_ID VAR_DECLARATION_AUX of_type TYPE SEEN_VAR_TYPE semicolon
+	VAR_DECLARATION : variable SEEN_VAR_KEYWORD id SEEN_VAR_ID VAR_DECLARATION_AUX of_type TYPE SEEN_VAR_TYPE semicolon
 	'''
 
 def p_VAR_DECLARATION_AUX(p):
@@ -178,26 +183,51 @@ def p_VAR_DECLARATION_AUX(p):
 						  | empty
 	'''
 
+#VAR_DECLARATION action 1
+def p_SEEN_VAR_KEYWORD(p):
+	"SEEN_VAR_KEYWORD : "
+	var_names = []
+
+#VAR_DECLARATION action 2
 def p_SEEN_VAR_ID(p):
 	"SEEN_VAR_ID : "
 	var_names.append(p[-1])
 
+#VAR_DECLARATION action 3
 def p_SEEN_VAR_TYPE(p):
+	"SEEN_VAR_TYPE : "
 	for var_name in var_names:
-		if var_name not in dict:
-		
+		#Find current_var_id in primitives dictionary for current_block_id row
+		if var_name not in function_directory.function_reference_table[current_block_id][1][0]:
+			function_directory.add_primitive(current_block_id, var_name, p[-1])
 		else:
 			stop_exec("ERROR: Variable name is already defined")
 
 def p_LIST_DECLARATION(p):
 	'''
-	LIST_DECLARATION : variable id squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon SEEN_LIST
+	LIST_DECLARATION : variable id SEEN_LIST_ID squarebracket_open EXPRESSION SEEN_LIST_SIZE squarebracket_close of_type TYPE SEEN_LIST_TYPE semicolon SEEN_LIST
 	'''
 
+#LIST_DECLARATION action 1
+def p_SEEN_LIST_ID(p):
+	"SEEN_LIST_ID : "
+	current_list_id = p[-1]
+
+#LIST_DECLARATION action 2
+def p_SEEN_LIST_SIZE(p):
+	"SEEN_LIST_SIZE : "
+	current_list_size = p[-1]
+
+#LIST_DECLARATION action 3
+def p_SEEN_LIST_TYPE(p):
+	"SEEN_LIST_TYPE : "
+	current_list_type = p[-1]
+
+#LIST_DECLARATION action 4
 def p_SEEN_LIST(p):
 	"SEEN_LIST : "
-	if x not in dict:
-		
+	if current_list_id not in function_directory.function_reference_table[current_block_id][1][1]:
+		function_directory.add_list(current_block_id, current_list_id, current_list_size, current_list_type)
 	else:
 		stop_exec("ERROR: List name is already defined")
 
@@ -216,6 +246,7 @@ def p_EXPRESSION_AUX1(p):
 	'''
 	EXPRESSION_AUX1 : op_and EXPRESSION_AUX EXP
 					 | op_or EXPRESSION_AUX EXP
+					 | empty
 	'''
 
 def p_EXP(p):

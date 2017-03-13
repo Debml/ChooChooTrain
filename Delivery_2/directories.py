@@ -62,7 +62,7 @@ class Function_Directory():
 				self.function_reference_table[key][1][0].insert(variable_name,variable_data)
 
 	#Key for current block, add list to list dictionary	
-	def add_list(self, key, variable_name, variable_type, variable_size):
+	def add_list(self, key, variable_name, variable_size, variable_type):
 		#variable_name should have value
 		if variable_name is not None:
 			if variable_type is not None:
