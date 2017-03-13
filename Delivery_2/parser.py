@@ -1,6 +1,7 @@
 import scanner
 import sys
 import ply.yacc as yacc
+
 import globalScope
 
 tokens = scanner.tokens
@@ -78,6 +79,11 @@ def p_SEEN_TYPE(p):
 	if globalScope.current_var_id not in globalScope.function_directory.function_reference_table[globalScope.current_block_id][1][0]:
 		globalScope.function_directory.add_parameter_type(globalScope.current_block_id, p[-1])
 		globalScope.function_directory.add_primitive(globalScope.current_block_id, globalScope.current_var_id, p[-1])
+
+	if current_var_id not in function_directory.function_reference_table[current_block_id][1][0]:
+		function_directory.add_parameter_type(current_block_id, p[-1])
+		function_directory.add_primitive(current_block_id, current_var_id, p[-1])
+
 	else:
 		stop_exec("ERROR: Parameter name is already defined")
 
