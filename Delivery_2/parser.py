@@ -1,8 +1,10 @@
 import scanner
-tokens = scanner.tokens
-
+import sys
 import ply.yacc as yacc
 import globalScope
+
+tokens = scanner.tokens
+
 
 def stop_exec(message):
 	sys.exit(message)
@@ -12,6 +14,7 @@ def p_PROGRAM(p):
 	PROGRAM : PROGRAM_AUX
 	'''
 	print('OKAY')
+	globalScope.function_directory.print_table()
 
 def p_PROGRAM_AUX(p):
 	'''
@@ -48,7 +51,7 @@ def p_RETURNS_AUX(p):
 				  | empty
 	'''
 
-#BLOCK action 1
+#BLOCK action 1 - Sets starting block
 def p_SEEN_STARTING(p):
 	"SEEN_STARTING : "
 	if globalScope.function_directory._starting_block_key == "-1":
@@ -56,7 +59,7 @@ def p_SEEN_STARTING(p):
 	else:
 		stop_exec("ERROR: Starting block is already defined")
 
-#BLOCK action 2
+#BLOCK action 2 - Creates a new Row in FRT with block id as key
 def p_SEEN_BLOCK_ID(p):
 	"SEEN_BLOCK_ID : "
 	globalScope.current_block_id = p[-1]
@@ -68,7 +71,7 @@ def p_SEEN_BLOCK_ID(p):
 	else:
 		stop_exec("ERROR: Block name is already defined")
 
-#BLOCK action 3
+#BLOCK action 3 - Creates the list of parameter types and adds them to the variable list
 def p_SEEN_TYPE(p):
 	"SEEN_TYPE : "
 	#Find current_var_id in primitives dictionary for current_block_id row
@@ -78,12 +81,12 @@ def p_SEEN_TYPE(p):
 	else:
 		stop_exec("ERROR: Parameter name is already defined")
 
-#BLOCK action 4
+#BLOCK action 4 - Sets the block return type
 def p_SEEN_RETURN_TYPE(p):
 	"SEEN_RETURN_TYPE : "
 	globalScope.function_directory.add_block_return_type(globalScope.current_block_id, p[-1])
 
-#BLOCK action 5
+#BLOCK action 5 - gets the current variable id being analyzed
 def p_SEEN_PARAM_ID(p):
 	"SEEN_PARAM_ID : "
 	globalScope.current_var_id = p[-1]
@@ -112,6 +115,7 @@ def p_TYPE(p):
 		   | words
 		   | boolean
 	'''
+	p[0] = p[1]
 
 def p_BODY(p):
 	'''
@@ -159,8 +163,9 @@ def p_CONSTANT_AUX1(p):
 
 def p_DECLARATIONS(p):
 	'''
-	DECLARATIONS : VAR_DECLARATION
-				   | LIST_DECLARATION
+	DECLARATIONS : VAR_DECLARATION DECLARATIONS
+				   | LIST_DECLARATION DECLARATIONS
+				   | empty
 	'''
 
 def p_VAR_DECLARATION(p):
@@ -196,7 +201,7 @@ def p_SEEN_VAR_TYPE(p):
 
 def p_LIST_DECLARATION(p):
 	'''
-	LIST_DECLARATION : variable id SEEN_LIST_ID squarebracket_open EXPRESSION SEEN_LIST_SIZE squarebracket_close of_type TYPE SEEN_LIST_TYPE semicolon SEEN_LIST
+	LIST_DECLARATION : list id SEEN_LIST_ID squarebracket_open EXPRESSION SEEN_LIST_SIZE squarebracket_close of_type TYPE SEEN_LIST_TYPE semicolon SEEN_LIST
 	'''
 
 #LIST_DECLARATION action 1
@@ -366,7 +371,7 @@ def p_error(p):
 
 yacc.yacc()
 
-data ='''starting block Block1
+data ='''starting block Block15
 receives :
 parameter1 oftype decimal ,
 parameter2 oftype whole ,
@@ -375,17 +380,19 @@ parameter3 oftype words
 returns whole 
 
 {
-	variable variable1 , variable2 oftype words;
+	variable var1, var2, var3 oftype whole;
+	variable var4, var5, var6 oftype words;
+	list list1[5] oftype decimal;
 }
 
-block Block2
+block Block16
 receives :
-parameter1 oftype whole ,
-parameter2 oftype words
+param1 oftype decimal
 
 {
-	variable variable1 [ 5 ] oftype whole
+	list list1[5] oftype words;
+	list list2[10] oftype decimal;
 }
 '''
-yacc.parse(data)
 
+yacc.parse(data)
