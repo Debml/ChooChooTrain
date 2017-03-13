@@ -25,7 +25,6 @@ class Function_Directory():
 
 			#private variable for block primitives (Dictionary)
 			primitives = Dictionary()
-			primitives.insert("variableTest",["whole","0"])
 
 			#private variable for block lists (Dictionary)
 			lists = Dictionary()

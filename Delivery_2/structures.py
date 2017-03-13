@@ -59,8 +59,8 @@ class Dictionary:
 	#Params: key
 	#Returns: value of item with given key in dictionary
 	def __getitem__(self, key):
-		val = self._dictionary.__getitem__(self, key)
-        return val
+		val = self._dictionary.__getitem__(key)
+		return val
 
 	#Returns size of dictionary
 	#Params: -
