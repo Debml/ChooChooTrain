@@ -72,7 +72,7 @@ class Function_Directory():
 				self.function_reference_table[key][1][1].insert(variable_name,variable_data)
 
 	#Key for current block, add one parameter found to parameters list
-	def add_parameter(self, key, parameter = None):
+	def add_parameter_type(self, key, parameter_type = None):
 		#parameter should have value
 		if parameter is not None:
 			#Index 0 of list is for parameter list
