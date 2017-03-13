@@ -93,3 +93,5 @@ ENV/
 .ropeproject
 
 .DS_Store
+
+Delivery_1/ply
