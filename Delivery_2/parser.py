@@ -81,6 +81,7 @@ def p_SEEN_BLOCK_ID(p):
 def p_SEEN_TYPE(p):
 	"SEEN_TYPE : "
 	#Find current_var_id in primitives dictionary for current_block_id row
+	print (current_var_id)
 	if current_var_id not in function_directory.function_reference_table[current_block_id][1][0]:
 		function_directory.add_parameter_type(current_block_id, p[-1])
 		function_directory.add_primitive(current_block_id, current_var_id, p[-1])
