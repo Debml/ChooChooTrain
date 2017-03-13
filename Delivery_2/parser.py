@@ -2,16 +2,7 @@ import scanner
 tokens = scanner.tokens
 
 import ply.yacc as yacc
-from directories import Function_Directory
-
-function_directory = Function_Directory()
-is_starting_block = False
-current_block_id = ""
-current_var_id = ""
-var_names = []
-current_list_id = ""
-current_list_size = ""
-current_list_type = ""
+import globalScope
 
 def stop_exec(message):
 	sys.exit(message)
@@ -60,20 +51,20 @@ def p_RETURNS_AUX(p):
 #BLOCK action 1
 def p_SEEN_STARTING(p):
 	"SEEN_STARTING : "
-	if function_directory._starting_block_key == "-1":
-		is_starting_block = True
+	if globalScope.function_directory._starting_block_key == "-1":
+		globalScope.is_starting_block = True
 	else:
 		stop_exec("ERROR: Starting block is already defined")
 
 #BLOCK action 2
 def p_SEEN_BLOCK_ID(p):
 	"SEEN_BLOCK_ID : "
-	current_block_id = p[-1]
-	if current_block_id not in function_directory.function_reference_table:
-		if is_starting_block:
-			function_directory._starting_block_key = current_block_id
+	globalScope.current_block_id = p[-1]
+	if globalScope.current_block_id not in globalScope.function_directory.function_reference_table:
+		if globalScope.is_starting_block:
+			globalScope.function_directory._starting_block_key = globalScope.current_block_id
 
-		function_directory.add_block_name(current_block_id)
+		globalScope.function_directory.add_block_name(globalScope.current_block_id)
 	else:
 		stop_exec("ERROR: Block name is already defined")
 
@@ -81,22 +72,21 @@ def p_SEEN_BLOCK_ID(p):
 def p_SEEN_TYPE(p):
 	"SEEN_TYPE : "
 	#Find current_var_id in primitives dictionary for current_block_id row
-	print (current_var_id)
-	if current_var_id not in function_directory.function_reference_table[current_block_id][1][0]:
-		function_directory.add_parameter_type(current_block_id, p[-1])
-		function_directory.add_primitive(current_block_id, current_var_id, p[-1])
+	if globalScope.current_var_id not in globalScope.function_directory.function_reference_table[globalScope.current_block_id][1][0]:
+		globalScope.function_directory.add_parameter_type(globalScope.current_block_id, p[-1])
+		globalScope.function_directory.add_primitive(globalScope.current_block_id, globalScope.current_var_id, p[-1])
 	else:
 		stop_exec("ERROR: Parameter name is already defined")
 
 #BLOCK action 4
 def p_SEEN_RETURN_TYPE(p):
 	"SEEN_RETURN_TYPE : "
-	function_directory.add_block_return_type(current_block_id, p[-1])
+	globalScope.function_directory.add_block_return_type(globalScope.current_block_id, p[-1])
 
 #BLOCK action 5
 def p_SEEN_PARAM_ID(p):
 	"SEEN_PARAM_ID : "
-	current_var_id = p[-1]
+	globalScope.current_var_id = p[-1]
 
 def p_BLOCK_BODY(p):
 	'''
@@ -187,20 +177,20 @@ def p_VAR_DECLARATION_AUX(p):
 #VAR_DECLARATION action 1
 def p_SEEN_VAR_KEYWORD(p):
 	"SEEN_VAR_KEYWORD : "
-	var_names = []
+	globalScope.var_names = []
 
 #VAR_DECLARATION action 2
 def p_SEEN_VAR_ID(p):
 	"SEEN_VAR_ID : "
-	var_names.append(p[-1])
+	globalScope.var_names.append(p[-1])
 
 #VAR_DECLARATION action 3
 def p_SEEN_VAR_TYPE(p):
 	"SEEN_VAR_TYPE : "
-	for var_name in var_names:
+	for var_name in globalScope.var_names:
 		#Find current_var_id in primitives dictionary for current_block_id row
-		if var_name not in function_directory.function_reference_table[current_block_id][1][0]:
-			function_directory.add_primitive(current_block_id, var_name, p[-1])
+		if var_name not in globalScope.function_directory.function_reference_table[globalScope.current_block_id][1][0]:
+			globalScope.function_directory.add_primitive(globalScope.current_block_id, var_name, p[-1])
 		else:
 			stop_exec("ERROR: Variable name is already defined")
 
@@ -212,23 +202,23 @@ def p_LIST_DECLARATION(p):
 #LIST_DECLARATION action 1
 def p_SEEN_LIST_ID(p):
 	"SEEN_LIST_ID : "
-	current_list_id = p[-1]
+	globalScope.current_list_id = p[-1]
 
 #LIST_DECLARATION action 2
 def p_SEEN_LIST_SIZE(p):
 	"SEEN_LIST_SIZE : "
-	current_list_size = p[-1]
+	globalScope.current_list_size = p[-1]
 
 #LIST_DECLARATION action 3
 def p_SEEN_LIST_TYPE(p):
 	"SEEN_LIST_TYPE : "
-	current_list_type = p[-1]
+	globalScope.current_list_type = p[-1]
 
 #LIST_DECLARATION action 4
 def p_SEEN_LIST(p):
 	"SEEN_LIST : "
-	if current_list_id not in function_directory.function_reference_table[current_block_id][1][1]:
-		function_directory.add_list(current_block_id, current_list_id, current_list_size, current_list_type)
+	if globalScope.current_list_id not in globalScope.function_directory.function_reference_table[globalScope.current_block_id][1][1]:
+		globalScope.function_directory.add_list(globalScope.current_block_id, globalScope.current_list_id, globalScope.current_list_size, globalScope.current_list_type)
 	else:
 		stop_exec("ERROR: List name is already defined")
 
@@ -391,7 +381,7 @@ returns whole
 block Block2
 receives :
 parameter1 oftype whole ,
-parameter2 oftype words ,
+parameter2 oftype words
 
 {
 	variable variable1 [ 5 ] oftype whole
