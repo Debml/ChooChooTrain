@@ -150,6 +150,7 @@ def p_EXPRESSION_AUX1(p):
 	'''
 	EXPRESSION_AUX1 : op_and EXPRESSION_AUX EXP
 					 | op_or EXPRESSION_AUX EXP
+					 | empty
 	'''
 
 def p_EXP(p):
@@ -278,6 +279,26 @@ def p_error(p):
 
 yacc.yacc()
 
-#data = '''starting block bl1 {  }'''
-#yacc.parse(data)
+data ='''starting block Block1
+receives :
+parameter1 oftype decimal ,
+parameter2 oftype whole ,
+parameter3 oftype words
+
+returns whole 
+
+{
+	variable variable1 , variable2 oftype words;
+}
+
+block Block2
+receives :
+parameter1 oftype whole ,
+parameter2 oftype words 
+
+{
+	variable variable1 [ 5 ] oftype whole;
+}
+'''
+yacc.parse(data)
 

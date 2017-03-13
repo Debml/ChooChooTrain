@@ -60,7 +60,7 @@ def p_RETURNS_AUX(p):
 #BLOCK action 1
 def p_SEEN_STARTING(p):
 	"SEEN_STARTING : "
-	if function_directory._starting_block_key != "-1":
+	if function_directory._starting_block_key == "-1":
 		is_starting_block = True
 	else:
 		stop_exec("ERROR: Starting block is already defined")
@@ -375,6 +375,26 @@ def p_error(p):
 
 yacc.yacc()
 
-#data = '''starting block bl1 {  }'''
-#yacc.parse(data)
+data ='''starting block Block1
+receives :
+parameter1 oftype decimal ,
+parameter2 oftype whole ,
+parameter3 oftype words
+
+returns whole 
+
+{
+	variable variable1 , variable2 oftype words;
+}
+
+block Block2
+receives :
+parameter1 oftype whole ,
+parameter2 oftype words ,
+
+{
+	variable variable1 [ 5 ] oftype whole
+}
+'''
+yacc.parse(data)
 

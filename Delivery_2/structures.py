@@ -79,6 +79,12 @@ class Dictionary:
 	def contains(self,key):
 		return (key in self._dictionary.keys())
 
+	#Returns whether key exists in dictionary or not
+	#Params: key
+	#Returns: bool TRUE if key exists in dictionary
+	def __contains__(self,key):
+		return (key in self._dictionary.keys())
+
 	#Returns instance of actual dictionary
 	#Params: -
 	#Returns: dictionary instance

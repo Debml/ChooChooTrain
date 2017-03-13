@@ -25,6 +25,7 @@ class Function_Directory():
 
 			#private variable for block primitives (Dictionary)
 			primitives = Dictionary()
+			primitives.insert("variableTest")
 
 			#private variable for block lists (Dictionary)
 			lists = Dictionary()
@@ -74,9 +75,9 @@ class Function_Directory():
 	#Key for current block, add one parameter found to parameters list
 	def add_parameter_type(self, key, parameter_type = None):
 		#parameter should have value
-		if parameter is not None:
+		if parameter_type is not None:
 			#Index 0 of list is for parameter list
-			self.function_reference_table[key][2].append(parameter)
+			self.function_reference_table[key][2].append(parameter_type)
 
     #Key for current block, add memory address of block
 	def add_memory_address(self, key, memory_address = None):
@@ -113,7 +114,6 @@ class Function_Directory():
 		else:
 			return -1
 
-
 	#print block information for all blocks
 	def print_table(self):
 		#print table formatted
@@ -124,13 +124,14 @@ class Function_Directory():
 			print("Primitives: ")
 			print(self.function_reference_table[key][1][0])
 			print("Lists: ")
-			print(self.function_reference_table[key][1][0])
+			print(self.function_reference_table[key][1][1])
 			print("Parameters: ")
 			print(self.function_reference_table[key][2])
 			print("Memory Address: ")
 			print(self.function_reference_table[key][3])
 			print("\n")
 
+#for testing purposes
 if __name__ == '__main__':
 	directory = Function_Directory()
 
@@ -139,12 +140,12 @@ if __name__ == '__main__':
 
 	directory.add_block_return_type("Block1","whole")
 
-	directory.add_parameter("Block1","decimal")
-	directory.add_parameter("Block1","whole")
-	directory.add_parameter("Block1","words")
+	directory.add_parameter_type("Block1","decimal")
+	directory.add_parameter_type("Block1","whole")
+	directory.add_parameter_type("Block1","words")
 
-	directory.add_parameter("Block2","whole")
-	directory.add_parameter("Block2","words")
+	directory.add_parameter_type("Block2","whole")
+	directory.add_parameter_type("Block2","words")
 
 	#parameters
 	directory.add_primitive("Block1","parameter1","decimal")
@@ -156,12 +157,9 @@ if __name__ == '__main__':
 
 	#variables
 	directory.add_primitive("Block1","variable1","words")
-	directory.add_primitive("Block1","variable2","whole")
-	directory.add_list("Block1","listvariable1","whole","3")
+	directory.add_primitive("Block1","variable2","words")
 
-	directory.add_primitive("Block2","variable1","decimal")
-	directory.add_primitive("Block2","variable2","decimal")
-	directory.add_list("Block2","listvariable1","words","5")
+	directory.add_list("Block2","listvariable1","5","whole")
 
 	directory.print_table()
 	

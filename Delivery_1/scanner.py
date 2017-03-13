@@ -10,7 +10,7 @@ reserved = {
     'return' : 'return_statement',    
     'call' : 'call',
     'variable' : 'variable',
-    'of type' : 'of_type',
+    'oftype' : 'of_type',
     'do' : 'do',
     'until' : 'until',
     'if' : 'if',
