@@ -71,7 +71,7 @@ class Dictionary:
 	#Params: -
 	#Returns: formatted string containing values of dictionary
 	def __str__(self):
-		return ("Dictionary\n" + '\n'.join('{}: {}'.format(key, val) for key, val in self._dictionary.items()))
+		return ('\n'.join('{}: {}'.format(key, val) for key, val in self._dictionary.items()))
 
 	#Returns whether key exists in dictionary or not
 	#Params: key

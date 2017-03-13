@@ -11,7 +11,7 @@ from structures import Dictionary
 class Function_Directory():
 	def __init__(self):
 		#public variable for starting block key
-		self._starting_block_key = -1
+		self._starting_block_key = "-1"
 
 		#public variable for function reference table
 		self.function_reference_table = Dictionary()
@@ -118,17 +118,24 @@ class Function_Directory():
 	def print_table(self):
 		#print table formatted
 		print("Function Reference Table\n")
-
-		print(self.function_reference_table)
-
+		for key in self.function_reference_table.getInstance():
+			print("*" + key + "* :")
+			print("Return Type: " + self.function_reference_table[key][0])
+			print("Primitives: ")
+			print(self.function_reference_table[key][1][0])
+			print("Lists: ")
+			print(self.function_reference_table[key][1][0])
+			print("Parameters: ")
+			print(self.function_reference_table[key][2])
+			print("Memory Address: ")
+			print(self.function_reference_table[key][3])
+			print("\n")
 
 if __name__ == '__main__':
 	directory = Function_Directory()
 
 	directory.add_block_name("Block1")
 	directory.add_block_name("Block2")
-
-	directory.print_table()
 
 	directory.add_block_return_type("Block1","whole")
 
@@ -138,6 +145,23 @@ if __name__ == '__main__':
 
 	directory.add_parameter("Block2","whole")
 	directory.add_parameter("Block2","words")
+
+	#parameters
+	directory.add_primitive("Block1","parameter1","decimal")
+	directory.add_primitive("Block1","parameter2","whole")
+	directory.add_primitive("Block1","parameter3","words")
+
+	directory.add_primitive("Block2","parameter1","whole")
+	directory.add_primitive("Block2","parameter2","words")
+
+	#variables
+	directory.add_primitive("Block1","variable1","words")
+	directory.add_primitive("Block1","variable2","whole")
+	directory.add_list("Block1","listvariable1","whole","3")
+
+	directory.add_primitive("Block2","variable1","decimal")
+	directory.add_primitive("Block2","variable2","decimal")
+	directory.add_list("Block2","listvariable1","words","5")
 
 	directory.print_table()
 	
