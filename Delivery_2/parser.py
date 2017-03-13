@@ -2,7 +2,18 @@ import scanner
 tokens = scanner.tokens
 
 import ply.yacc as yacc
+
 import globalScope
+
+function_directory = Function_Directory()
+is_starting_block = False
+current_block_id = ""
+current_var_id
+current_var_id = ""
+var_names = []
+current_list_id = ""
+current_list_size = ""
+current_list_type = ""
 
 def stop_exec(message):
 	sys.exit(message)
@@ -75,6 +86,11 @@ def p_SEEN_TYPE(p):
 	if globalScope.current_var_id not in globalScope.function_directory.function_reference_table[globalScope.current_block_id][1][0]:
 		globalScope.function_directory.add_parameter_type(globalScope.current_block_id, p[-1])
 		globalScope.function_directory.add_primitive(globalScope.current_block_id, globalScope.current_var_id, p[-1])
+
+	if current_var_id not in function_directory.function_reference_table[current_block_id][1][0]:
+		function_directory.add_parameter_type(current_block_id, p[-1])
+		function_directory.add_primitive(current_block_id, current_var_id, p[-1])
+
 	else:
 		stop_exec("ERROR: Parameter name is already defined")
 
