@@ -5,16 +5,6 @@ import ply.yacc as yacc
 
 import globalScope
 
-function_directory = Function_Directory()
-is_starting_block = False
-current_block_id = ""
-current_var_id
-current_var_id = ""
-var_names = []
-current_list_id = ""
-current_list_size = ""
-current_list_type = ""
-
 def stop_exec(message):
 	sys.exit(message)
 
