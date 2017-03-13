@@ -2,6 +2,16 @@ import scanner
 tokens = scanner.tokens
 
 import ply.yacc as yacc
+from directories import Function_Directory
+
+function_directory = Function_Directory()
+is_starting_block = False
+current_block_id = ""
+current_var_id = ""
+var_names = []
+
+def stop_exec(message):
+	sys.exit(message)
 
 def p_PROGRAM(p):
 	'''
@@ -17,32 +27,70 @@ def p_PROGRAM_AUX(p):
 
 def p_BLOCK(p):
 	'''
-	BLOCK : BLOCK_AUX block id RECEIVES_AUX RETURNS_AUX BLOCK_BODY
+	BLOCK : BLOCK_AUX block id SEEN_BLOCK_ID RECEIVES_AUX RETURNS_AUX BLOCK_BODY
 	'''
 
 def p_BLOCK_AUX(p):
 	'''
-	BLOCK_AUX : starting 
+	BLOCK_AUX : starting SEEN_STARTING
 				| empty
 	'''
 
+#Block punto 1
+def p_SEEN_STARTING(p):
+	"SEEN_STARTING : "
+	if function_directory._starting_block_key != "-1":
+		is_starting_block = True
+	else:
+		stop_exec("ERROR: Starting block is already defined")
+
+#Block punto 2
+def p_SEEN_BLOCK_ID(p):
+	"SEEN_BLOCK_ID : "
+	current_block_id = p[-1]
+	if current_block_id not in function_directory.function_reference_table:
+		if is_starting_block:
+			function_directory._starting_block_key = current_block_id
+
+		function_directory.add_block_name(current_block_id)
+	else:
+		stop_exec("ERROR: Block name is already defined")
+
 def p_RECEIVES_AUX(p):
 	'''
-	RECEIVES_AUX : receives colon id of_type TYPE RECEIVES_AUX1
+	RECEIVES_AUX : receives colon id SEEN_VAR_ID of_type TYPE SEEN_TYPE RECEIVES_AUX1
 				   | empty
 	'''
 
 def p_RECEIVES_AUX1(p):
 	'''
-	RECEIVES_AUX1 : comma id of_type TYPE RECEIVES_AUX1
+	RECEIVES_AUX1 : comma id SEEN_VAR_ID of_type TYPE SEEN_TYPE RECEIVES_AUX1
 					| empty
 	'''
 
+#Block punto 3
+def p_SEEN_TYPE(p):
+	"SEEN_TYPE : "
+	#Find the current_var_id in primitives dictionary for current_block_id row
+	if current_var_id not in function_directory.function_reference_table[current_block_id][1][0]
+		
+	else:
+		stop_exec("ERROR: Parameter name is already defined")
+		
+#Block punto 5
+def p_SEEN_VAR_ID(p):
+	"SEEN_VAR_ID : "
+	current_var_id = p[-1]
+
 def p_RETURNS_AUX(p):
 	'''
-	RETURNS_AUX : block_returns TYPE 
+	RETURNS_AUX : block_returns TYPE SEEN_RETURN_TYPE
 				  | empty
 	'''
+
+def p_SEEN_RETURN_TYPE(p):
+	"SEEN_RETURN_TYPE : "
+	FRT[current_block_id][0] = p[-1]
 
 def p_BLOCK_BODY(p):
 	'''
@@ -121,19 +169,37 @@ def p_DECLARATIONS(p):
 
 def p_VAR_DECLARATION(p):
 	'''
-	VAR_DECLARATION : variable id VAR_DECLARATION_AUX of_type TYPE semicolon
+	VAR_DECLARATION : variable id SEEN_VAR_ID VAR_DECLARATION_AUX of_type TYPE SEEN_VAR_TYPE semicolon
 	'''
 
 def p_VAR_DECLARATION_AUX(p):
 	'''
-	VAR_DECLARATION_AUX : comma id VAR_DECLARATION_AUX
+	VAR_DECLARATION_AUX : comma id SEEN_VAR_ID VAR_DECLARATION_AUX
 						  | empty
 	'''
 
+def p_SEEN_VAR_ID(p):
+	"SEEN_VAR_ID : "
+	var_names.append(p[-1])
+
+def p_SEEN_VAR_TYPE(p):
+	for var_name in var_names:
+		if var_name not in dict:
+		
+		else:
+			stop_exec("ERROR: Variable name is already defined")
+
 def p_LIST_DECLARATION(p):
 	'''
-	LIST_DECLARATION : variable id squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon
+	LIST_DECLARATION : variable id squarebracket_open EXPRESSION squarebracket_close of_type TYPE semicolon SEEN_LIST
 	'''
+
+def p_SEEN_LIST(p):
+	"SEEN_LIST : "
+	if x not in dict:
+		
+	else:
+		stop_exec("ERROR: List name is already defined")
 
 def p_EXPRESSION(p):
 	'''
