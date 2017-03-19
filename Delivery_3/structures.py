@@ -70,6 +70,50 @@ class Semantic_Cube:
 		self.cube = [dictionary_whole,dictionary_decimal,dictionary_words,dictionary_bool]
 
 """
+Quadruple class represents quadruple for intermediate code representation
+"""
+class Quad():
+    def __init__(self, operator = None, left_operand = None, right_operand = None, result = None):
+        if operator is not None:
+            if left_operand is not None:
+                if right_operand is not None: 
+                    if result is not None:
+                        #private variable for operator code
+                        self._operator = operator
+
+                        #private variable for left operand memory address
+                        self._left_operand = left_operand
+
+                        #private variable for right operand memory address
+                        self._right_operand = right_operand
+
+                        #private variable for quad result memory address
+                        self._result = result
+
+    #Returns the quad operator code
+    def get_operator(self):
+        return self._operator
+
+    #Returns the quad left operand memory address
+    def get_left_operand(self):
+        return self._left_operand
+
+    #Returns the quad right operand memory address
+    def get_right_operand(self):
+        return self._right_operand
+
+    #Returns the quad result memory address
+    def get_result(self):
+        return self._result
+
+    #Prints the information for the specified quad
+    def print_quad(self):
+        print("Operator: " + self.get_operator())
+        print("Left Operand: " + self.get_left_operand())
+        print("Right Operand: " + self.get_right_operand())
+        print("Result: " + self.get_result())
+
+"""
 Dictionary class defining a data structure behaving like hash/table/dict
 Key must be inmutable: string, number, tuple
 """
@@ -283,3 +327,15 @@ class Stack:
 	#Returns: stack instance
 	def getInstance(self):
 		return self._stack
+
+#for testing purposes
+if __name__ == '__main__':
+    quad_1 = Quad('=', '5', '-1', 'B')
+    quad_2 = Quad('+', '10', '20', 'A')
+    quad_3 = Quad('goto', '-1', '20', 'C')
+    quad_4 = Quad('gotoT', 'T1', '20', 'D')
+
+    quad_1.print_quad()
+    quad_2.print_quad()
+    quad_3.print_quad()
+    quad_4.print_quad()
