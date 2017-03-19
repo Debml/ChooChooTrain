@@ -77,6 +77,7 @@ def t_cst_boolean(t):
 def t_id(t): 
     r'[A-Za-z][A-Za-z0-9]*'
     t.type = reserved.get(t.value, 'id')
+    #print(t)
     return t 
 def t_newline(t):
     r'\n+'

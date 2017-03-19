@@ -1,11 +1,9 @@
 import scanner
 import sys
 import ply.yacc as yacc
-
 import globalScope
 
 tokens = scanner.tokens
-
 
 def stop_exec(message):
 	sys.exit(message)
@@ -296,7 +294,7 @@ def p_EC_SEEN_STARTING(p):
 def p_EC_SEEN_BLOCK_ID(p):
 	"EC_SEEN_BLOCK_ID : "
 	globalScope.current_block_id = p[-1]
-	if globalScope.current_block_id not in globalScope.function_directory.function_reference_table:
+	if not globalScope.function_directory.block_id_exists(globalScope.current_block_id):
 		if globalScope.is_starting_block:
 			globalScope.function_directory._starting_block_key = globalScope.current_block_id
 
@@ -307,8 +305,7 @@ def p_EC_SEEN_BLOCK_ID(p):
 #BLOCK action 3 - Creates the list of parameter types and adds them to the variable list
 def p_EC_SEEN_TYPE(p):
 	"EC_SEEN_TYPE : "
-	#Find current_var_id in primitives dictionary for current_block_id row
-	if globalScope.current_var_id not in globalScope.function_directory.function_reference_table[globalScope.current_block_id][1][0]:
+	if not globalScope.function_directory.var_id_exists(globalScope.current_var_id, globalScope.current_block_id):
 		globalScope.function_directory.add_parameter_type(globalScope.current_block_id, p[-1])
 		globalScope.function_directory.add_primitive(globalScope.current_block_id, globalScope.current_var_id, p[-1])
 	else:
@@ -339,7 +336,7 @@ def p_EC_SEEN_VAR_TYPE(p):
 	"EC_SEEN_VAR_TYPE : "
 	for var_name in globalScope.var_names:
 		#Find current_var_id in primitives dictionary for current_block_id row
-		if var_name not in globalScope.function_directory.function_reference_table[globalScope.current_block_id][1][0]:
+		if not globalScope.function_directory.var_id_exists(var_name, globalScope.current_block_id):
 			globalScope.function_directory.add_primitive(globalScope.current_block_id, var_name, p[-1])
 		else:
 			stop_exec("ERROR: Variable name is already defined")
@@ -362,13 +359,14 @@ def p_EC_SEEN_LIST_TYPE(p):
 #LIST_DECLARATION action 4
 def p_EC_SEEN_LIST(p):
 	"EC_SEEN_LIST : "
-	if globalScope.current_list_id not in globalScope.function_directory.function_reference_table[globalScope.current_block_id][1][1]:
+	if not globalScope.function_directory.var_id_exists(globalScope.current_list_id, globalScope.current_block_id):
 		globalScope.function_directory.add_list(globalScope.current_block_id, globalScope.current_list_id, globalScope.current_list_size, globalScope.current_list_type)
 	else:
 		stop_exec("ERROR: List name is already defined")			
 
 def p_error(p):
 	print("***ERROR '%s'" % p)
+	sys.exit()
 
 yacc.yacc()
 
@@ -378,12 +376,12 @@ parameter1 oftype decimal ,
 parameter2 oftype whole ,
 parameter3 oftype words
 
-returns whole 
+returns whole
 
 {
 	variable var1, var2, var3 oftype whole;
 	variable var4, var5, var6 oftype words;
-	list list1[5] oftype decimal;
+	list list[5] oftype decimal;
 }
 
 block Block16
@@ -393,6 +391,7 @@ param1 oftype decimal
 {
 	list list1[5] oftype words;
 	list list2[10] oftype decimal;
+	variable var1 oftype whole;
 }
 '''
 

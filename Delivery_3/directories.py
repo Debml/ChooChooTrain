@@ -130,6 +130,33 @@ class Function_Directory():
 			print(self.function_reference_table[key][3])
 			print("\n")
 
+	#Check if a function id does not exist in the Function Reference Table
+	def block_id_exists(self, block_id = None):
+		if block_id is not None:
+			#Check the function names
+			if block_id in self.function_reference_table:
+				return True
+								
+			return False
+			
+	#Check if a var id exists in the Function Reference Table
+	def var_id_exists(self, var_id = None, block_id = None):
+		if var_id is not None and block_id is not None:
+
+			#Check the function name
+			if self.block_id_exists(var_id):
+				return True
+			
+			#Check the variable names
+			if var_id in self.function_reference_table[block_id][1][0]:
+				return True
+			
+			#check the list names
+			if var_id in self.function_reference_table[block_id][1][1]:
+				return True
+								
+			return False
+
 #for testing purposes
 if __name__ == '__main__':
 	directory = Function_Directory()
