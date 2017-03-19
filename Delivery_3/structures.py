@@ -7,6 +7,69 @@ January 19, 2016
 from collections import deque
 
 """
+Fixed Semantic cube class defining a data structure behving like a semantic
+cube where given two operands and one operator, returns, if operation is valid,
+the resulting type of the operation. If not valid, returns None.
+"""
+class Semantic_Cube:
+	#Constructor method
+	#Params: -
+	#Returns: -
+	def __init__(self):
+		#operand 2 dictionary
+		dictionary_whole = Dictionary()
+		dictionary_decimal = Dictionary()
+		dictionary_words = Dictionary()
+		dictionary_bool = Dictionary()
+
+		#create operator depth for each type
+		#whole-whole
+		whole_whole_valid_operators = Dictionary()
+		whole_whole_valid_operators.insert("t_op_addition","whole")
+		whole_whole_valid_operators.insert("t_op_subtraction","whole")
+		whole_whole_valid_operators.insert("t_op_subtraction","whole")
+		whole_whole_valid_operators.insert("t_op_division","decimal")
+		whole_whole_valid_operators.insert("t_op_division","decimal")
+
+		whole_whole_valid_operators.insert("t_op_less","boolean")
+		whole_whole_valid_operators.insert("t_op_less_equal","boolean")
+		whole_whole_valid_operators.insert("t_op_greater","boolean")
+		whole_whole_valid_operators.insert("t_op_greater_equal","boolean")
+		whole_whole_valid_operators.insert("t_op_equal","boolean")
+		whole_whole_valid_operators.insert("t_op_not_equal","boolean")
+
+		#whole-decimal, decimal-whole, decimal-decimal
+		decimal_valid_operators = Dictionary()
+		decimal_valid_operators.insert("t_op_addition","decimal")
+		decimal_valid_operators.insert("t_op_subtraction","decimal")
+		decimal_valid_operators.insert("t_op_subtraction","decimal")
+		decimal_valid_operators.insert("t_op_division","decimal")
+
+		decimal_valid_operators.insert("t_op_less","boolean")
+		decimal_valid_operators.insert("t_op_less_equal","boolean")
+		decimal_valid_operators.insert("t_op_greater","boolean")
+		decimal_valid_operators.insert("t_op_greater_equal","boolean")
+		decimal_valid_operators.insert("t_op_equal","boolean")
+		decimal_valid_operators.insert("t_op_not_equal","boolean")
+
+		#words-words
+		words_valid_operators = Dictionary()
+		words_valid_operators.insert("t_op_addition","words")
+		words_valid_operators.insert("t_op_equal","boolean")
+		words_valid_operators.insert("t_op_not_equal","boolean")
+
+		#insert operator depth
+		dictionary_whole.insert("whole",whole_whole_valid_operators)
+		dictionary_whole.insert("decimal",decimal_valid_operators)
+
+		dictionary_decimal.insert("whole",decimal_valid_operators)
+		dictionary_decimal.insert("decimal",decimal_valid_operators)
+
+		dictionary_words.insert("words",words_valid_operators)
+
+		self.cube = [dictionary_whole,dictionary_decimal,dictionary_words,dictionary_bool]
+
+"""
 Dictionary class defining a data structure behaving like hash/table/dict
 Key must be inmutable: string, number, tuple
 """

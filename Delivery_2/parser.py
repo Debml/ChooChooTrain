@@ -377,19 +377,15 @@ receives :
 parameter1 oftype decimal ,
 parameter2 oftype whole ,
 parameter3 oftype words
-
 returns whole 
-
 {
 	variable var1, var2, var3 oftype whole;
 	variable var4, var5, var6 oftype words;
 	list list1[5] oftype decimal;
 }
-
 block Block16
 receives :
 param1 oftype decimal
-
 {
 	list list1[5] oftype words;
 	list list2[10] oftype decimal;
