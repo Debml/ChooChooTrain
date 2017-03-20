@@ -27,8 +27,7 @@ class Semantic_Cube:
 		whole_whole_valid_operators = Dictionary()
 		whole_whole_valid_operators.insert("op_addition","whole")
 		whole_whole_valid_operators.insert("op_subtraction","whole")
-		whole_whole_valid_operators.insert("op_subtraction","whole")
-		whole_whole_valid_operators.insert("op_division","decimal")
+		whole_whole_valid_operators.insert("op_multiplication","whole")
 		whole_whole_valid_operators.insert("op_division","decimal")
 
 		whole_whole_valid_operators.insert("op_less","boolean")
@@ -37,12 +36,27 @@ class Semantic_Cube:
 		whole_whole_valid_operators.insert("op_greater_equal","boolean")
 		whole_whole_valid_operators.insert("op_equal","boolean")
 		whole_whole_valid_operators.insert("op_not_equal","boolean")
+		whole_whole_valid_operators.insert("op_assign","whole")
 
-		#whole-decimal, decimal-whole, decimal-decimal
+		#whole-decimal
+		whole_decimal_valid_operators = Dictionary()
+		whole_decimal_valid_operators.insert("op_addition","decimal")
+		whole_decimal_valid_operators.insert("op_subtraction","decimal")
+		whole_decimal_valid_operators.insert("op_multiplication","decimal")
+		whole_decimal_valid_operators.insert("op_division","decimal")
+
+		whole_decimal_valid_operators.insert("op_less","boolean")
+		whole_decimal_valid_operators.insert("op_less_equal","boolean")
+		whole_decimal_valid_operators.insert("op_greater","boolean")
+		whole_decimal_valid_operators.insert("op_greater_equal","boolean")
+		whole_decimal_valid_operators.insert("op_equal","boolean")
+		whole_decimal_valid_operators.insert("op_not_equal","boolean")
+
+		#decimal-whole, decimal-decimal
 		decimal_valid_operators = Dictionary()
 		decimal_valid_operators.insert("op_addition","decimal")
 		decimal_valid_operators.insert("op_subtraction","decimal")
-		decimal_valid_operators.insert("op_subtraction","decimal")
+		decimal_valid_operators.insert("op_multiplication","decimal")
 		decimal_valid_operators.insert("op_division","decimal")
 
 		decimal_valid_operators.insert("op_less","boolean")
@@ -51,22 +65,25 @@ class Semantic_Cube:
 		decimal_valid_operators.insert("op_greater_equal","boolean")
 		decimal_valid_operators.insert("op_equal","boolean")
 		decimal_valid_operators.insert("op_not_equal","boolean")
+		decimal_valid_operators.insert("op_assign","decimal")
 
 		#words-words
 		words_valid_operators = Dictionary()
 		words_valid_operators.insert("op_addition","words")
 		words_valid_operators.insert("op_equal","boolean")
 		words_valid_operators.insert("op_not_equal","boolean")
+		words_valid_operators.insert("op_assign","words")
 
 		#bool-bool
 		bool_valid_operators = Dictionary()
 		bool_valid_operators.insert("op_and","boolean")
 		bool_valid_operators.insert("op_or","boolean")		
-		bool_valid_operators.insert("op_negation","boolean")		
+		bool_valid_operators.insert("op_negation","boolean")	
+		bool_valid_operators.insert("op_assign","boolean")	
 
 		#insert operator depth
 		dictionary_whole.insert("whole",whole_whole_valid_operators)
-		dictionary_whole.insert("decimal",decimal_valid_operators)
+		dictionary_whole.insert("decimal",whole_decimal_valid_operators)
 
 		dictionary_decimal.insert("whole",decimal_valid_operators)
 		dictionary_decimal.insert("decimal",decimal_valid_operators)
@@ -392,20 +409,14 @@ if __name__ == '__main__':
     quad_3 = Quad('goto', '-1', '20', 'C')
     quad_4 = Quad('gotoT', 'T1', '20', 'D')
 
-    quad_1.print_quad()
-    quad_2.print_quad()
-    quad_3.print_quad()
-    quad_4.print_quad()
-
-
-    print quad_1
-
     cube = Semantic_Cube()
-    print cube.validate_operation("op_negation","boolean")
-"""
+    print cube.validate_operation("op_assign","whole","decimal")
+
     que = Queue()
     que.push(quad_1)
     que.push(quad_2)
+    que.push(quad_3)
+    que.push(quad_4)
 
     print que
-"""
+
