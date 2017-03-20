@@ -6,7 +6,6 @@ import globalScope
 
 tokens = scanner.tokens
 
-
 def stop_exec(message):
 	sys.exit(message)
 
