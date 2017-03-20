@@ -167,6 +167,17 @@ class Quad():
         print("Right Operand: " + self.get_right_operand())
         print("Result: " + self.get_result())
 
+    #Overrides print method
+	#Params: -
+	#Returns: formatted string containing values of queue
+	def __str__(self):
+		return "Instance"
+
+    #Overrides representation method
+	#Params: -
+	#Returns: formatted string containing values of queue
+	def __repr__(self):
+		return "Instance"
 """
 Dictionary class defining a data structure behaving like hash/table/dict
 Key must be inmutable: string, number, tuple
@@ -304,7 +315,7 @@ class Queue:
 	#Params: -
 	#Returns: formatted string containing values of queue
 	def __str__(self):
-		return ('\n'.join(self._queue))
+		return ('\n'.join('{}'.format(elem) for elem in self._queue))
 
 	#Returns whether element exists in queue
 	#Params: item
@@ -368,7 +379,7 @@ class Stack:
 	#Params: -
 	#Returns: formatted string containing values of stack
 	def __str__(self):
-		return ('\n'.join(self._stack))
+		return ('\n'.join('{}'.format(elem) for elem in self._stack))
 
 	#Returns whether element exists in stack
 	#Params: item
@@ -396,3 +407,9 @@ if __name__ == '__main__':
 
     cube = Semantic_Cube()
     print cube.validate_operation("op_negation","boolean")
+
+    que = Queue()
+    que.push(quad_1)
+    que.push(quad_2)
+
+    print que
