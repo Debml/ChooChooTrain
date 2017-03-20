@@ -1,4 +1,6 @@
 from directories import Function_Directory
+from structures import Queue
+from structures import Stack
 
 function_directory = Function_Directory()
 is_starting_block = False
@@ -8,3 +10,8 @@ var_names = []
 current_list_id = ""
 current_list_size = ""
 current_list_type = ""
+quads = Queue()
+pending_operators = Stack()
+pending_operands = Stack()
+operand_types = Stack()
+temp_space = 1
