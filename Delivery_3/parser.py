@@ -207,13 +207,13 @@ def p_ITEM_AUX(p):
 
 def p_TERM(p):
 	'''
-	TERM : FACTOR TERM_AUX
+	TERM : FACTOR EC_SEEN_FACTOR TERM_AUX
 	'''
 
 def p_TERM_AUX(p):
 	'''
-	TERM_AUX : op_multiplication TERM
-			   | op_division TERM
+	TERM_AUX : op_multiplication EC_SEEN_TERM_OP TERM
+			   | op_division EC_SEEN_TERM_OP TERM
 			   | empty
 	'''
 
@@ -393,10 +393,43 @@ def p_EC_SEEN_ITEM_OP(p):
 	elif p[-1] == "-":
 		globalScope.pending_operators.push("-")
 
+#ITEM action 2
 def p_EC_SEEN_TERM(p):
 	"EC_SEEN_TERM : "
 
 	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "+" or globalScope.pending_operators.peek() == "-"):
+		right_operand = globalScope.pending_operands.pop()
+		#right type = 
+		left_operand = globalScope.pending_operands.pop()
+		#left type = 
+		operator = globalScope.pending_operators.pop()
+		result_type = 1
+
+		if result_type != -1:
+			result = "t" + str(globalScope.temp_space)
+			globalScope.temp_space = globalScope.temp_space + 1
+			temp_quad = Quad(operator, left_operand, right_operand, result)
+			globalScope.quads.push(temp_quad)
+			globalScope.pending_operands.push(result)
+			#result_type
+			#free temp operand memory
+		else:
+			print("Types cannot be combined")
+			sys.exit()
+
+#TERM action 1
+def p_EC_SEEN_TERM_OP(p):
+	"EC_SEEN_TERM_OP : "
+	if p[-1] == "*":
+		globalScope.pending_operators.push("*")
+	elif p[-1] == "/":
+		globalScope.pending_operators.push("/")
+
+#TERM action 2
+def p_EC_SEEN_FACTOR(p):
+	"EC_SEEN_FACTOR : "
+
+	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "*" or globalScope.pending_operators.peek() == "/"):
 		right_operand = globalScope.pending_operands.pop()
 		#right type = 
 		left_operand = globalScope.pending_operands.pop()
@@ -435,7 +468,7 @@ returns whole
 	variable var4, var5, var6 oftype words;
 	list list1[5] oftype decimal;
 
-	idName = 1 + 2 - 3 + 4 + 5 - 6 - 7 + (8 + 9 - 10 + 11 - 12 - 13);
+	idName2 = (1 + 2) * 5;
 
 }
 
