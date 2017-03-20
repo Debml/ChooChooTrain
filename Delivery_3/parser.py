@@ -171,12 +171,12 @@ def p_EXP(p):
 
 def p_EXP_AUX(p):
 	'''
-	EXP_AUX : op_less ITEM
-			  | op_less_equal ITEM
-			  | op_greater ITEM
-			  | op_greater_equal ITEM
-			  | op_equal ITEM
-			  | op_not_equal ITEM
+	EXP_AUX : op_less EC_SEEN_RELOP ITEM EC_SEEN_RELOP_ITEM
+			  | op_less_equal EC_SEEN_RELOP ITEM EC_SEEN_RELOP_ITEM
+			  | op_greater EC_SEEN_RELOP ITEM EC_SEEN_RELOP_ITEM
+			  | op_greater_equal EC_SEEN_RELOP ITEM EC_SEEN_RELOP_ITEM
+			  | op_equal EC_SEEN_RELOP ITEM EC_SEEN_RELOP_ITEM
+			  | op_not_equal EC_SEEN_RELOP ITEM EC_SEEN_RELOP_ITEM
 			  | empty
 	'''
 
@@ -490,6 +490,56 @@ def p_EC_SEEN_FACTOR(p):
 		else:
 			print("Types cannot be combined")
 			sys.exit()
+
+#EXP action 1
+def p_EC_SEEN_RELOP(p):
+	"EC_SEEN_RELOP : "
+	if p[-1] == ">":
+		globalScope.pending_operators.push("op_greater")
+	elif p[-1] == ">=":
+		globalScope.pending_operators.push("op_greater_equal")
+	elif p[-1] == "<":
+		globalScope.pending_operators.push("op_less")
+	elif p[-1] == "<=":
+		globalScope.pending_operators.push("op_less_equal")
+	elif p[-1] == "==":
+		globalScope.pending_operators.push("op_equal")
+	elif p[-1] == "!=":
+		globalScope.pending_operators.push("op_not_equal")
+
+#EXP action 2
+def p_EC_SEEN_RELOP_ITEM(p):
+	"EC_SEEN_RELOP_ITEM : "
+	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_greater" 
+														or globalScope.pending_operators.peek() == "op_greater_equal"
+														or globalScope.pending_operators.peek() == "op_less"
+														or globalScope.pending_operators.peek() == "op_less_equal"
+														or globalScope.pending_operators.peek() == "op_equal"
+														or globalScope.pending_operators.peek() == "op_not_equal"):
+			right_operand = globalScope.pending_operands.pop()
+			right_type = globalScope.operand_types.pop()
+
+			left_operand = globalScope.pending_operands.pop()
+			left_type = globalScope.operand_types.pop()
+
+			operator = globalScope.pending_operators.pop()
+
+			result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
+
+			if result_type != -1:
+				result = "t" + str(globalScope.temp_space)
+				globalScope.temp_space = globalScope.temp_space + 1
+
+				temp_quad = Quad(operator, left_operand, right_operand, result)
+				globalScope.quads.push(temp_quad)
+
+				globalScope.pending_operands.push(result)
+				globalScope.operand_types.push(result_type)
+
+				#free temp operand memory
+			else:
+				print("Types cannot be combined")
+				sys.exit()
 	
 def p_error(p):
 	print("***ERROR '%s'" % p)
@@ -508,8 +558,9 @@ returns whole
 {
 	variable var1, var2, var3 oftype whole;
 	variable var4, var5, var6 oftype words;
+	list lista1[5] oftype words;
 
-	idName2 = 2.05 + 3 * (1 + 2 / 3) / 3;
+	idName2 = var1 == var4;
 
 }
 '''
