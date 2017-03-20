@@ -126,7 +126,7 @@ class Semantic_Cube:
 """
 Quadruple class represents quadruple for intermediate code representation
 """
-class Quad():
+class Quad:
     def __init__(self, operator = None, left_operand = None, right_operand = None, result = None):
         if operator is not None:
             if left_operand is not None:
@@ -143,6 +143,9 @@ class Quad():
 
                         #private variable for quad result memory address
                         self._result = result
+
+    def __str__(self):
+    	return ('{}, {}, {}, {}'.format(self._operator, self._left_operand, self._right_operand, self._result))
 
     #Returns the quad operator code
     def get_operator(self):
@@ -167,17 +170,6 @@ class Quad():
         print("Right Operand: " + self.get_right_operand())
         print("Result: " + self.get_result())
 
-    #Overrides print method
-	#Params: -
-	#Returns: formatted string containing values of queue
-	def __str__(self):
-		return "Instance"
-
-    #Overrides representation method
-	#Params: -
-	#Returns: formatted string containing values of queue
-	def __repr__(self):
-		return "Instance"
 """
 Dictionary class defining a data structure behaving like hash/table/dict
 Key must be inmutable: string, number, tuple
@@ -405,11 +397,15 @@ if __name__ == '__main__':
     quad_3.print_quad()
     quad_4.print_quad()
 
+
+    print quad_1
+
     cube = Semantic_Cube()
     print cube.validate_operation("op_negation","boolean")
-
+"""
     que = Queue()
     que.push(quad_1)
     que.push(quad_2)
 
     print que
+"""
