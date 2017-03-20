@@ -410,7 +410,7 @@ if __name__ == '__main__':
     quad_4 = Quad('gotoT', 'T1', '20', 'D')
 
     cube = Semantic_Cube()
-    print cube.validate_operation("op_assign","whole","decimal")
+    print cube.validate_operation("op_addition","words","whole")
 
     que = Queue()
     que.push(quad_1)

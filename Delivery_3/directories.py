@@ -16,6 +16,8 @@ class Function_Directory():
 		#public variable for function reference table
 		self.function_reference_table = Dictionary()
 
+		#constant table goes
+
 	#add block information for new block
 	def add_block_name(self, block_name = None):
 		#block_name should have value
@@ -73,13 +75,16 @@ class Function_Directory():
 			#variable_name should have value
 			if variable_name is not None:
 				#variable_size should have value
-				if variable_size is not None:
+
+				#patch for list variable size
+				#if variable_size is not None:
+
 					#variable_type should have value
-					if variable_type is not None:
-						#Index 1 of list is for primitives and lists dictionaries
-						#Index 1 of such list is specifically for lists
-						variable_data = [variable_type, self._get_memory_address_variable(variable_type), variable_size]
-						self.function_reference_table[key][1][1].insert(variable_name,variable_data)
+				if variable_type is not None:
+					#Index 1 of list is for primitives and lists dictionaries
+					#Index 1 of such list is specifically for lists
+					variable_data = [variable_type, self._get_memory_address_variable(variable_type), variable_size]
+					self.function_reference_table[key][1][1].insert(variable_name,variable_data)
 
 	#Key for current block, add one parameter found to parameters list
 	def add_parameter_type(self, key = None, parameter_type = None):
