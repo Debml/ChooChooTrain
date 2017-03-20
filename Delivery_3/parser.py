@@ -16,7 +16,7 @@ def p_PROGRAM(p):
 	'''
 	print('Compilation Successful!')
 	globalScope.function_directory.print_table()
-	#print (globalScope.quads)
+	print (globalScope.quads)
 
 def p_PROGRAM_AUX(p):
 	'''
@@ -104,10 +104,10 @@ def p_CONDITION_AUX(p):
 def p_CONSTANT(p):
 	'''
 	CONSTANT : id CONSTANT_AUX
-			   | cst_whole
-	   		   | cst_decimal
-		 	   | cst_words
-			   | cst_boolean
+			   | cst_whole  EC_SEEN_CONST SEEN_CONST_WHOLE
+	   		   | cst_decimal  EC_SEEN_CONST SEEN_CONST_DECIMAL
+		 	   | cst_words  EC_SEEN_CONST SEEN_CONST_WORDS
+			   | cst_boolean  EC_SEEN_CONST SEEN_CONST_BOOLEAN
 	'''
 	p[0] = p[1]
 
@@ -115,7 +115,7 @@ def p_CONSTANT_AUX(p):
 	'''
 	CONSTANT_AUX : squarebracket_open EXPRESSION squarebracket_close
 				   | parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close
-				   | empty
+				   |  EC_SEEN_CONST SEEN_CONST_ID empty
 	'''
 
 def p_CONSTANT_AUX1(p):
@@ -188,9 +188,9 @@ def p_FACTOR(p):
 
 def p_FACTOR_AUX(p):
 	'''
-	FACTOR_AUX : op_addition CONSTANT EC_SEEN_FACT_CONST
-				 | op_subtraction CONSTANT EC_SEEN_FACT_CONST
-				 | CONSTANT EC_SEEN_FACT_CONST
+	FACTOR_AUX : op_addition CONSTANT
+				 | op_subtraction CONSTANT
+				 | CONSTANT
 	'''
 
 def p_ITEM(p):
@@ -379,39 +379,75 @@ def p_EC_SEEN_FACT_RP(p):
 	"EC_SEEN_FACT_RP : "
 	globalScope.pending_operators.pop()
 
-#FACTOR action 3
-def p_EC_SEEN_FACT_CONST(p):
-	"EC_SEEN_FACT_CONST : "
+#CONSTANT action 1
+def p_EC_SEEN_CONST(p):
+	"EC_SEEN_CONST : "
 	globalScope.pending_operands.push(p[-1])
-	#push tipo				
+
+#CONSTANT action 2
+def p_SEEN_CONST_ID(p):
+	"SEEN_CONST_ID : "
+	#checks the id type in the FRT
+	if globalScope.function_directory.var_id_exists(globalScope.pending_operands.peek(), globalScope.current_block_id):
+		globalScope.operand_types.push(globalScope.function_directory.get_variable_type_for_block(globalScope.pending_operands.peek(), globalScope.current_block_id))
+	else:
+		print("Id " + globalScope.pending_operands.peek() + " does not exist")
+		sys.exit()
+
+#CONSTANT action 3
+def p_SEEN_CONST_WHOLE(p):
+	"SEEN_CONST_WHOLE : "
+	globalScope.operand_types.push("whole")
+	print(p[-1])
+
+#CONSTANT action 4
+def p_SEEN_CONST_DECIMAL(p):
+	"SEEN_CONST_DECIMAL : "
+	globalScope.operand_types.push("decimal")
+
+#CONSTANT action 5
+def p_SEEN_CONST_WORDS(p):
+	"SEEN_CONST_WORDS : "
+	globalScope.operand_types.push("words")
+
+#CONSTANT action 6
+def p_SEEN_CONST_BOOLEAN(p):
+	"SEEN_CONST_BOOLEAN : "
+	globalScope.operand_types.push("boolean")
 
 #ITEM action 1
 def p_EC_SEEN_ITEM_OP(p):
 	"EC_SEEN_ITEM_OP : "
 	if p[-1] == "+":
-		globalScope.pending_operators.push("+")
+		globalScope.pending_operators.push("op_addition")
 	elif p[-1] == "-":
-		globalScope.pending_operators.push("-")
+		globalScope.pending_operators.push("op_subtraction")
 
 #ITEM action 2
 def p_EC_SEEN_TERM(p):
 	"EC_SEEN_TERM : "
 
-	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "+" or globalScope.pending_operators.peek() == "-"):
+	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_addition" or globalScope.pending_operators.peek() == "op_subtraction"):
 		right_operand = globalScope.pending_operands.pop()
-		#right type = 
+		right_type = globalScope.operand_types.pop()
+
 		left_operand = globalScope.pending_operands.pop()
-		#left type = 
+		left_type = globalScope.operand_types.pop()
+
 		operator = globalScope.pending_operators.pop()
-		result_type = 1
+
+		result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
 
 		if result_type != -1:
 			result = "t" + str(globalScope.temp_space)
 			globalScope.temp_space = globalScope.temp_space + 1
+
 			temp_quad = Quad(operator, left_operand, right_operand, result)
 			globalScope.quads.push(temp_quad)
+
 			globalScope.pending_operands.push(result)
-			#result_type
+			globalScope.operand_types.push(result_type)
+
 			#free temp operand memory
 		else:
 			print("Types cannot be combined")
@@ -421,29 +457,35 @@ def p_EC_SEEN_TERM(p):
 def p_EC_SEEN_TERM_OP(p):
 	"EC_SEEN_TERM_OP : "
 	if p[-1] == "*":
-		globalScope.pending_operators.push("*")
+		globalScope.pending_operators.push("op_multiplication")
 	elif p[-1] == "/":
-		globalScope.pending_operators.push("/")
+		globalScope.pending_operators.push("op_division")
 
 #TERM action 2
 def p_EC_SEEN_FACTOR(p):
 	"EC_SEEN_FACTOR : "
 
-	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "*" or globalScope.pending_operators.peek() == "/"):
+	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_multiplication" or globalScope.pending_operators.peek() == "op_division"):
 		right_operand = globalScope.pending_operands.pop()
-		#right type = 
+		right_type = globalScope.operand_types.pop()
+
 		left_operand = globalScope.pending_operands.pop()
-		#left type = 
+		left_type = globalScope.operand_types.pop()
+
 		operator = globalScope.pending_operators.pop()
-		result_type = 1
+
+		result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
 
 		if result_type != -1:
 			result = "t" + str(globalScope.temp_space)
 			globalScope.temp_space = globalScope.temp_space + 1
+
 			temp_quad = Quad(operator, left_operand, right_operand, result)
 			globalScope.quads.push(temp_quad)
+
 			globalScope.pending_operands.push(result)
-			#result_type
+			globalScope.operand_types.push(result_type)
+
 			#free temp operand memory
 		else:
 			print("Types cannot be combined")
@@ -466,20 +508,9 @@ returns whole
 {
 	variable var1, var2, var3 oftype whole;
 	variable var4, var5, var6 oftype words;
-	list list1[5] oftype decimal;
 
-	idName2 = (1 + 2) * 5;
+	idName2 = 2.05 + 3 * (1 + 2 / 3) / 3;
 
-}
-
-block Block16
-receives :
-param1 oftype decimal
-
-{
-	list list1[5] oftype words;
-	list list2[10] oftype decimal;
-	variable var1 oftype whole;
 }
 '''
 

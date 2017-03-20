@@ -174,6 +174,13 @@ class Function_Directory():
 									
 				return False
 
+	def get_variable_type_for_block(self, var_id = None, block_id = None):
+		#var_id should have value
+		if var_id is not None:
+			#block_id should have value
+			if block_id is not None:
+				return self.function_reference_table[block_id][1][0][var_id][0]
+
 #for testing purposes
 if __name__ == '__main__':
 	directory = Function_Directory()
