@@ -16,7 +16,7 @@ def p_PROGRAM(p):
 	'''
 	print('Compilation Successful!')
 	globalScope.function_directory.print_table()
-	print (globalScope.quads)
+	#print (globalScope.quads)
 
 def p_PROGRAM_AUX(p):
 	'''
@@ -436,6 +436,7 @@ returns whole
 	list list1[5] oftype decimal;
 
 	idName = 1 + 2 - 3 + 4 + 5 - 6 - 7 + (8 + 9 - 10 + 11 - 12 - 13);
+
 }
 
 block Block16

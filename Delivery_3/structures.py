@@ -8,7 +8,7 @@ from collections import deque
 
 """
 Fixed Semantic cube class defining a data structure behving like a semantic
-cube where given two operands and one operator, returns, if operation is valid,
+cube where given two operand types and one operator, returns, if operation is valid,
 the resulting type of the operation. If not valid, returns None.
 """
 class Semantic_Cube:
@@ -25,38 +25,44 @@ class Semantic_Cube:
 		#create operator depth for each type
 		#whole-whole
 		whole_whole_valid_operators = Dictionary()
-		whole_whole_valid_operators.insert("t_op_addition","whole")
-		whole_whole_valid_operators.insert("t_op_subtraction","whole")
-		whole_whole_valid_operators.insert("t_op_subtraction","whole")
-		whole_whole_valid_operators.insert("t_op_division","decimal")
-		whole_whole_valid_operators.insert("t_op_division","decimal")
+		whole_whole_valid_operators.insert("op_addition","whole")
+		whole_whole_valid_operators.insert("op_subtraction","whole")
+		whole_whole_valid_operators.insert("op_subtraction","whole")
+		whole_whole_valid_operators.insert("op_division","decimal")
+		whole_whole_valid_operators.insert("op_division","decimal")
 
-		whole_whole_valid_operators.insert("t_op_less","boolean")
-		whole_whole_valid_operators.insert("t_op_less_equal","boolean")
-		whole_whole_valid_operators.insert("t_op_greater","boolean")
-		whole_whole_valid_operators.insert("t_op_greater_equal","boolean")
-		whole_whole_valid_operators.insert("t_op_equal","boolean")
-		whole_whole_valid_operators.insert("t_op_not_equal","boolean")
+		whole_whole_valid_operators.insert("op_less","boolean")
+		whole_whole_valid_operators.insert("op_less_equal","boolean")
+		whole_whole_valid_operators.insert("op_greater","boolean")
+		whole_whole_valid_operators.insert("op_greater_equal","boolean")
+		whole_whole_valid_operators.insert("op_equal","boolean")
+		whole_whole_valid_operators.insert("op_not_equal","boolean")
 
 		#whole-decimal, decimal-whole, decimal-decimal
 		decimal_valid_operators = Dictionary()
-		decimal_valid_operators.insert("t_op_addition","decimal")
-		decimal_valid_operators.insert("t_op_subtraction","decimal")
-		decimal_valid_operators.insert("t_op_subtraction","decimal")
-		decimal_valid_operators.insert("t_op_division","decimal")
+		decimal_valid_operators.insert("op_addition","decimal")
+		decimal_valid_operators.insert("op_subtraction","decimal")
+		decimal_valid_operators.insert("op_subtraction","decimal")
+		decimal_valid_operators.insert("op_division","decimal")
 
-		decimal_valid_operators.insert("t_op_less","boolean")
-		decimal_valid_operators.insert("t_op_less_equal","boolean")
-		decimal_valid_operators.insert("t_op_greater","boolean")
-		decimal_valid_operators.insert("t_op_greater_equal","boolean")
-		decimal_valid_operators.insert("t_op_equal","boolean")
-		decimal_valid_operators.insert("t_op_not_equal","boolean")
+		decimal_valid_operators.insert("op_less","boolean")
+		decimal_valid_operators.insert("op_less_equal","boolean")
+		decimal_valid_operators.insert("op_greater","boolean")
+		decimal_valid_operators.insert("op_greater_equal","boolean")
+		decimal_valid_operators.insert("op_equal","boolean")
+		decimal_valid_operators.insert("op_not_equal","boolean")
 
 		#words-words
 		words_valid_operators = Dictionary()
-		words_valid_operators.insert("t_op_addition","words")
-		words_valid_operators.insert("t_op_equal","boolean")
-		words_valid_operators.insert("t_op_not_equal","boolean")
+		words_valid_operators.insert("op_addition","words")
+		words_valid_operators.insert("op_equal","boolean")
+		words_valid_operators.insert("op_not_equal","boolean")
+
+		#bool-bool
+		bool_valid_operators = Dictionary()
+		bool_valid_operators.insert("op_and","boolean")
+		bool_valid_operators.insert("op_or","boolean")		
+		bool_valid_operators.insert("op_negation","boolean")		
 
 		#insert operator depth
 		dictionary_whole.insert("whole",whole_whole_valid_operators)
@@ -67,7 +73,55 @@ class Semantic_Cube:
 
 		dictionary_words.insert("words",words_valid_operators)
 
+		dictionary_bool.insert("boolean",bool_valid_operators)
+
 		self.cube = [dictionary_whole,dictionary_decimal,dictionary_words,dictionary_bool]
+
+	#gets operand type code
+	def get_operand_type_code(self, operand = None):
+		if (operand == "whole"):
+			return 0
+
+		elif (operand == "decimal"):
+			return 1
+
+		elif (operand == "words"):
+			return 2
+
+		elif (operand == "boolean"):
+			return 3
+
+		else:
+			return -1
+
+	#if valid returns resulting type, if not it returns -1
+	def validate_operation(self, operator = None, operand_one_type = None, operand_two_type = None):
+		#Parameters must exist
+		if operator is not None:
+			if operand_one_type is not None:
+				#if operator is negation, then operand_two is boolean by default for cube look-up
+				if (operator == "op_negation"):
+					operand_two_type = "boolean"
+
+				#all operands now have data
+				if operand_two_type is not None:
+					#get code for operand 
+					operand_one_type_code = self.get_operand_type_code(operand_one_type)
+					#check static semantic cube for type if not -1
+					if operand_one_type_code is not -1:
+						#the two operands share a valid operator
+						if(self.cube[operand_one_type_code].contains(operand_two_type)):
+							#the operator matches
+							if(self.cube[operand_one_type_code][operand_two_type].contains(operator)):
+								return self.cube[operand_one_type_code][operand_two_type][operator]
+
+							#operator not valid for operands
+							else:
+								return -1
+
+						#operands do not share a valid operator
+						else:
+							return -1
 
 """
 Quadruple class represents quadruple for intermediate code representation
@@ -339,3 +393,6 @@ if __name__ == '__main__':
     quad_2.print_quad()
     quad_3.print_quad()
     quad_4.print_quad()
+
+    cube = Semantic_Cube()
+    print cube.validate_operation("op_negation","boolean")
