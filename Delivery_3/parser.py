@@ -3,6 +3,8 @@ import sys
 import ply.yacc as yacc
 import globalScope
 
+from structures import Quad
+
 tokens = scanner.tokens
 
 def stop_exec(message):
@@ -14,6 +16,7 @@ def p_PROGRAM(p):
 	'''
 	print('Compilation Successful!')
 	globalScope.function_directory.print_table()
+	print (globalScope.quads)
 
 def p_PROGRAM_AUX(p):
 	'''
@@ -106,6 +109,7 @@ def p_CONSTANT(p):
 		 	   | cst_words
 			   | cst_boolean
 	'''
+	p[0] = p[1]
 
 def p_CONSTANT_AUX(p):
 	'''
@@ -178,26 +182,26 @@ def p_EXP_AUX(p):
 
 def p_FACTOR(p):
 	'''
-	FACTOR : parenthesis_open EXPRESSION parenthesis_close
+	FACTOR : parenthesis_open EC_SEEN_FACT_LP EXPRESSION parenthesis_close EC_SEEN_FACT_RP
 			 | FACTOR_AUX
 	'''
 
 def p_FACTOR_AUX(p):
 	'''
-	FACTOR_AUX : op_addition CONSTANT
-				 | op_subtraction CONSTANT
-				 | CONSTANT
+	FACTOR_AUX : op_addition CONSTANT EC_SEEN_FACT_CONST
+				 | op_subtraction CONSTANT EC_SEEN_FACT_CONST
+				 | CONSTANT EC_SEEN_FACT_CONST
 	'''
 
 def p_ITEM(p):
 	'''
-	ITEM : TERM ITEM_AUX
+	ITEM : TERM EC_SEEN_TERM ITEM_AUX
 	'''
 
 def p_ITEM_AUX(p):
 	'''
-	ITEM_AUX : op_addition ITEM
-			   | op_subtraction ITEM
+	ITEM_AUX : op_addition EC_SEEN_ITEM_OP ITEM
+			   | op_subtraction EC_SEEN_ITEM_OP ITEM
 			   | empty
 	'''
 
@@ -248,6 +252,7 @@ def p_ASSIGN(p):
 def p_ASSIGN_AUX(p):
 	'''
 	ASSIGN_AUX : squarebracket_open EXPRESSION squarebracket_close
+				 | empty
 	'''
 
 def p_RETURN(p):
@@ -285,7 +290,7 @@ def p_empty(p):
 #BLOCK action 1 - Sets starting block
 def p_EC_SEEN_STARTING(p):
 	"EC_SEEN_STARTING : "
-	if globalScope.function_directory._starting_block_key == "-1":
+	if globalScope.function_directory.starting_block_key == "-1":
 		globalScope.is_starting_block = True
 	else:
 		stop_exec("ERROR: Starting block is already defined")
@@ -362,8 +367,55 @@ def p_EC_SEEN_LIST(p):
 	if not globalScope.function_directory.var_id_exists(globalScope.current_list_id, globalScope.current_block_id):
 		globalScope.function_directory.add_list(globalScope.current_block_id, globalScope.current_list_id, globalScope.current_list_size, globalScope.current_list_type)
 	else:
-		stop_exec("ERROR: List name is already defined")			
+		stop_exec("ERROR: List name is already defined")
 
+#FACTOR action 1
+def p_EC_SEEN_FACT_LP(p):	
+	"EC_SEEN_FACT_LP : "
+	globalScope.pending_operators.push("(")
+
+#FACTOR action 2
+def p_EC_SEEN_FACT_RP(p):	
+	"EC_SEEN_FACT_RP : "
+	globalScope.pending_operators.pop()
+
+#FACTOR action 3
+def p_EC_SEEN_FACT_CONST(p):
+	"EC_SEEN_FACT_CONST : "
+	globalScope.pending_operands.push(p[-1])
+	#push tipo				
+
+#ITEM action 1
+def p_EC_SEEN_ITEM_OP(p):
+	"EC_SEEN_ITEM_OP : "
+	if p[-1] == "+":
+		globalScope.pending_operators.push("+")
+	elif p[-1] == "-":
+		globalScope.pending_operators.push("-")
+
+def p_EC_SEEN_TERM(p):
+	"EC_SEEN_TERM : "
+
+	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "+" or globalScope.pending_operators.peek() == "-"):
+		right_operand = globalScope.pending_operands.pop()
+		#right type = 
+		left_operand = globalScope.pending_operands.pop()
+		#left type = 
+		operator = globalScope.pending_operators.pop()
+		result_type = 1
+
+		if result_type != -1:
+			result = "t" + str(globalScope.temp_space)
+			globalScope.temp_space = globalScope.temp_space + 1
+			temp_quad = Quad(operator, left_operand, right_operand, result)
+			globalScope.quads.push(temp_quad)
+			globalScope.pending_operands.push(result)
+			#result_type
+			#free temp operand memory
+		else:
+			print("Types cannot be combined")
+			sys.exit()
+	
 def p_error(p):
 	print("***ERROR '%s'" % p)
 	sys.exit()
@@ -381,7 +433,9 @@ returns whole
 {
 	variable var1, var2, var3 oftype whole;
 	variable var4, var5, var6 oftype words;
-	list list[5] oftype decimal;
+	list list1[5] oftype decimal;
+
+	idName = 1 + 2 - 3 + 4 + 5 - 6 - 7 + (8 + 9 - 10 + 11 - 12 - 13);
 }
 
 block Block16
