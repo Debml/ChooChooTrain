@@ -246,7 +246,7 @@ def p_LOOP(p):
 
 def p_ASSIGN(p):
 	'''
-	ASSIGN : id ASSIGN_AUX op_assign EXPRESSION semicolon
+	ASSIGN : id EC_SEEN_CONST SEEN_CONST_ID ASSIGN_AUX op_assign EC_SEEN_ASSIGN_OP EXPRESSION EC_SEEN_ASSIGN_VALUE semicolon
 	'''
 
 def p_ASSIGN_AUX(p):
@@ -540,6 +540,43 @@ def p_EC_SEEN_RELOP_ITEM(p):
 			else:
 				print("Types cannot be combined")
 				sys.exit()
+
+#ASSIGN action 1
+def p_EC_SEEN_ASSIGN_OP(p):
+	"EC_SEEN_ASSIGN_OP : "
+	globalScope.pending_operators.push("op_assign")
+
+#ASSIGN action 2
+def p_EC_SEEN_ASSIGN_VALUE(p):
+	"EC_SEEN_ASSIGN_VALUE : "
+	if not globalScope.pending_operators.empty() and globalScope.pending_operators.peek() == "op_assign":
+			#value to be assigned
+			right_operand = globalScope.pending_operands.pop()
+			right_type = globalScope.operand_types.pop()
+
+			#id where value will be assigned
+			left_operand = globalScope.pending_operands.pop()
+			left_type = globalScope.operand_types.pop()
+
+			operator = globalScope.pending_operators.pop()
+
+			result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
+
+			if result_type != -1:
+				result = "t" + str(globalScope.temp_space)
+				globalScope.temp_space = globalScope.temp_space + 1
+
+				temp_quad = Quad(operator, right_operand, "-1", left_operand)
+				globalScope.quads.push(temp_quad)
+
+				#globalScope.pending_operands.push(result)
+				#globalScope.operand_types.push(result_type)
+
+				#free temp operand memory
+			else:
+				print("Types cannot be combined")
+				sys.exit()
+
 	
 def p_error(p):
 	print("***ERROR '%s'" % p)
@@ -560,7 +597,7 @@ returns whole
 	variable var4, var5, var6 oftype words;
 	list lista1[5] oftype words;
 
-	idName2 = var1 == var4;
+	vary = 5;
 
 }
 '''
