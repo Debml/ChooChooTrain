@@ -16,7 +16,8 @@ class Function_Directory():
 		#public variable for function reference table
 		self.function_reference_table = Dictionary()
 
-		#constant table goes
+		#public variable for constant table
+		self.constant_table = Dictionary()
 
 	#add block information for new block
 	def add_block_name(self, block_name = None):
@@ -86,6 +87,18 @@ class Function_Directory():
 					variable_data = [variable_type, self._get_memory_address_variable(variable_type), variable_size]
 					self.function_reference_table[key][1][1].insert(variable_name,variable_data)
 
+	#Constant value and constant type to identify constant
+	def add_constant(self, constant_value = None, constant_type = None):
+		#key should have value
+		if constant_value is not None:
+			if constant_type is not None:
+				#create list for entry
+				#value for dictionary entry
+				constant_data = [constant_type, self._get_memory_address_constant(constant_type)]
+				
+				#insert to constant table
+				self.constant_table.insert(constant_value,constant_data)
+
 	#Key for current block, add one parameter found to parameters list
 	def add_parameter_type(self, key = None, parameter_type = None):
 		#key should have value
@@ -132,22 +145,29 @@ class Function_Directory():
 			else:
 				return -1
 
-	#print block information for all blocks
-	def print_table(self):
-		#print table formatted
-		print("Function Reference Table\n")
-		for key in self.function_reference_table.getInstance():
-			print("*" + key + "* :")
-			print("Return Type: " + self.function_reference_table[key][0])
-			print("Primitives: ")
-			print(self.function_reference_table[key][1][0])
-			print("Lists: ")
-			print(self.function_reference_table[key][1][1])
-			print("Parameters: ")
-			print(self.function_reference_table[key][2])
-			print("Memory Address: ")
-			print(self.function_reference_table[key][3])
-			print("\n")
+	#Get memory address of block
+	def _get_memory_address_constant(self, constant_type = None):
+		#constant_type should have value
+		if constant_type is not None:
+			#memory address for constant whole
+			if(constant_type == "cst_whole"):
+				return 600
+
+			#memory address for constant decimal
+			elif(constant_type == "cst_decimal"):
+				return 700
+
+			#memory address for constant words
+			elif(constant_type == "cst_words"):
+				return 800
+
+			#memory address for constant boolean
+			elif(constant_type == "cst_boolean"):
+				return 900
+
+			#does not recognize constant type
+			else:
+				return -1
 
 	#Check if a function id does not exist in the Function Reference Table
 	def block_id_exists(self, block_id = None):
@@ -179,12 +199,46 @@ class Function_Directory():
 									
 				return False
 
+	def constant_exists(self, constant_value = None, constant_type = None):
+		#constant_id should have value
+		if constant_value is not None:
+			#constant_type should have value
+			if constant_type is not None:
+				#check if entry exists
+				if self.constant_table.contains(constant_value):
+					#check if entry exists as its corresponding type
+					if (self.constant_table[constant_value][0] == constant_type):
+						#value exists with corresponding type
+						return True
+
+					return False
+
 	def get_variable_type_for_block(self, var_id = None, block_id = None):
 		#var_id should have value
 		if var_id is not None:
 			#block_id should have value
 			if block_id is not None:
 				return self.function_reference_table[block_id][1][0][var_id][0]
+
+
+	#print block information for all blocks
+	def print_table(self):
+		#print table formatted
+		print("Function Reference Table\n")
+		for key in self.function_reference_table.getInstance():
+			print("*" + key + "* :")
+			print("Return Type: " + self.function_reference_table[key][0])
+			print("Primitives: ")
+			print(self.function_reference_table[key][1][0])
+			print("Lists: ")
+			print(self.function_reference_table[key][1][1])
+			print("Parameters: ")
+			print(self.function_reference_table[key][2])
+			print("Constants: ")
+			print(self.constant_table)
+			print("Function Memory Address: ")
+			print(self.function_reference_table[key][3])
+			print("\n")
 
 #for testing purposes
 if __name__ == '__main__':
