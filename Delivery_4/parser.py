@@ -16,8 +16,11 @@ def p_PROGRAM(p):
 	'''
 	print('Compilation Successful!')
 	globalScope.function_directory.print_table()
+	i = 0
 	for quad in globalScope.quads:
+		print(i)
 		quad.print_quad()
+		i = i + 1
 
 def p_PROGRAM_AUX(p):
 	'''
@@ -242,7 +245,7 @@ def p_CALL_AUX(p):
 
 def p_LOOP(p):
 	'''
-	LOOP : do BODY until parenthesis_open EXPRESSION parenthesis_close 
+	LOOP : do EC_SEEN_DO BODY until parenthesis_open EXPRESSION parenthesis_close EC_SEEN_UNTIL
 	'''
 
 def p_ASSIGN(p):
@@ -609,6 +612,28 @@ def p_EC_SEEN_ELSE(p):
 	false = globalScope.pending_jumps.pop()
 	globalScope.pending_jumps.push(globalScope.quad_count - 1)
 	globalScope.quads[false]._result = globalScope.quad_count
+
+#LOOP action 1
+def p_EC_SEEN_DO(p):
+	"EC_SEEN_DO : "
+	globalScope.pending_jumps.push(globalScope.quad_count)
+
+#LOOP action 2:
+def p_EC_SEEN_UNTIL(p):
+	"EC_SEEN_UNTIL : "
+	exp_type = globalScope.operand_types.pop()
+
+	if exp_type == "boolean":
+		result = globalScope.pending_operands.pop()
+		start = globalScope.pending_jumps.pop()
+
+		temp_quad = Quad("GotoT", result, "-1", start)
+		globalScope.quads.append(temp_quad)
+		globalScope.quad_count = globalScope.quad_count + 1
+	else:
+		print("Expected a boolean expression, found " + exp_type + " instead")
+		sys.exit()
+
 	
 def p_error(p):
 	print("***ERROR '%s'" % p)
@@ -633,7 +658,7 @@ returns whole
 	variable A, B, C, D oftype whole;
 
 	if(A + B > D) {
-		if(A < B){
+		if(A < B) {
 			A = 0;
 			B = B + D;
 		}
@@ -641,10 +666,19 @@ returns whole
 			C = A + B;
 		}
 	}
-	else{
+	else {
 		A = B + C;
 	}
 	D = B + A * C;
+
+	do {
+		A = B + C;
+		if (A > B){
+			do {
+				A = A * 2;
+			} until (A > A * 2)
+		}
+	} until (A < B)
 
 }
 '''
