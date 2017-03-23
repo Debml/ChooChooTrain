@@ -8,7 +8,7 @@ from structures import Quad
 tokens = scanner.tokens
 
 def stop_exec(message):
-	sys.exit(message)
+	sys.exit("Error in line %d: %s" % (globalScope.line_count, message))
 
 def p_PROGRAM(p):
 	'''
@@ -297,7 +297,7 @@ def p_EC_SEEN_STARTING(p):
 	if globalScope.function_directory.starting_block_key == "-1":
 		globalScope.is_starting_block = True
 	else:
-		stop_exec("ERROR: Starting block is already defined")
+		stop_exec("Starting block is already defined")
 
 #BLOCK action 2 - Creates a new Row in FRT with block id as key
 def p_EC_SEEN_BLOCK_ID(p):
@@ -309,7 +309,7 @@ def p_EC_SEEN_BLOCK_ID(p):
 
 		globalScope.function_directory.add_block_name(globalScope.current_block_id)
 	else:
-		stop_exec("ERROR: Block name is already defined")
+		stop_exec("Block named '" + globalScope.current_block_id + "' is already defined")
 
 #BLOCK action 3 - Creates the list of parameter types and adds them to the variable list
 def p_EC_SEEN_TYPE(p):
@@ -318,7 +318,7 @@ def p_EC_SEEN_TYPE(p):
 		globalScope.function_directory.add_parameter_type(globalScope.current_block_id, p[-1])
 		globalScope.function_directory.add_primitive(globalScope.current_block_id, globalScope.current_var_id, p[-1])
 	else:
-		stop_exec("ERROR: Parameter name is already defined")
+		stop_exec("Parameter named '" + globalScope.current_var_id + "' is already defined")
 
 #BLOCK action 4 - Sets the block return type
 def p_EC_SEEN_RETURN_TYPE(p):
@@ -348,7 +348,7 @@ def p_EC_SEEN_VAR_TYPE(p):
 		if not globalScope.function_directory.var_id_exists(var_name, globalScope.current_block_id):
 			globalScope.function_directory.add_primitive(globalScope.current_block_id, var_name, p[-1])
 		else:
-			stop_exec("ERROR: Variable name is already defined")
+			stop_exec("Variable named '" + var_name + "' is already defined")
 
 #LIST_DECLARATION action 1
 def p_EC_SEEN_LIST_ID(p):
@@ -371,7 +371,7 @@ def p_EC_SEEN_LIST(p):
 	if not globalScope.function_directory.var_id_exists(globalScope.current_list_id, globalScope.current_block_id):
 		globalScope.function_directory.add_list(globalScope.current_block_id, globalScope.current_list_id, globalScope.current_list_size, globalScope.current_list_type)
 	else:
-		stop_exec("ERROR: List name is already defined")
+		stop_exec("List named '" + globalScope.current_list_id + "' is already defined")
 
 #FACTOR action 1
 def p_EC_SEEN_FACT_LP(p):	
@@ -395,8 +395,7 @@ def p_SEEN_CONST_ID(p):
 	if globalScope.function_directory.var_id_exists(globalScope.pending_operands.peek(), globalScope.current_block_id):
 		globalScope.operand_types.push(globalScope.function_directory.get_variable_type_for_block(globalScope.pending_operands.peek(), globalScope.current_block_id))
 	else:
-		print("Id " + globalScope.pending_operands.peek() + " is not declared")
-		sys.exit()
+		stop_exec("ID '" + globalScope.pending_operands.peek() + "' is not declared")
 
 #CONSTANT action 3
 def p_SEEN_CONST_WHOLE(p):
@@ -455,8 +454,7 @@ def p_EC_SEEN_TERM(p):
 
 			#free temp operand memory
 		else:
-			print("Types cannot be combined")
-			sys.exit()
+			stop_exec("Expressions of type '" + left_type + "' and '" + right_type + "' cannot be combined")
 
 #TERM action 1
 def p_EC_SEEN_TERM_OP(p):
@@ -494,8 +492,7 @@ def p_EC_SEEN_FACTOR(p):
 
 			#free temp operand memory
 		else:
-			print("Types cannot be combined")
-			sys.exit()
+			stop_exec("Expressions of type '" + left_type + "' and '" + right_type + "' cannot be combined")
 
 #EXP action 1
 def p_EC_SEEN_RELOP(p):
@@ -545,8 +542,8 @@ def p_EC_SEEN_RELOP_ITEM(p):
 
 				#free temp operand memory
 			else:
-				print("Types cannot be combined")
-				sys.exit()
+				stop_exec("Expressions of type '" + left_type + "' and '" + right_type + "' cannot be combined")
+
 
 #ASSIGN action 1
 def p_EC_SEEN_ASSIGN_OP(p):
@@ -576,8 +573,7 @@ def p_EC_SEEN_ASSIGN_VALUE(p):
 
 				#free temp operand memory
 			else:
-				print("Types "+ right_type + " and "+ left_type + " cannot be combined")
-				sys.exit()
+				stop_exec("Expression of type '" + right_type + "' cannot be assigned to ID of type '" + left_type + "'")
 
 #CONDITION action 1
 def p_EC_SEEN_IF_EXP(p):
@@ -593,8 +589,7 @@ def p_EC_SEEN_IF_EXP(p):
 
 		globalScope.pending_jumps.push(globalScope.quad_count - 1)
 	else:
-		print("Expected a boolean expression, found " + exp_type + " instead")
-		sys.exit()
+		stop_exec("Expected a boolean expression, found '" + exp_type + "' expression instead")
 
 #CONDITION action 2
 def p_EC_SEEN_END_IF(p):
@@ -631,9 +626,7 @@ def p_EC_SEEN_UNTIL(p):
 		globalScope.quads.append(temp_quad)
 		globalScope.quad_count = globalScope.quad_count + 1
 	else:
-		print("Expected a boolean expression, found " + exp_type + " instead")
-		sys.exit()
-
+		stop_exec("Expected a boolean expression, found '" + exp_type + "' expression instead")
 	
 def p_error(p):
 	print("***ERROR '%s'" % p)

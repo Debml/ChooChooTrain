@@ -20,3 +20,4 @@ pending_jumps = Stack()
 #helper variable to handle temporary results counter
 temp_space = 1
 quad_count = 0
+line_count = 1
