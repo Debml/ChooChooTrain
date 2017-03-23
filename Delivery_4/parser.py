@@ -639,48 +639,17 @@ def p_error(p):
 	print("***ERROR '%s'" % p)
 	sys.exit()
 
-yacc.yacc()
+# Build the parser
+parser = yacc.yacc()
 
-data ='''starting block Block15
-receives :
-parameter1 oftype decimal ,
-parameter2 oftype whole ,
-parameter3 oftype words
+# If no argument was given, make the user input a file
+if(len(sys.argv) < 2):
+    fileName = raw_input('Input the name of the file to parse: ')
+    fileToParse = open(fileName, "r")
+# If an argument was given, read that file
+else:
+    fileToParse = open(sys.argv[1], "r")
 
-returns whole
-
-{
-	variable var1, var2, var3, var7 oftype whole;
-	variable var8 oftype decimal;
-	variable var4, var5, var6 oftype words;
-	variable bvar9 oftype boolean;
-	list lista1[5] oftype words;
-	variable A, B, C, D oftype whole;
-
-	if(A + B > D) {
-		if(A < B) {
-			A = 0;
-			B = B + D;
-		}
-		else {
-			C = A + B;
-		}
-	}
-	else {
-		A = B + C;
-	}
-	D = B + A * C;
-
-	do {
-		A = B + C;
-		if (A > B){
-			do {
-				A = A * 2;
-			} until (A > A * 2)
-		}
-	} until (A < B)
-
-}
-'''
-
-yacc.parse(data)
+# Read the file sent as argument and parse it
+code = fileToParse.read()
+parser.parse(code)
