@@ -18,8 +18,7 @@ def p_PROGRAM(p):
 	globalScope.function_directory.print_table()
 	i = 0
 	for quad in globalScope.quads:
-		print(i)
-		quad.print_quad()
+		#print("%d \t %s" % (i, quad.quad_to_string()))
 		i = i + 1
 
 def p_PROGRAM_AUX(p):
@@ -117,7 +116,7 @@ def p_CONSTANT(p):
 
 def p_CONSTANT_AUX(p):
 	'''
-	CONSTANT_AUX : squarebracket_open EXPRESSION squarebracket_close
+	CONSTANT_AUX : squarebracket_open ITEM squarebracket_close
 				   | parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close
 				   |  EC_SEEN_CONST SEEN_CONST_ID empty
 	'''
@@ -147,7 +146,7 @@ def p_VAR_DECLARATION_AUX(p):
 
 def p_LIST_DECLARATION(p):
 	'''
-	LIST_DECLARATION : list id EC_SEEN_LIST_ID squarebracket_open EXPRESSION EC_SEEN_LIST_SIZE squarebracket_close of type TYPE EC_SEEN_LIST_TYPE semicolon EC_SEEN_LIST
+	LIST_DECLARATION : list id EC_SEEN_LIST_ID squarebracket_open ITEM EC_SEEN_LIST_SIZE squarebracket_close of type TYPE EC_SEEN_LIST_TYPE semicolon EC_SEEN_LIST
 	'''
 
 def p_EXPRESSION(p):
@@ -255,7 +254,7 @@ def p_ASSIGN(p):
 
 def p_ASSIGN_AUX(p):
 	'''
-	ASSIGN_AUX : squarebracket_open EXPRESSION squarebracket_close
+	ASSIGN_AUX : squarebracket_open ITEM squarebracket_close
 				 | EC_SEEN_CONST SEEN_CONST_ID empty
 	'''
 
@@ -271,7 +270,7 @@ def p_READ(p):
 
 def p_READ_AUX(p):
 	'''
-	READ_AUX : squarebracket_open EXPRESSION squarebracket_close
+	READ_AUX : squarebracket_open ITEM squarebracket_close
 			   | empty
 	'''
 
@@ -287,7 +286,7 @@ def p_WRITE_AUX(p):
 	'''
 
 def p_empty(p):
-    'empty :'
+    'empty : '
     pass
 
 #Embedded Actions
@@ -594,7 +593,7 @@ def p_EC_SEEN_IF_EXP(p):
 def p_EC_SEEN_END_IF(p):
 	"EC_SEEN_END_IF : "
 	end_if = globalScope.pending_jumps.pop()
-	globalScope.quads[end_if]._result = globalScope.quad_count
+	globalScope.quads[end_if].set_result = globalScope.quad_count
 
 #CONDITION action 3
 def p_EC_SEEN_ELSE(p):
@@ -605,7 +604,7 @@ def p_EC_SEEN_ELSE(p):
 
 	if_false = globalScope.pending_jumps.pop()
 	globalScope.pending_jumps.push(globalScope.quad_count - 1)
-	globalScope.quads[if_false]._result = globalScope.quad_count
+	globalScope.quads[if_false].set_result = globalScope.quad_count
 
 #LOOP action 1
 def p_EC_SEEN_DO(p):
@@ -649,8 +648,7 @@ def p_EC_SEEN_READ_ID(p):
 		stop_exec("ID '" + id_to_read_into + "' is not declared")
 	
 def p_error(p):
-	print("***ERROR '%s'" % p)
-	sys.exit()
+	stop_exec("Unexpected token '" + p.value.split("\n")[0] + "' found")
 
 # Build the parser
 parser = yacc.yacc()
