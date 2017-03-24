@@ -162,7 +162,7 @@ class Quad:
                         self._result = result
 
     def __str__(self):
-    	return ('{}, {}, {}, {}'.format(self._operator, self._left_operand, self._right_operand, self._result))
+    	return ('%s\t\t%s\t%s\t%s' % (self._operator, self._left_operand, self._right_operand, self._result))
 
     #Returns the quad operator code
     def get_operator(self):
@@ -192,11 +192,6 @@ class Quad:
         #print("Right Operand: " + self.get_right_operand())
         #print("Result: " + self.get_result())
 		print(self.get_operator(), self.get_left_operand(), self.get_right_operand(), self.get_result())
-
-	#Returns a formatted string with the values of the quad
-   	def quad_to_string(self):
-		quad_str = self.get_operator() + '\t' + self.get_left_operand() + '\t' + self.get_right_operand() + '\t' + self.get_result()
-		return quad_str
 
 """
 Dictionary class defining a data structure behaving like hash/table/dict

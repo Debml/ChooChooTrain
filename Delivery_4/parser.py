@@ -18,7 +18,7 @@ def p_PROGRAM(p):
 	globalScope.function_directory.print_table()
 	i = 0
 	for quad in globalScope.quads:
-		#print("%d \t %s" % (i, quad.quad_to_string()))
+		print("%d \t %s" % (i, quad))
 		i = i + 1
 
 def p_PROGRAM_AUX(p):
@@ -593,7 +593,7 @@ def p_EC_SEEN_IF_EXP(p):
 def p_EC_SEEN_END_IF(p):
 	"EC_SEEN_END_IF : "
 	end_if = globalScope.pending_jumps.pop()
-	globalScope.quads[end_if].set_result = globalScope.quad_count
+	globalScope.quads[end_if].set_result(globalScope.quad_count)
 
 #CONDITION action 3
 def p_EC_SEEN_ELSE(p):
@@ -604,7 +604,7 @@ def p_EC_SEEN_ELSE(p):
 
 	if_false = globalScope.pending_jumps.pop()
 	globalScope.pending_jumps.push(globalScope.quad_count - 1)
-	globalScope.quads[if_false].set_result = globalScope.quad_count
+	globalScope.quads[if_false].set_result(globalScope.quad_count)
 
 #LOOP action 1
 def p_EC_SEEN_DO(p):
