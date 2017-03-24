@@ -11,6 +11,7 @@ returns whole
 	variable bvar9 oftype boolean;
 	list lista1[5] oftype words;
 	variable A, B, C, D oftype whole;
+
 	if(A + B > D) {
 		if(A < B) {
 			A = 0;
@@ -23,13 +24,15 @@ returns whole
 	else {
 		A = B + C;
 	}
+
 	D = B + A * C;
+
 	do {
 		A = B + C;
 		if (A > B){
 			do {
 				A = A * 2;
-			} until (A > A * 2)
+			} until (A < A * 2)
 		}
-	} until (A < B)
+	} until (A + B)
 }

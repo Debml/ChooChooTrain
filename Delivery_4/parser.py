@@ -401,7 +401,6 @@ def p_SEEN_CONST_ID(p):
 def p_SEEN_CONST_WHOLE(p):
 	"SEEN_CONST_WHOLE : "
 	globalScope.operand_types.push("whole")
-	print(p[-1])
 
 #CONSTANT action 4
 def p_SEEN_CONST_DECIMAL(p):
