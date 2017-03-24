@@ -41,13 +41,13 @@ def p_BLOCK_AUX(p):
 
 def p_RECEIVES_AUX(p):
 	'''
-	RECEIVES_AUX : receives colon id EC_SEEN_PARAM_ID of_type TYPE EC_SEEN_TYPE RECEIVES_AUX1
+	RECEIVES_AUX : receives colon id EC_SEEN_PARAM_ID of type TYPE EC_SEEN_TYPE RECEIVES_AUX1
 				   | empty
 	'''
 
 def p_RECEIVES_AUX1(p):
 	'''
-	RECEIVES_AUX1 : comma id EC_SEEN_PARAM_ID of_type TYPE EC_SEEN_TYPE RECEIVES_AUX1
+	RECEIVES_AUX1 : comma id EC_SEEN_PARAM_ID of type TYPE EC_SEEN_TYPE RECEIVES_AUX1
 					| empty
 	'''
 
@@ -136,7 +136,7 @@ def p_DECLARATIONS(p):
 
 def p_VAR_DECLARATION(p):
 	'''
-	VAR_DECLARATION : variable EC_SEEN_VAR_KEYWORD id EC_SEEN_VAR_ID VAR_DECLARATION_AUX of_type TYPE EC_SEEN_VAR_TYPE semicolon
+	VAR_DECLARATION : variable EC_SEEN_VAR_KEYWORD id EC_SEEN_VAR_ID VAR_DECLARATION_AUX of type TYPE EC_SEEN_VAR_TYPE semicolon
 	'''
 
 def p_VAR_DECLARATION_AUX(p):
@@ -147,7 +147,7 @@ def p_VAR_DECLARATION_AUX(p):
 
 def p_LIST_DECLARATION(p):
 	'''
-	LIST_DECLARATION : list id EC_SEEN_LIST_ID squarebracket_open EXPRESSION EC_SEEN_LIST_SIZE squarebracket_close of_type TYPE EC_SEEN_LIST_TYPE semicolon EC_SEEN_LIST
+	LIST_DECLARATION : list id EC_SEEN_LIST_ID squarebracket_open EXPRESSION EC_SEEN_LIST_SIZE squarebracket_close of type TYPE EC_SEEN_LIST_TYPE semicolon EC_SEEN_LIST
 	'''
 
 def p_EXPRESSION(p):
@@ -250,13 +250,13 @@ def p_LOOP(p):
 
 def p_ASSIGN(p):
 	'''
-	ASSIGN : id EC_SEEN_CONST SEEN_CONST_ID ASSIGN_AUX op_assign EC_SEEN_ASSIGN_OP EXPRESSION EC_SEEN_ASSIGN_VALUE semicolon
+	ASSIGN : id ASSIGN_AUX op_assign EC_SEEN_ASSIGN_OP EXPRESSION EC_SEEN_ASSIGN_VALUE semicolon
 	'''
 
 def p_ASSIGN_AUX(p):
 	'''
 	ASSIGN_AUX : squarebracket_open EXPRESSION squarebracket_close
-				 | empty
+				 | EC_SEEN_CONST SEEN_CONST_ID empty
 	'''
 
 def p_RETURN(p):
@@ -266,7 +266,7 @@ def p_RETURN(p):
 
 def p_READ(p):
 	'''
-	READ : input parenthesis_open id READ_AUX parenthesis_close semicolon
+	READ : input parenthesis_open id EC_SEEN_READ_ID READ_AUX parenthesis_close semicolon
 	'''
 
 def p_READ_AUX(p):
@@ -277,12 +277,12 @@ def p_READ_AUX(p):
 
 def p_WRITE(p):
 	'''
-	WRITE : print parenthesis_open EXPRESSION WRITE_AUX parenthesis_close semicolon
+	WRITE : print parenthesis_open EXPRESSION EC_SEEN_WRITE_EXP WRITE_AUX parenthesis_close semicolon
 	'''
 
 def p_WRITE_AUX(p):
 	'''
-	WRITE_AUX : comma EXPRESSION WRITE_AUX
+	WRITE_AUX : comma EXPRESSION EC_SEEN_WRITE_EXP WRITE_AUX
 				| empty
 	'''
 
@@ -314,7 +314,7 @@ def p_EC_SEEN_BLOCK_ID(p):
 #BLOCK action 3 - Creates the list of parameter types and adds them to the variable list
 def p_EC_SEEN_TYPE(p):
 	"EC_SEEN_TYPE : "
-	if not globalScope.function_directory.var_id_exists(globalScope.current_var_id, globalScope.current_block_id):
+	if not globalScope.function_directory.id_exists(globalScope.current_var_id, globalScope.current_block_id):
 		globalScope.function_directory.add_parameter_type(globalScope.current_block_id, p[-1])
 		globalScope.function_directory.add_primitive(globalScope.current_block_id, globalScope.current_var_id, p[-1])
 	else:
@@ -345,7 +345,7 @@ def p_EC_SEEN_VAR_TYPE(p):
 	"EC_SEEN_VAR_TYPE : "
 	for var_name in globalScope.var_names:
 		#Find current_var_id in primitives dictionary for current_block_id row
-		if not globalScope.function_directory.var_id_exists(var_name, globalScope.current_block_id):
+		if not globalScope.function_directory.id_exists(var_name, globalScope.current_block_id):
 			globalScope.function_directory.add_primitive(globalScope.current_block_id, var_name, p[-1])
 		else:
 			stop_exec("Variable named '" + var_name + "' is already defined")
@@ -368,7 +368,7 @@ def p_EC_SEEN_LIST_TYPE(p):
 #LIST_DECLARATION action 4
 def p_EC_SEEN_LIST(p):
 	"EC_SEEN_LIST : "
-	if not globalScope.function_directory.var_id_exists(globalScope.current_list_id, globalScope.current_block_id):
+	if not globalScope.function_directory.id_exists(globalScope.current_list_id, globalScope.current_block_id):
 		globalScope.function_directory.add_list(globalScope.current_block_id, globalScope.current_list_id, globalScope.current_list_size, globalScope.current_list_type)
 	else:
 		stop_exec("List named '" + globalScope.current_list_id + "' is already defined")
@@ -392,7 +392,7 @@ def p_EC_SEEN_CONST(p):
 def p_SEEN_CONST_ID(p):
 	"SEEN_CONST_ID : "
 	#checks the id type in the FRT
-	if globalScope.function_directory.var_id_exists(globalScope.pending_operands.peek(), globalScope.current_block_id):
+	if globalScope.function_directory.primitive_id_exists(globalScope.pending_operands.peek(), globalScope.current_block_id):
 		globalScope.operand_types.push(globalScope.function_directory.get_variable_type_for_block(globalScope.pending_operands.peek(), globalScope.current_block_id))
 	else:
 		stop_exec("ID '" + globalScope.pending_operands.peek() + "' is not declared")
@@ -582,7 +582,7 @@ def p_EC_SEEN_IF_EXP(p):
 	if exp_type == "boolean":
 		result = globalScope.pending_operands.pop()
 
-		temp_quad = Quad("GotoF", result, "-1", "pending")
+		temp_quad = Quad("op_go_to_f", result, "-1", "pending")
 		globalScope.quads.append(temp_quad)
 		globalScope.quad_count = globalScope.quad_count + 1
 
@@ -593,19 +593,19 @@ def p_EC_SEEN_IF_EXP(p):
 #CONDITION action 2
 def p_EC_SEEN_END_IF(p):
 	"EC_SEEN_END_IF : "
-	end = globalScope.pending_jumps.pop()
-	globalScope.quads[end]._result = globalScope.quad_count
+	end_if = globalScope.pending_jumps.pop()
+	globalScope.quads[end_if]._result = globalScope.quad_count
 
 #CONDITION action 3
 def p_EC_SEEN_ELSE(p):
 	"EC_SEEN_ELSE : "
-	temp_quad = Quad("Goto", "-1", "-1", "-1")
+	temp_quad = Quad("op_go_to", "-1", "-1", "-1")
 	globalScope.quads.append(temp_quad)
 	globalScope.quad_count = globalScope.quad_count + 1
 
-	false = globalScope.pending_jumps.pop()
+	if_false = globalScope.pending_jumps.pop()
 	globalScope.pending_jumps.push(globalScope.quad_count - 1)
-	globalScope.quads[false]._result = globalScope.quad_count
+	globalScope.quads[if_false]._result = globalScope.quad_count
 
 #LOOP action 1
 def p_EC_SEEN_DO(p):
@@ -618,14 +618,35 @@ def p_EC_SEEN_UNTIL(p):
 	exp_type = globalScope.operand_types.pop()
 
 	if exp_type == "boolean":
-		result = globalScope.pending_operands.pop()
-		start = globalScope.pending_jumps.pop()
+		evaluation_result = globalScope.pending_operands.pop()
+		loop_start = globalScope.pending_jumps.pop()
 
-		temp_quad = Quad("GotoT", result, "-1", start)
+		temp_quad = Quad("op_go_to_t", evaluation_result, "-1", loop_start)
 		globalScope.quads.append(temp_quad)
 		globalScope.quad_count = globalScope.quad_count + 1
 	else:
 		stop_exec("Expected a boolean expression, found '" + exp_type + "' expression instead")
+
+#WRITE action 1:
+def p_EC_SEEN_WRITE_EXP(p):
+	"EC_SEEN_WRITE_EXP : "
+	expression_to_print = globalScope.pending_operands.pop()
+
+	temp_quad = Quad("op_print", expression_to_print, "-1", "-1")
+	globalScope.quads.append(temp_quad)
+	globalScope.quad_count = globalScope.quad_count + 1
+
+#READ action 1:
+def p_EC_SEEN_READ_ID(p):
+	"EC_SEEN_READ_ID : "
+	id_to_read_into = p[-1]
+
+	if globalScope.function_directory.primitive_id_exists(id_to_read_into, globalScope.current_block_id):
+		temp_quad = Quad("op_input", "-1", "-1", id_to_read_into)
+		globalScope.quads.append(temp_quad)	
+		globalScope.quad_count = globalScope.quad_count + 1
+	else:
+		stop_exec("ID '" + id_to_read_into + "' is not declared")
 	
 def p_error(p):
 	print("***ERROR '%s'" % p)

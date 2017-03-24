@@ -136,7 +136,7 @@ class Function_Directory:
             return False
 
     #Check if a var id exists in the Function Reference Table
-    def var_id_exists(self, var_id = None, block_id = None):
+    def id_exists(self, var_id = None, block_id = None):
         #var_id should have value
         if var_id is not None:
             #block_id should have value
@@ -145,12 +145,44 @@ class Function_Directory:
                 if self.block_id_exists(var_id):
                     return True
                 
-                #Check the variable names
+                #Check the primitive names
                 if var_id in self.function_reference_table[block_id][1][0]:
                     return True
                 
                 #check the list names
                 if var_id in self.function_reference_table[block_id][1][1]:
+                    return True
+                                    
+                return False
+
+    #Check if a given ID is a primitive
+    def primitive_id_exists(self, primitive_id = None, block_id = None):
+        #primitive_id should have value
+        if primitive_id is not None:
+            #block_id should have value
+            if block_id is not None:
+                #Check the function name
+                if self.block_id_exists(primitive_id):
+                    return True
+                
+                #Check the primitive names
+                if primitive_id in self.function_reference_table[block_id][1][0]:
+                    return True
+                                    
+                return False
+
+    #Check if a given ID is a primitive
+    def list_id_exists(self, list_id = None, block_id = None):
+        #list_id should have value
+        if list_id is not None:
+            #block_id should have value
+            if block_id is not None:
+                #Check the function name
+                if self.block_id_exists(list_id):
+                    return True
+                
+                #Check the list names
+                if list_id in self.function_reference_table[block_id][1][1]:
                     return True
                                     
                 return False

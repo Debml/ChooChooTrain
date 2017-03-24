@@ -1,0 +1,11 @@
+starting block Block15
+receives :
+parameter1 of type decimal,
+parameter2 of type whole,
+parameter3 of type words
+returns whole
+{
+	variable a, b, f of type whole;
+	print(a, b, f*2+1);
+	input(a);
+}
