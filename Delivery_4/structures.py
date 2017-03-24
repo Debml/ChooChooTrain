@@ -164,14 +164,14 @@ class Quad:
     def __str__(self):
     	return ('{}, {}, {}, {}'.format(self._operator, self._left_operand, self._right_operand, self._result))
 
-	#Sets the value of result for a given quad
-	def set_result(self, result = None):
-		if result is not None:
-			self._result = result
-
     #Returns the quad operator code
     def get_operator(self):
         return self._operator
+
+    #Sets the value of result for a given quad
+    def set_result(self, result = None):
+    	if result is not None:
+    		self._result = result
 
     #Returns the quad left operand memory address
     def get_left_operand(self):
