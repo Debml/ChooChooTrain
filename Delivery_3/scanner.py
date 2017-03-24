@@ -11,7 +11,7 @@ reserved = {
     'call' : 'call',
     'variable' : 'variable',
     'list' : 'list',
-    'oftype' : 'of_type',
+    'of_type' : 'of_type',
     'do' : 'do',
     'until' : 'until',
     'if' : 'if',
