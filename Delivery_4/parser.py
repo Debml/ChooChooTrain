@@ -151,19 +151,19 @@ def p_LIST_DECLARATION(p):
 
 def p_EXPRESSION(p):
 	'''
-	EXPRESSION : EXPRESSION_AUX EXP EXPRESSION_AUX1
+	EXPRESSION : EXPRESSION_AUX EXP EC_SEEN_EXPRESSION EXPRESSION_AUX1
 	'''
 
 def p_EXPRESSION_AUX(p):
 	'''
-	EXPRESSION_AUX : op_negation
+	EXPRESSION_AUX : op_negation EC_SEEN_NOT
 					 | empty
 	'''
 
 def p_EXPRESSION_AUX1(p):
 	'''
-	EXPRESSION_AUX1 : op_and EXPRESSION_AUX EXP
-					 | op_or EXPRESSION_AUX EXP
+	EXPRESSION_AUX1 : op_and EC_SEEN_AND_OR EXPRESSION
+					 | op_or EC_SEEN_AND_OR EXPRESSION
 					 | empty
 	'''
 
@@ -646,6 +646,69 @@ def p_EC_SEEN_READ_ID(p):
 		globalScope.quad_count = globalScope.quad_count + 1
 	else:
 		stop_exec("ID '" + id_to_read_into + "' is not declared")
+
+#EXPRESSION action 1:
+def p_EC_SEEN_NOT(p):
+	"EC_SEEN_NOT : "
+	globalScope.pending_operators.push("op_negation")
+
+#EXPRESSION action 2:	
+def p_EC_SEEN_AND_OR(p):
+	"EC_SEEN_AND_OR : "
+	if p[-1] == "and":
+		globalScope.pending_operators.push("op_and")
+	elif p[-1] == "or":
+		globalScope.pending_operators.push("op_or")
+
+#EXPRESSION action 3:
+def p_EC_SEEN_EXPRESSION(p):
+	"EC_SEEN_EXPRESSION : "
+	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_and" 
+														or globalScope.pending_operators.peek() == "op_or"):
+		right_operand = globalScope.pending_operands.pop()
+		right_type = globalScope.operand_types.pop()
+
+		left_operand = globalScope.pending_operands.pop()
+		left_type = globalScope.operand_types.pop()
+
+		operator = globalScope.pending_operators.pop()
+
+		result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
+
+		if result_type != -1:
+			result = "t" + str(globalScope.temp_space)
+			globalScope.temp_space = globalScope.temp_space + 1
+
+			temp_quad = Quad(operator, left_operand, right_operand, result)
+			globalScope.quads.append(temp_quad)
+			globalScope.quad_count = globalScope.quad_count + 1
+
+			globalScope.pending_operands.push(result)
+			globalScope.operand_types.push(result_type)
+
+			#free temp operand memory
+		else:
+			stop_exec("Expressions of type '" + left_type + "' and '" + right_type + "' cannot be combined")
+	elif not globalScope.pending_operators.empty() and globalScope.pending_operators.peek() == "op_negation":
+		right_operand = globalScope.pending_operands.pop()
+		right_type = globalScope.operand_types.pop()
+
+		operator = globalScope.pending_operators.pop()
+
+		if right_type == "boolean":
+			result = "t" + str(globalScope.temp_space)
+			globalScope.temp_space = globalScope.temp_space + 1
+
+			temp_quad = Quad(operator, "-1", right_operand, result)
+			globalScope.quads.append(temp_quad)
+			globalScope.quad_count = globalScope.quad_count + 1
+
+			globalScope.pending_operands.push(result)
+			globalScope.operand_types.push('boolean')
+
+			#free temp operand memory
+		else:
+			stop_exec("Not operator can only be applied to 'boolean' expression, found '" + right_type + "' expression")
 	
 def p_error(p):
 	stop_exec("Unexpected token '" + p.value.split("\n")[0] + "' found")
