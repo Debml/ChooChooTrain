@@ -10,16 +10,19 @@ tokens = scanner.tokens
 def stop_exec(message):
 	sys.exit("Error in line %d: %s" % (globalScope.line_count, message))
 
-def p_PROGRAM(p):
-	'''
-	PROGRAM : PROGRAM_AUX
-	'''
+def printResults():
 	print('Compilation Successful!')
 	globalScope.function_directory.print_table()
 	i = 0
 	for quad in globalScope.quads:
 		print("%d \t %s" % (i, quad))
 		i = i + 1
+
+def p_PROGRAM(p):
+	'''
+	PROGRAM : EC_SEEN_START_PROG PROGRAM_AUX
+	'''
+	printResults()
 
 def p_PROGRAM_AUX(p):
 	'''
@@ -295,8 +298,11 @@ def p_EC_SEEN_STARTING(p):
 	"EC_SEEN_STARTING : "
 	if globalScope.function_directory.starting_block_key == "-1":
 		globalScope.is_starting_block = True
+
+		go_to_start = globalScope.pending_jumps.pop()
+		globalScope.quads[go_to_start].set_result(globalScope.quad_count)
 	else:
-		stop_exec("Starting block is already defined")
+		stop_exec("Multiple starting blocks found")
 
 #BLOCK action 2 - Creates a new Row in FRT with block id as key
 def p_EC_SEEN_BLOCK_ID(p):
@@ -304,7 +310,7 @@ def p_EC_SEEN_BLOCK_ID(p):
 	globalScope.current_block_id = p[-1]
 	if not globalScope.function_directory.block_id_exists(globalScope.current_block_id):
 		if globalScope.is_starting_block:
-			globalScope.function_directory._starting_block_key = globalScope.current_block_id
+			globalScope.function_directory.starting_block_key = globalScope.current_block_id
 
 		globalScope.function_directory.add_block_name(globalScope.current_block_id)
 	else:
@@ -710,6 +716,16 @@ def p_EC_SEEN_EXPRESSION(p):
 		else:
 			stop_exec("Not operator can only be applied to 'boolean' expression, found '" + right_type + "' expression")
 	
+#PROGRAM action 1
+def p_EC_SEEN_START_PROG(p):
+	"EC_SEEN_START_PROG : "
+	temp_quad = Quad("op_go_to", "-1", "-1", "pending")
+	globalScope.quads.append(temp_quad)
+	globalScope.quad_count = globalScope.quad_count + 1
+
+	globalScope.pending_jumps.push(globalScope.quad_count - 1)
+	print "hi"
+
 def p_error(p):
 	stop_exec("Unexpected token '" + p.value.split("\n")[0] + "' found")
 

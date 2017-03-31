@@ -304,7 +304,7 @@ def p_EC_SEEN_BLOCK_ID(p):
 	globalScope.current_block_id = p[-1]
 	if not globalScope.function_directory.block_id_exists(globalScope.current_block_id):
 		if globalScope.is_starting_block:
-			globalScope.function_directory._starting_block_key = globalScope.current_block_id
+			globalScope.function_directory.starting_block_key = globalScope.current_block_id
 
 		globalScope.function_directory.add_block_name(globalScope.current_block_id)
 	else:

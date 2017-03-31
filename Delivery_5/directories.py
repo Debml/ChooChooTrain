@@ -212,6 +212,7 @@ class Function_Directory:
     def print_table(self):
         #print table formatted
         print("Function Reference Table\n")
+        print("Starting Block: " + self.starting_block_key)
         for key in self.function_reference_table.getInstance():
             print("*" + key + "* :")
             print("Return Type: " + self.function_reference_table[key][0])
