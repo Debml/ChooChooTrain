@@ -143,7 +143,7 @@ class Semantic_Cube:
 """
 Class holds list of quads
 """
-class Quad_list:
+class Quad_List:
 	def __init__(self):
 		self._quads = []
 		self._quad_count = 0

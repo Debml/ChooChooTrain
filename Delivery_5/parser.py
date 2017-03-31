@@ -13,10 +13,7 @@ def stop_exec(message):
 def printResults():
 	print('Compilation Successful!')
 	globalScope.function_directory.print_table()
-	i = 0
-	for quad in globalScope.quads:
-		print("%d \t %s" % (i, quad))
-		i = i + 1
+	print(globalScope.quad_list)
 
 def p_PROGRAM(p):
 	'''
@@ -300,7 +297,7 @@ def p_EC_SEEN_STARTING(p):
 		globalScope.is_starting_block = True
 
 		go_to_start = globalScope.pending_jumps.pop()
-		globalScope.quads[go_to_start].set_result(globalScope.quad_count)
+		globalScope.quad_list.set_result(go_to_start)
 	else:
 		stop_exec("Multiple starting blocks found")
 
@@ -338,7 +335,7 @@ def p_EC_SEEN_PARAM_ID(p):
 #BLOCK action 6 - save block initial quad in FRT row
 def p_EC_SEEN_BLOCK_SIGNATURE(p):
 	"EC_SEEN_BLOCK_SIGNATURE : "
-	globalScope.function_directory.add_quad_position_block(globalScope.current_block_id, globalScope.quad_count)
+	globalScope.function_directory.add_quad_position_block(globalScope.current_block_id, globalScope.quad_list.get_quad_count())
 
 #BLOCK action 7
 def p_EC_SEEN_END_BLOCK(p):
@@ -461,9 +458,7 @@ def p_EC_SEEN_TERM(p):
 			result = "t" + str(globalScope.temp_space)
 			globalScope.temp_space = globalScope.temp_space + 1
 
-			temp_quad = Quad(operator, left_operand, right_operand, result)
-			globalScope.quads.append(temp_quad)
-			globalScope.quad_count = globalScope.quad_count + 1
+			globalScope.quad_list.append_quad(operator, left_operand, right_operand, result)
 
 			globalScope.pending_operands.push(result)
 			globalScope.operand_types.push(result_type)
@@ -499,9 +494,7 @@ def p_EC_SEEN_FACTOR(p):
 			result = "t" + str(globalScope.temp_space)
 			globalScope.temp_space = globalScope.temp_space + 1
 
-			temp_quad = Quad(operator, left_operand, right_operand, result)
-			globalScope.quads.append(temp_quad)
-			globalScope.quad_count = globalScope.quad_count + 1
+			globalScope.quad_list.append_quad(operator, left_operand, right_operand, result)
 
 			globalScope.pending_operands.push(result)
 			globalScope.operand_types.push(result_type)
@@ -549,9 +542,7 @@ def p_EC_SEEN_RELOP_ITEM(p):
 				result = "t" + str(globalScope.temp_space)
 				globalScope.temp_space = globalScope.temp_space + 1
 
-				temp_quad = Quad(operator, left_operand, right_operand, result)
-				globalScope.quads.append(temp_quad)
-				globalScope.quad_count = globalScope.quad_count + 1
+				globalScope.quad_list.append_quad(operator, left_operand, right_operand, result)
 
 				globalScope.pending_operands.push(result)
 				globalScope.operand_types.push(result_type)
@@ -583,9 +574,7 @@ def p_EC_SEEN_ASSIGN_VALUE(p):
 			result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
 
 			if result_type != -1:
-				temp_quad = Quad(operator, right_operand, "-1", left_operand)
-				globalScope.quads.append(temp_quad)
-				globalScope.quad_count = globalScope.quad_count + 1
+				globalScope.quad_list.append_quad(operator, right_operand, "-1", left_operand)
 
 				#free temp operand memory
 			else:
@@ -599,11 +588,9 @@ def p_EC_SEEN_IF_EXP(p):
 	if exp_type == "boolean":
 		result = globalScope.pending_operands.pop()
 
-		temp_quad = Quad("op_go_to_f", result, "-1", "pending")
-		globalScope.quads.append(temp_quad)
-		globalScope.quad_count = globalScope.quad_count + 1
+		globalScope.quad_list.append_quad("op_go_to_f", result, "-1", "pending")
 
-		globalScope.pending_jumps.push(globalScope.quad_count - 1)
+		globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count() - 1)
 	else:
 		stop_exec("Expected a boolean expression, found '" + exp_type + "' expression instead")
 
@@ -611,23 +598,21 @@ def p_EC_SEEN_IF_EXP(p):
 def p_EC_SEEN_END_IF(p):
 	"EC_SEEN_END_IF : "
 	end_if = globalScope.pending_jumps.pop()
-	globalScope.quads[end_if].set_result(globalScope.quad_count)
+	globalScope.quad_list.set_result(end_if)
 
 #CONDITION action 3
 def p_EC_SEEN_ELSE(p):
 	"EC_SEEN_ELSE : "
-	temp_quad = Quad("op_go_to", "-1", "-1", "-1")
-	globalScope.quads.append(temp_quad)
-	globalScope.quad_count = globalScope.quad_count + 1
+	globalScope.quad_list.append_quad("op_go_to", "-1", "-1", "-1")
 
 	if_false = globalScope.pending_jumps.pop()
-	globalScope.pending_jumps.push(globalScope.quad_count - 1)
-	globalScope.quads[if_false].set_result(globalScope.quad_count)
+	globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count() - 1)
+	globalScope.quad_list.set_result(if_false)
 
 #LOOP action 1
 def p_EC_SEEN_DO(p):
 	"EC_SEEN_DO : "
-	globalScope.pending_jumps.push(globalScope.quad_count)
+	globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count())
 
 #LOOP action 2:
 def p_EC_SEEN_UNTIL(p):
@@ -638,9 +623,7 @@ def p_EC_SEEN_UNTIL(p):
 		evaluation_result = globalScope.pending_operands.pop()
 		loop_start = globalScope.pending_jumps.pop()
 
-		temp_quad = Quad("op_go_to_t", evaluation_result, "-1", loop_start)
-		globalScope.quads.append(temp_quad)
-		globalScope.quad_count = globalScope.quad_count + 1
+		globalScope.quad_list.append_quad("op_go_to_t", evaluation_result, "-1", loop_start)
 	else:
 		stop_exec("Expected a boolean expression, found '" + exp_type + "' expression instead")
 
@@ -649,9 +632,7 @@ def p_EC_SEEN_WRITE_EXP(p):
 	"EC_SEEN_WRITE_EXP : "
 	expression_to_print = globalScope.pending_operands.pop()
 
-	temp_quad = Quad("op_print", expression_to_print, "-1", "-1")
-	globalScope.quads.append(temp_quad)
-	globalScope.quad_count = globalScope.quad_count + 1
+	globalScope.quad_list.append_quad("op_print", expression_to_print, "-1", "-1")
 
 #READ action 1:
 def p_EC_SEEN_READ_ID(p):
@@ -659,9 +640,7 @@ def p_EC_SEEN_READ_ID(p):
 	id_to_read_into = p[-1]
 
 	if globalScope.function_directory.primitive_id_exists(id_to_read_into, globalScope.current_block_id):
-		temp_quad = Quad("op_input", "-1", "-1", id_to_read_into)
-		globalScope.quads.append(temp_quad)	
-		globalScope.quad_count = globalScope.quad_count + 1
+		globalScope.quad_list.append_quad("op_input", "-1", "-1", id_to_read_into)
 	else:
 		stop_exec("ID '" + id_to_read_into + "' is not declared")
 
@@ -697,9 +676,7 @@ def p_EC_SEEN_EXPRESSION(p):
 			result = "t" + str(globalScope.temp_space)
 			globalScope.temp_space = globalScope.temp_space + 1
 
-			temp_quad = Quad(operator, left_operand, right_operand, result)
-			globalScope.quads.append(temp_quad)
-			globalScope.quad_count = globalScope.quad_count + 1
+			globalScope.quad_list.append_quad(operator, left_operand, right_operand, result)
 
 			globalScope.pending_operands.push(result)
 			globalScope.operand_types.push(result_type)
@@ -717,9 +694,7 @@ def p_EC_SEEN_EXPRESSION(p):
 			result = "t" + str(globalScope.temp_space)
 			globalScope.temp_space = globalScope.temp_space + 1
 
-			temp_quad = Quad(operator, "-1", right_operand, result)
-			globalScope.quads.append(temp_quad)
-			globalScope.quad_count = globalScope.quad_count + 1
+			globalScope.quad_list.append_quad(operator, "-1", right_operand, result)
 
 			globalScope.pending_operands.push(result)
 			globalScope.operand_types.push('boolean')
@@ -731,11 +706,9 @@ def p_EC_SEEN_EXPRESSION(p):
 #PROGRAM action 1
 def p_EC_SEEN_START_PROG(p):
 	"EC_SEEN_START_PROG : "
-	temp_quad = Quad("op_go_to", "-1", "-1", "pending")
-	globalScope.quads.append(temp_quad)
-	globalScope.quad_count = globalScope.quad_count + 1
+	globalScope.quad_list.append_quad("op_go_to", "-1", "-1", "pending")
 
-	globalScope.pending_jumps.push(globalScope.quad_count - 1)
+	globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count() - 1)
 	print "hi"
 
 

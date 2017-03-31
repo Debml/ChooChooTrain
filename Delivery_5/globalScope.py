@@ -2,6 +2,7 @@ from directories import Function_Directory
 from structures import Queue
 from structures import Stack
 from structures import Semantic_Cube
+from structures import Quad_List
 
 function_directory = Function_Directory()
 semantic_cube = Semantic_Cube()
@@ -12,12 +13,11 @@ var_names = []
 current_list_id = ""
 current_list_size = ""
 current_list_type = ""
-quads = []
+quad_list = Quad_List()
 pending_operators = Stack()
 pending_operands = Stack()
 operand_types = Stack()
 pending_jumps = Stack()
 #helper variable to handle temporary results counter
 temp_space = 1
-quad_count = 0
 line_count = 1
