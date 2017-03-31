@@ -3,8 +3,6 @@ import sys
 import ply.yacc as yacc
 import globalScope
 
-from structures import Quad
-
 tokens = scanner.tokens
 
 def stop_exec(message):
@@ -305,6 +303,7 @@ def p_EC_SEEN_STARTING(p):
 def p_EC_SEEN_BLOCK_ID(p):
 	"EC_SEEN_BLOCK_ID : "
 	globalScope.current_block_id = p[-1]
+
 	if not globalScope.function_directory.block_id_exists(globalScope.current_block_id):
 		if globalScope.is_starting_block:
 			globalScope.function_directory.starting_block_key = globalScope.current_block_id
@@ -340,9 +339,8 @@ def p_EC_SEEN_BLOCK_SIGNATURE(p):
 #BLOCK action 7
 def p_EC_SEEN_END_BLOCK(p):
 	"EC_SEEN_END_BLOCK : "
-	#generate end proc
-	#delete var table
-	#print for debugging purposes
+	globalScope.quad_list.append_quad("op_end_proc", "-1", "-1", "-1")
+	globalScope.function_directory.clear_variable_list(globalScope.current_block_id)
 
 #VAR_DECLARATION action 1
 def p_EC_SEEN_VAR_KEYWORD(p):
@@ -709,9 +707,6 @@ def p_EC_SEEN_START_PROG(p):
 	globalScope.quad_list.append_quad("op_go_to", "-1", "-1", "pending")
 
 	globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count() - 1)
-	print "hi"
-
-
 
 def p_error(p):
 	stop_exec("Unexpected token '" + p.value.split("\n")[0] + "' found")

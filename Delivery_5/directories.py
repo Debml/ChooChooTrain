@@ -203,17 +203,17 @@ class Function_Directory:
 
                     return False
 
-    #clears variable list in function
-    def clear_variable(self, block_key = None):
+    #clears variable list (primitives and lists) in a function
+    def clear_variable_list(self, block_key = None):
         #block id should have value
         if block_key is not None:
             #if block exists
             if self.block_id_exists(block_key):
                 #clear primitive table
-                self.function_reference_table[block_id][1][0] = Dictionary()
+                self.function_reference_table[block_key][1][0] = Dictionary()
             
                 #clear list table
-                self.function_reference_table[block_id][1][1] = Dictionary()
+                self.function_reference_table[block_key][1][1] = Dictionary()
 
     #print block information for all blocks
     def print_table(self):
