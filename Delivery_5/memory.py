@@ -6,17 +6,8 @@ class Memory_Handler:
 		self._constant_memory = [0,0,0,0]
 		#counter for variable memory
 		self._variable_memory = [0,0,0,0]
-		#counter for function memory
-		self._function_memory = 0
 
-	#Get memory address of block
-	def _get_memory_address_block(self):
-		#memory address for block
-		address = (100+self._function_memory)
-		self._function_memory = self._function_memory+1
-		return address
-
-	#Get memory address of block
+	#Get memory address of variable
 	def _get_memory_address_variable(self, variable_type = None):
 		#variable_type should have value
 		if variable_type is not None:
@@ -48,7 +39,7 @@ class Memory_Handler:
 			else:
 				return -1
 
-	#Get memory address of block
+	#Get memory address of constant
 	def _get_memory_address_constant(self, constant_type = None):
 		#constant_type should have value
 		if constant_type is not None:

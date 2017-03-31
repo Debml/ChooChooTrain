@@ -1,11 +1,18 @@
-block Block16
+block Block1
 {
-	variable var1, var2, var3, var7 of type whole;
+	variable var1 of type whole;
 
 	var1 = 1 + 1;
 }
 
-starting block Block15
+block Block2
+{
+	variable var1 of type whole;
+
+	var1 = 2 + 1;
+}
+
+starting block Block3
 receives :
 parameter1 of type decimal,
 parameter2 of type whole,

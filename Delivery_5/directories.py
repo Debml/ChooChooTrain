@@ -27,31 +27,26 @@ class Function_Directory:
     def add_block_name(self, block_name = None):
         #block_name should have value
         if block_name is not None:
-            #private variable for block return type (string)
+            #public variable for block return type (string)
             return_type = "void"
 
-            #private variable for block primitives (Dictionary)
+            #public variable for block primitives (Dictionary)
             primitives = Dictionary()
 
-            #private variable for block lists (Dictionary)
+            #public variable for block lists (Dictionary)
             lists = Dictionary()
 
-            #private variable for block parameters(list)
+            #public variable for block parameters(list)
             parameters = []
 
-            #private variable for block memory address (string)
-            memory_address = ""
+            #public variable for quad position where block begins
+            quad_position = -1
 
             #declare block_data
-            block_data = [return_type,[primitives,lists],parameters,memory_address]
+            block_data = [return_type, [primitives, lists], parameters, quad_position]
 
             #add new block name as key
-            self.function_reference_table.insert(block_name,block_data)
-
-            #Add memory address to block
-            memory_address =  self._memory_handler._get_memory_address_block()
-
-            self.add_memory_address_block(block_name, memory_address)
+            self.function_reference_table.insert(block_name, block_data)
 
     #Key for current block, add block return type if any    
     def add_block_return_type(self, key = None, block_return_type = None):
@@ -117,13 +112,12 @@ class Function_Directory:
                 #Index 0 of list is for parameter list
                 self.function_reference_table[key][2].append(parameter_type)
 
-    #Key for current block, add memory address of block
-    def add_memory_address_block(self, key, memory_address = None):
-        #memory_address should have value
-        if memory_address is not None:
-            #Index 3 of list is for memory address
-            if (memory_address != -1):
-                self.function_reference_table[key][3] = memory_address
+    #Key for current block, add quad_position of block
+    def add_quad_position_block(self, key, quad_position = None):
+        #quad_position should have value
+        if quad_position is not None:
+            #Index 3 of list is for quad_position
+            self.function_reference_table[key][3] = quad_position
 
     #Check if a function id does not exist in the Function Reference Table
     def block_id_exists(self, block_id = None):
@@ -224,7 +218,7 @@ class Function_Directory:
             print(self.function_reference_table[key][2])
             print("Constants: ")
             print(self.constant_table)
-            print("Function Memory Address: ")
+            print("Function Starting Quad: ")
             print(self.function_reference_table[key][3])
             print("\n")
 

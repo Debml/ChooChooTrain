@@ -32,7 +32,7 @@ def p_PROGRAM_AUX(p):
 
 def p_BLOCK(p):
 	'''
-	BLOCK : BLOCK_AUX block id EC_SEEN_BLOCK_ID RECEIVES_AUX RETURNS_AUX BLOCK_BODY
+	BLOCK : BLOCK_AUX block id EC_SEEN_BLOCK_ID RECEIVES_AUX RETURNS_AUX EC_SEEN_BLOCK_SIGNATURE BLOCK_BODY EC_SEEN_END_BLOCK
 	'''
 
 def p_BLOCK_AUX(p):
@@ -334,6 +334,18 @@ def p_EC_SEEN_RETURN_TYPE(p):
 def p_EC_SEEN_PARAM_ID(p):
 	"EC_SEEN_PARAM_ID : "
 	globalScope.current_var_id = p[-1]
+
+#BLOCK action 6 - save block initial quad in FRT row
+def p_EC_SEEN_BLOCK_SIGNATURE(p):
+	"EC_SEEN_BLOCK_SIGNATURE : "
+	globalScope.function_directory.add_quad_position_block(globalScope.current_block_id, globalScope.quad_count)
+
+#BLOCK action 7
+def p_EC_SEEN_END_BLOCK(p):
+	"EC_SEEN_END_BLOCK : "
+	#generate end proc
+	#delete var table
+	#print for debugging purposes
 
 #VAR_DECLARATION action 1
 def p_EC_SEEN_VAR_KEYWORD(p):
@@ -725,6 +737,8 @@ def p_EC_SEEN_START_PROG(p):
 
 	globalScope.pending_jumps.push(globalScope.quad_count - 1)
 	print "hi"
+
+
 
 def p_error(p):
 	stop_exec("Unexpected token '" + p.value.split("\n")[0] + "' found")
