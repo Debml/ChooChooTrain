@@ -119,6 +119,13 @@ class Function_Directory:
             #Index 3 of list is for quad_position
             self.function_reference_table[key][3] = quad_position
 
+    def get_variable_type_for_block(self, var_id = None, block_id = None):
+        #var_id should have value
+        if var_id is not None:
+            #block_id should have value
+            if block_id is not None:
+                return self.function_reference_table[block_id][1][0][var_id][0]
+
     #Check if a function id does not exist in the Function Reference Table
     def block_id_exists(self, block_id = None):
         #block_id should have value
@@ -181,6 +188,7 @@ class Function_Directory:
                                     
                 return False
 
+    #returns if value exists in constant table
     def constant_exists(self, constant_value = None, constant_type = None):
         #constant_id should have value
         if constant_value is not None:
@@ -195,12 +203,17 @@ class Function_Directory:
 
                     return False
 
-    def get_variable_type_for_block(self, var_id = None, block_id = None):
-        #var_id should have value
-        if var_id is not None:
-            #block_id should have value
-            if block_id is not None:
-                return self.function_reference_table[block_id][1][0][var_id][0]
+    #clears variable list in function
+    def clear_variable(self, block_key = None):
+        #block id should have value
+        if block_key is not None:
+            #if block exists
+            if self.block_id_exists(block_key):
+                #clear primitive table
+                self.function_reference_table[block_id][1][0] = Dictionary()
+            
+                #clear list table
+                self.function_reference_table[block_id][1][1] = Dictionary()
 
     #print block information for all blocks
     def print_table(self):
