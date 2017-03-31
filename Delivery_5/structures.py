@@ -143,21 +143,21 @@ class Semantic_Cube:
 """
 Class holds list of quads
 """
-class QuadList:
+class Quad_list:
 	def __init__(self):
 		self._quads = []
 		self._quad_count = 0
 
 	def __str__(self):
-		return ('\n'.join('{} \t {}'.format(1,quad) for quad in self._quads))
+		return ('\n'.join('{} \t {}'.format(index,quad) for index, quad in enumerate(self._quads,start = 0)))
 
 	def append_quad(self,operator, left_operand, right_operand, result):
 		temp_quad = Quad(operator, left_operand, right_operand, result)
 		self._quads.append(temp_quad)
 		self._quad_count = self._quad_count + 1
 
-	def set_result(self, quad_index, quad_count):
-		self._quads[quad_index].set_result(quad_count)
+	def set_result(self, quad_index):
+		self._quads[quad_index].set_result(self._quad_count)
 
 	def get_quad_count(self):
 		return self._quad_count
@@ -447,4 +447,3 @@ if __name__ == '__main__':
     quadli.append_quad('gotoT', 'T1', '20', 'D')
 
     print quadli
-
