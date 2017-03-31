@@ -119,12 +119,19 @@ class Function_Directory:
             #Index 3 of list is for quad_position
             self.function_reference_table[key][3] = quad_position
 
-    def get_variable_type_for_block(self, var_id = None, block_id = None):
-        #var_id should have value
-        if var_id is not None:
-            #block_id should have value
-            if block_id is not None:
-                return self.function_reference_table[block_id][1][0][var_id][0]
+    #Get parameter count
+    def get_parameter_count(self, block_id = None):
+        #block_id should have value
+        if block_id is not None:
+            #parameter signature
+            return len(self.function_reference_table[block_id][2])
+
+    #Get variable count
+    def get_variable_count(self, block_id = None):
+        #block_id should have value
+        if block_id is not None:
+           #add primitives and list 
+            return self.function_reference_table[block_id][1][0].size()+self.function_reference_table[block_id][1][1].size()
 
     #Check if a function id does not exist in the Function Reference Table
     def block_id_exists(self, block_id = None):
@@ -278,5 +285,14 @@ if __name__ == '__main__':
     directory.add_list("Block2","listvariable1","5","whole")
 
     directory.print_table()
-    directory.print_variable_list("Block1")
+
+    print ("NUM VARS")
+    print directory.get_variable_count("Block1")
+    print ("NUM PARAMS")
+    print directory.get_parameter_count("Block1")
+
+    print ("NUM VARS")
+    print directory.get_variable_count("Block2")
+    print ("NUM PARAMS")
+    print directory.get_parameter_count("Block2")
     
