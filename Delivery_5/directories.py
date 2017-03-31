@@ -229,10 +229,22 @@ class Function_Directory:
             print(self.function_reference_table[key][1][1])
             print("Parameters: ")
             print(self.function_reference_table[key][2])
-            print("Constants: ")
-            print(self.constant_table)
             print("Function Starting Quad: ")
             print(self.function_reference_table[key][3])
+            print("\n")
+        print("Constants: ")
+        print(self.constant_table)
+        print("\n")
+
+    #print variable list for specific block
+    def print_variable_list(self, block_key = None):
+        #print table formatted
+        print("Variable Table for " + block_key)
+        if self.block_id_exists(block_key):
+            print("Primitives: ")
+            print(self.function_reference_table[block_key][1][0])
+            print("Lists: ")
+            print(self.function_reference_table[block_key][1][1])
             print("\n")
 
 #for testing purposes
@@ -266,4 +278,5 @@ if __name__ == '__main__':
     directory.add_list("Block2","listvariable1","5","whole")
 
     directory.print_table()
+    directory.print_variable_list("Block1")
     
