@@ -141,6 +141,28 @@ class Semantic_Cube:
 							return -1
 
 """
+Class holds list of quads
+"""
+class QuadList:
+	def __init__(self):
+		self._quads = []
+		self._quad_count = 0
+
+	def __str__(self):
+		return ('\n'.join('{} \t {}'.format(1,quad) for quad in self._quads))
+
+	def append_quad(self,operator, left_operand, right_operand, result):
+		temp_quad = Quad(operator, left_operand, right_operand, result)
+		self._quads.append(temp_quad)
+		self._quad_count = self._quad_count + 1
+
+	def set_result(self, quad_index, quad_count):
+		self._quads[quad_index].set_result(quad_count)
+
+	def get_quad_count(self):
+		return self._quad_count
+
+"""
 Quadruple class represents quadruple for intermediate code representation
 """
 class Quad:
@@ -418,11 +440,11 @@ if __name__ == '__main__':
     cube = Semantic_Cube()
     print cube.validate_operation("op_addition","words","whole")
 
-    que = Queue()
-    que.push(quad_1)
-    que.push(quad_2)
-    que.push(quad_3)
-    que.push(quad_4)
+    quadli = QuadList()
+    quadli.append_quad('=', '5', '-1', 'B')
+    quadli.append_quad('+', '10', '20', 'A')
+    quadli.append_quad('goto', '-1', '20', "pending")
+    quadli.append_quad('gotoT', 'T1', '20', 'D')
 
-    print que
+    print quadli
 
