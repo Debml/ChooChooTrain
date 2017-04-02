@@ -16,4 +16,6 @@ returns whole
 		A = 0;
 	}
 	A = A + 1;
+
+	return A;
 }

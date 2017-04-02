@@ -32,4 +32,6 @@ returns whole
 			} until (A > A * 2)
 		}
 	} until (A < B)
+
+	return A;
 }

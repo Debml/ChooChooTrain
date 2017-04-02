@@ -7,6 +7,7 @@ from structures import Quad_List
 function_directory = Function_Directory()
 semantic_cube = Semantic_Cube()
 is_starting_block = False
+block_returns = False
 current_block_id = ""
 current_var_id = ""
 var_names = []

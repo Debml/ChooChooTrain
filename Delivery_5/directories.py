@@ -119,6 +119,19 @@ class Function_Directory:
             #Index 3 of list is for quad_position
             self.function_reference_table[key][3] = quad_position
 
+    def get_block_return_type(self, block_name):
+        #block_name should not be none
+        if block_name is not None:
+            #Index 0 of list is for block return type
+            return self.function_reference_table[block_name][0]
+
+    def get_variable_type_for_block(self, var_id = None, block_id = None):
+        #var_id should have value
+        if var_id is not None:
+            #block_id should have value
+            if block_id is not None:
+                return self.function_reference_table[block_id][1][0][var_id][0]            
+
     #Get parameter count
     def get_parameter_count(self, block_id = None):
         #block_id should have value

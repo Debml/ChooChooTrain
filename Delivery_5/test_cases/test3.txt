@@ -8,4 +8,6 @@ returns whole
 	variable a, b, f of type whole;
 	print(a, b, f*2+1);
 	input(a);
+
+	return a;
 }

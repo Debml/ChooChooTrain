@@ -6,10 +6,12 @@ block Block1
 }
 
 block Block2
+returns whole
 {
 	variable var1 of type whole;
 
 	var1 = 2 + 1;
+	return var1;
 }
 
 starting block Block3
@@ -32,7 +34,7 @@ returns whole
 			B = B + D;
 		}
 		else {
-			C = A + B;
+			return A;
 		}
 	}
 	else {

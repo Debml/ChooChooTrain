@@ -27,7 +27,7 @@ def p_PROGRAM_AUX(p):
 
 def p_BLOCK(p):
 	'''
-	BLOCK : BLOCK_AUX block id EC_SEEN_BLOCK_ID RECEIVES_AUX RETURNS_AUX EC_SEEN_BLOCK_SIGNATURE BLOCK_BODY EC_SEEN_END_BLOCK
+	BLOCK : BLOCK_AUX block id EC_SEEN_BLOCK_ID RECEIVES_AUX RETURNS_AUX EC_SEEN_BLOCK_SIGNATURE BLOCK_BODY
 	'''
 
 def p_BLOCK_AUX(p):
@@ -56,7 +56,7 @@ def p_RETURNS_AUX(p):
 
 def p_BLOCK_BODY(p):
 	'''
-	BLOCK_BODY : curlybraces_open BLOCK_BODY_AUX curlybraces_close
+	BLOCK_BODY : curlybraces_open BLOCK_BODY_AUX EC_SEEN_BLOCK_BODY_END curlybraces_close
 	'''
 
 def p_BLOCK_BODY_AUX1(p):
@@ -258,7 +258,7 @@ def p_ASSIGN_AUX(p):
 
 def p_RETURN(p):
 	'''
-	RETURN : return_statement EXPRESSION semicolon
+	RETURN : return_statement EXPRESSION EC_SEEN_RETURN semicolon
 	'''
 
 def p_READ(p):
@@ -302,6 +302,7 @@ def p_EC_SEEN_STARTING(p):
 #BLOCK action 2 - Creates a new Row in FRT with block id as key
 def p_EC_SEEN_BLOCK_ID(p):
 	"EC_SEEN_BLOCK_ID : "
+	globalScope.block_returns = False
 	globalScope.current_block_id = p[-1]
 
 	if not globalScope.function_directory.block_id_exists(globalScope.current_block_id):
@@ -336,11 +337,16 @@ def p_EC_SEEN_BLOCK_SIGNATURE(p):
 	"EC_SEEN_BLOCK_SIGNATURE : "
 	globalScope.function_directory.add_quad_position_block(globalScope.current_block_id, globalScope.quad_list.get_quad_count())
 
-#BLOCK action 7
-def p_EC_SEEN_END_BLOCK(p):
-	"EC_SEEN_END_BLOCK : "
-	globalScope.quad_list.append_quad("op_end_proc", "-1", "-1", "-1")
-	globalScope.function_directory.clear_variable_list(globalScope.current_block_id)
+#BLOCK_BODY action 1
+def p_EC_SEEN_BLOCK_BODY_END(p):
+	"EC_SEEN_BLOCK_BODY_END : "
+	block_return_type = globalScope.function_directory.get_block_return_type(globalScope.current_block_id)
+
+	if (globalScope.block_returns and block_return_type != "void") or (not globalScope.block_returns and block_return_type == "void"):
+		globalScope.quad_list.append_quad("op_end_proc", "-1", "-1", "-1")
+		globalScope.function_directory.clear_variable_list(globalScope.current_block_id)
+	else:
+		stop_exec("Block '" + globalScope.current_block_id + "' should return a '" + block_return_type + "' value")
 
 #VAR_DECLARATION action 1
 def p_EC_SEEN_VAR_KEYWORD(p):
@@ -707,6 +713,24 @@ def p_EC_SEEN_START_PROG(p):
 	globalScope.quad_list.append_quad("op_go_to", "-1", "-1", "pending")
 
 	globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count() - 1)
+
+#RETURN action 1
+def p_EC_SEEN_RETURN(p):
+	"EC_SEEN_RETURN : "
+	block_return_type = globalScope.function_directory.get_block_return_type(globalScope.current_block_id)
+
+	if block_return_type != "void":
+		return_type = globalScope.operand_types.pop()
+
+		if return_type == block_return_type:
+			return_value = globalScope.pending_operands.pop()
+			globalScope.quad_list.append_quad("op_return", return_value, "-1", "-1")
+			globalScope.block_returns = True
+		else:
+			stop_exec("Block '" + globalScope.current_block_id + "' should return a '" + block_return_type + "' value, found a '" + return_type + "' value instead")
+
+	else:
+		stop_exec("Block '" + globalScope.current_block_id + "' should not return a value")
 
 def p_error(p):
 	stop_exec("Unexpected token '" + p.value.split("\n")[0] + "' found")
