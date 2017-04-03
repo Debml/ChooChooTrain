@@ -10,6 +10,7 @@ is_starting_block = False
 block_returns = False
 current_block_id = ""
 current_var_id = ""
+call_block_id = ""
 var_names = []
 current_list_id = ""
 current_list_size = ""
@@ -22,3 +23,4 @@ pending_jumps = Stack()
 #helper variable to handle temporary results counter
 temp_space = 1
 line_count = 1
+block_argument_counter = 0

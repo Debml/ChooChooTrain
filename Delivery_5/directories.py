@@ -36,7 +36,7 @@ class Function_Directory:
             #public variable for block lists (Dictionary)
             lists = Dictionary()
 
-            #public variable for block parameters(list)
+            #public variable for block parameters types(list)
             parameters = []
 
             #public variable for quad position where block begins
@@ -118,29 +118,45 @@ class Function_Directory:
         if quad_position is not None:
             #Index 3 of list is for quad_position
             self.function_reference_table[key][3] = quad_position
+    #Gets the number of the first quad for a given block
+    def get_quad_position_block(self, block_name):
+        #block_name should have value
+        if block_name is not None:
+            #Index 3 of list is for quad_position
+            return self.function_reference_table[block_name][3]
 
-    def get_block_return_type(self, block_name):
+    #Gets the return type for a block
+    def get_return_type_for_block(self, block_name):
         #block_name should not be none
         if block_name is not None:
             #Index 0 of list is for block return type
             return self.function_reference_table[block_name][0]
-
+    #Gets the variable type for a variable in a given block
     def get_variable_type_for_block(self, var_id = None, block_id = None):
         #var_id should have value
         if var_id is not None:
             #block_id should have value
             if block_id is not None:
-                return self.function_reference_table[block_id][1][0][var_id][0]            
+                return self.function_reference_table[block_id][1][0][var_id][0]   
+
+    #Gets the Nth (param_count) parameter data type for a given block
+    def get_parameter_type_for_block(self, block_id, n):
+        #block_id should have value
+        if block_id is not None:
+            #n should have value
+            if n is not None:
+                #Index 2 is the list of parameter types
+                return self.function_reference_table[block_id][2][n]
 
     #Get parameter count
-    def get_parameter_count(self, block_id = None):
+    def get_parameter_count_for_block(self, block_id = None):
         #block_id should have value
         if block_id is not None:
             #parameter signature
             return len(self.function_reference_table[block_id][2])
 
     #Get variable count
-    def get_variable_count(self, block_id = None):
+    def get_variable_count_for_block(self, block_id = None):
         #block_id should have value
         if block_id is not None:
            #add primitives and list 

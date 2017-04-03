@@ -231,13 +231,20 @@ def p_STATEMENT(p):
 
 def p_CALL(p):
 	'''
-	CALL : call id parenthesis_open EXPRESSION CALL_AUX parenthesis_close semicolon
+	CALL : call id EC_SEEN_CALL_VOID_BLOCK_ID parenthesis_open EC_SEEN_START_PARAM CALL_AUX parenthesis_close EC_SEEN_BLOCK_CALL semicolon
 	'''
 
 def p_CALL_AUX(p):
 	'''
-	CALL_AUX : comma EXPRESSION CALL_AUX
+	CALL_AUX : EXPRESSION EC_SEEN_PARAM CALL_AUX2
 			   | empty
+
+	'''	
+
+def p_CALL_AUX2(p):
+	'''
+	CALL_AUX2 : comma EXPRESSION EC_SEEN_PARAM CALL_AUX2
+			    | empty
 	'''
 
 def p_LOOP(p):
@@ -340,7 +347,7 @@ def p_EC_SEEN_BLOCK_SIGNATURE(p):
 #BLOCK_BODY action 1
 def p_EC_SEEN_BLOCK_BODY_END(p):
 	"EC_SEEN_BLOCK_BODY_END : "
-	block_return_type = globalScope.function_directory.get_block_return_type(globalScope.current_block_id)
+	block_return_type = globalScope.function_directory.get_return_type_for_block(globalScope.current_block_id)
 
 	if (globalScope.block_returns and block_return_type != "void") or (not globalScope.block_returns and block_return_type == "void"):
 		globalScope.quad_list.append_quad("op_end_proc", "-1", "-1", "-1")
@@ -717,7 +724,7 @@ def p_EC_SEEN_START_PROG(p):
 #RETURN action 1
 def p_EC_SEEN_RETURN(p):
 	"EC_SEEN_RETURN : "
-	block_return_type = globalScope.function_directory.get_block_return_type(globalScope.current_block_id)
+	block_return_type = globalScope.function_directory.get_return_type_for_block(globalScope.current_block_id)
 
 	if block_return_type != "void":
 		return_type = globalScope.operand_types.pop()
@@ -731,6 +738,56 @@ def p_EC_SEEN_RETURN(p):
 
 	else:
 		stop_exec("Block '" + globalScope.current_block_id + "' should not return a value")
+
+#CALL action 1
+def p_EC_SEEN_CALL_VOID_BLOCK_ID(p):
+	"EC_SEEN_CALL_VOID_BLOCK_ID : "
+	globalScope.call_block_id = p[-1]
+
+	if globalScope.function_directory.block_id_exists(globalScope.call_block_id):
+		call_block_return_type = globalScope.function_directory.get_return_type_for_block(globalScope.call_block_id)
+
+		if  call_block_return_type != "void":
+			stop_exec("Block '" + globalScope.call_block_id + "' returns a '" + call_block_return_type + "' value, but is not being assigned to anything")
+	else:
+		stop_exec("Block '" + globalScope.call_block_id + "' does not exist or is declared below '" + globalScope.current_block_id + "'")
+
+#CALL action 2
+def p_EC_SEEN_START_PARAM(p):
+	"EC_SEEN_START_PARAM : "
+	globalScope.quad_list.append_quad("op_era", globalScope.call_block_id, "-1", "-1")			
+	globalScope.block_argument_counter = 0
+
+#CALL action 3
+def p_EC_SEEN_PARAM(p):
+	"EC_SEEN_PARAM : "
+	argument_type = globalScope.operand_types.pop()
+
+	try:
+		parameter_type = globalScope.function_directory.get_parameter_type_for_block(globalScope.call_block_id, globalScope.block_argument_counter)
+	except IndexError:
+		block_parameter_counter = globalScope.function_directory.get_parameter_count_for_block(globalScope.call_block_id)
+		stop_exec("Block '" + globalScope.call_block_id + "' receives " + str(block_parameter_counter) + " parameter(s), found " + str(globalScope.block_argument_counter + 1) + " argument(s) instead")
+
+	globalScope.block_argument_counter = globalScope.block_argument_counter + 1
+
+	if argument_type == parameter_type:
+		argument = globalScope.pending_operands.pop()
+		result = "param" + str(globalScope.block_argument_counter)
+		globalScope.quad_list.append_quad("op_param", argument, "-1", result)
+	else:
+		stop_exec("Argument #" + str(globalScope.block_argument_counter) + " of block '" + globalScope.call_block_id + "' should be a '" + parameter_type + "' value, found a '" + argument_type + "' value instead")
+
+#CALL action 4
+def p_EC_SEEN_BLOCK_CALL(p):
+	"EC_SEEN_BLOCK_CALL : "
+	block_parameter_counter = globalScope.function_directory.get_parameter_count_for_block(globalScope.call_block_id)
+
+	if  block_parameter_counter == globalScope.block_argument_counter:
+		call_block_initial_quad = globalScope.function_directory.get_quad_position_block(globalScope.call_block_id)
+		globalScope.quad_list.append_quad("op_go_sub", globalScope.call_block_id, "-1", call_block_initial_quad)
+	else:
+		stop_exec("Block '" + globalScope.call_block_id + "' receives " + str(block_parameter_counter) + " parameter(s), found " + str(globalScope.block_argument_counter) + " argument(s) instead")
 
 def p_error(p):
 	stop_exec("Unexpected token '" + p.value.split("\n")[0] + "' found")
