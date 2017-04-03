@@ -115,15 +115,22 @@ def p_CONSTANT(p):
 def p_CONSTANT_AUX(p):
 	'''
 	CONSTANT_AUX : squarebracket_open ITEM squarebracket_close
-				   | parenthesis_open EXPRESSION CONSTANT_AUX1 parenthesis_close
+				   | parenthesis_open CONSTANT_AUX1 parenthesis_close
 				   |  EC_SEEN_CONST SEEN_CONST_ID empty
 	'''
 
 def p_CONSTANT_AUX1(p):
 	'''
-	CONSTANT_AUX1 : comma EXPRESSION CONSTANT_AUX1
-					| empty
+	CALL_AUX : EXPRESSION CONSTANT_AUX2
+			   | empty
+
+	'''	
+
+def p_CONSTANT_AUX2(p):
 	'''
+	CALL_AUX2 : comma EXPRESSION CONSTANT_AUX2
+			    | empty
+	'''	
 
 def p_DECLARATIONS(p):
 	'''
