@@ -1,3 +1,12 @@
+block cero
+returns whole
+{
+	variable b of type whole;
+
+	print(cero());
+	return b;
+}
+
 block uno
 receives :
 a of type whole 
@@ -39,8 +48,7 @@ starting block main
 	f = 3.14;
 
 	call dos(a + b * 2, b, f * 3);
-	call dos(a, b, f * 3);
-
-	print(a, b, f * 2 + 1);
+	print(cero(), b, f * 2 + 1);
+	call dos(cero(), uno(1), 1.2);
 }
 

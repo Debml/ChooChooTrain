@@ -115,20 +115,20 @@ def p_CONSTANT(p):
 def p_CONSTANT_AUX(p):
 	'''
 	CONSTANT_AUX : squarebracket_open ITEM squarebracket_close
-				   |  parenthesis_open CONSTANT_AUX1 parenthesis_close
-				   |  EC_SEEN_CONST SEEN_CONST_ID empty
+				   |  EC_SEEN_CALL_VAL_BLOCK_ID parenthesis_open EC_SEEN_START_PARAM CONSTANT_AUX1 parenthesis_close EC_SEEN_BLOCK_CALL_VAL
+				   |  EC_SEEN_CONST EC_SEEN_CONST_ID empty
 	'''
 
 def p_CONSTANT_AUX1(p):
 	'''
-	CONSTANT_AUX1 : EXPRESSION CONSTANT_AUX2
+	CONSTANT_AUX1 : EXPRESSION EC_SEEN_PARAM CONSTANT_AUX2
 			   | empty
 
 	'''	
 
 def p_CONSTANT_AUX2(p):
 	'''
-	CONSTANT_AUX2 : comma EXPRESSION CONSTANT_AUX2
+	CONSTANT_AUX2 : comma EXPRESSION EC_SEEN_PARAM CONSTANT_AUX2
 			    | empty
 	'''	
 
@@ -267,7 +267,7 @@ def p_ASSIGN(p):
 def p_ASSIGN_AUX(p):
 	'''
 	ASSIGN_AUX : squarebracket_open ITEM squarebracket_close
-				 | EC_SEEN_CONST SEEN_CONST_ID empty
+				 | EC_SEEN_CONST EC_SEEN_CONST_ID empty
 	'''
 
 def p_RETURN(p):
@@ -421,8 +421,8 @@ def p_EC_SEEN_CONST(p):
 	globalScope.pending_operands.push(p[-1])
 
 #CONSTANT action 2
-def p_SEEN_CONST_ID(p):
-	"SEEN_CONST_ID : "
+def p_EC_SEEN_CONST_ID(p):
+	"EC_SEEN_CONST_ID : "
 	#checks the id type in the FRT
 	if globalScope.function_directory.primitive_id_exists(globalScope.pending_operands.peek(), globalScope.current_block_id):
 		globalScope.operand_types.push(globalScope.function_directory.get_variable_type_for_block(globalScope.pending_operands.peek(), globalScope.current_block_id))
@@ -448,6 +448,16 @@ def p_SEEN_CONST_WORDS(p):
 def p_SEEN_CONST_BOOLEAN(p):
 	"SEEN_CONST_BOOLEAN : "
 	globalScope.operand_types.push("boolean")
+
+#CONSTANT action 7
+def p_EC_SEEN_CALL_VAL_BLOCK_ID(p):
+	"EC_SEEN_CALL_VAL_BLOCK_ID : "
+	seen_block_id(p, True)
+
+#CONSTANT action 8
+def p_EC_SEEN_BLOCK_CALL_VAL(p):
+	"EC_SEEN_BLOCK_CALL_VAL : "
+	seen_block_call(p, True)
 
 #ITEM action 1
 def p_EC_SEEN_ITEM_OP(p):
@@ -749,14 +759,21 @@ def p_EC_SEEN_RETURN(p):
 #CALL action 1
 def p_EC_SEEN_CALL_VOID_BLOCK_ID(p):
 	"EC_SEEN_CALL_VOID_BLOCK_ID : "
+	seen_block_id(p, False)
+
+def seen_block_id(p, returns_value):
 	call_block_id = p[-1]
 	globalScope.pending_blocks.push(call_block_id)
 
 	if globalScope.function_directory.block_id_exists(call_block_id):
 		call_block_return_type = globalScope.function_directory.get_return_type_for_block(call_block_id)
 
-		if call_block_return_type != "void":
-			stop_exec("Block '" + call_block_id + "' returns a '" + call_block_return_type + "' value, but is not being assigned to anything")
+		if not returns_value:
+			if call_block_return_type != "void":
+				stop_exec("Block '" + call_block_id + "' returns a '" + call_block_return_type + "' value, but is not being assigned to anything")
+		else:
+			if call_block_return_type == "void":
+				stop_exec("Block '" + call_block_id + "' does not return a value")
 	else:
 		stop_exec("Block '" + call_block_id + "' does not exist or is declared below '" + globalScope.current_block_id + "'")
 
@@ -794,6 +811,9 @@ def p_EC_SEEN_PARAM(p):
 #CALL action 4
 def p_EC_SEEN_BLOCK_CALL(p):
 	"EC_SEEN_BLOCK_CALL : "
+	seen_block_call(p, False)
+
+def seen_block_call(p, returns_value):
 	call_block_id = globalScope.pending_blocks.pop()
 	block_parameter_counter = globalScope.function_directory.get_parameter_count_for_block(call_block_id)
 	block_argument_counter = globalScope.pending_block_argument_counter.pop()
@@ -801,8 +821,19 @@ def p_EC_SEEN_BLOCK_CALL(p):
 	if  block_parameter_counter == block_argument_counter:
 		call_block_initial_quad = globalScope.function_directory.get_quad_position_block(call_block_id)
 		globalScope.quad_list.append_quad("op_go_sub", call_block_id, "-1", call_block_initial_quad)
+
+		if returns_value:
+			result = "t" + str(globalScope.temp_space)
+			globalScope.temp_space = globalScope.temp_space + 1
+			globalScope.quad_list.append_quad("op_assign", call_block_id, "-1", result)
+
+			globalScope.pending_operands.push(result)
+			return_type = globalScope.function_directory.get_return_type_for_block(call_block_id)
+			globalScope.operand_types.push(return_type)
+
 	else:
 		stop_exec("Block '" + call_block_id + "' receives " + str(block_parameter_counter) + " parameter(s), found " + str(block_argument_counter) + " argument(s) instead")
+
 
 def p_error(p):
 	stop_exec("Unexpected token '" + p.value.split("\n")[0] + "' found")
