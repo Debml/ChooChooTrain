@@ -7,6 +7,7 @@ This Class contains two instance variables representing values for
 2. Function Reference Table: Python Dictionary
 """
 from structures import Dictionary
+from structures import Stack
 from memory import Memory_Handler
 
 class Function_Directory:
