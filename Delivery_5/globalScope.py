@@ -20,6 +20,8 @@ pending_operators = Stack()
 pending_operands = Stack()
 operand_types = Stack()
 pending_jumps = Stack()
+pending_blocks = Stack()
+pending_block_argument_counter = Stack()
 #helper variable to handle temporary results counter
 temp_space = 1
 line_count = 1
