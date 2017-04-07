@@ -42,12 +42,28 @@ class Function_Directory:
             #public variable for quad position where block begins
             quad_position = -1
 
+            #public variable for return value of function
+            return_value = Stack()
+
             #declare block_data
-            block_data = [return_type, [primitives, lists], parameters, quad_position]
+            block_data = [return_type, [primitives, lists], parameters, quad_position, return_value]
 
             #add new block name as key
             self.function_reference_table.insert(block_name, block_data)
 
+    def push_block_return_value(self, key = None, block_return_value = None):
+        #key should have value
+        if key is not None:
+            #block_return_value should have some value
+            if block_return_value is not None:
+                self.function_reference_table[key][4].push(block_return_value)
+
+    def pop_block_return_value(self,key = None):
+        #key should have value
+        if key is not None:
+            #pop from stack
+            return self.function_reference_table[key][4].pop()
+            
     #Key for current block, add block return type if any    
     def add_block_return_type(self, key = None, block_return_type = None):
         #key should have value
