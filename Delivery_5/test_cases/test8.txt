@@ -1,0 +1,12 @@
+starting block Block15
+receives :
+parameter1 of type decimal,
+parameter2 of type whole,
+parameter3 of type words
+{
+	list a[5] of type whole;
+	variable b of type whole;
+	variable c of type decimal;
+
+	b = a[1];
+}

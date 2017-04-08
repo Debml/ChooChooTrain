@@ -89,23 +89,21 @@ class Function_Directory:
                     self.function_reference_table[key][1][0].insert(variable_name,variable_data)
 
     #Key for current block, add list to list dictionary 
-    def add_list(self, key = None, variable_name = None, variable_size = None, variable_type = None):
+    def add_list(self, key = None, list_id = None, list_size = None, list_type = None):
         #key should have value
         if key is not None:
             #variable_name should have value
-            if variable_name is not None:
-                #variable_size should have value
+            if list_id is not None:
+                #list_size should have value
+                if list_size is not None:
 
-                #patch for list variable size
-                #if variable_size is not None:
-
-                    #variable_type should have value
-                if variable_type is not None:
-                    #Index 1 of list is for primitives and lists dictionaries
-                    #Index 1 of such list is specifically for lists
-                    memory_address =  self._memory_handler._get_memory_address_variable(variable_type)
-                    variable_data = [variable_type, memory_address, variable_size]
-                    self.function_reference_table[key][1][1].insert(variable_name,variable_data)
+                    #list_type should have value
+                    if list_type is not None:
+                        #Index 1 of list is for primitives and lists dictionaries
+                        #Index 1 of such list is specifically for lists
+                        memory_address = self._memory_handler._get_memory_address_variable(list_type)
+                        list_data = [list_type, memory_address, list_size]
+                        self.function_reference_table[key][1][1].insert(list_id, list_data)
 
     #Constant value and constant type to identify constant
     def add_constant(self, constant_value = None, constant_type = None):
@@ -135,6 +133,7 @@ class Function_Directory:
         if quad_position is not None:
             #Index 3 of list is for quad_position
             self.function_reference_table[key][3] = quad_position
+
     #Gets the number of the first quad for a given block
     def get_quad_position_block(self, block_name):
         #block_name should have value
@@ -148,6 +147,7 @@ class Function_Directory:
         if block_name is not None:
             #Index 0 of list is for block return type
             return self.function_reference_table[block_name][0]
+
     #Gets the variable type for a variable in a given block
     def get_variable_type_for_block(self, var_id = None, block_id = None):
         #var_id should have value
@@ -178,6 +178,39 @@ class Function_Directory:
         if block_id is not None:
            #add primitives and list 
             return self.function_reference_table[block_id][1][0].size()+self.function_reference_table[block_id][1][1].size()
+
+    #Gets the size of a list on a given block
+    def get_list_size_for_block(self, list_id = None, block_id = None):
+        #list_id should have value
+        if list_id is not None:
+            #block_id should have value
+            if block_id is not None:
+                #Index 1 of list is for primitives and lists dictionaries
+                #Index 1 of such list is specifically for lists
+                #Index 2 holds the size of a list
+                return self.function_reference_table[block_id][1][1][list_id][2]
+
+    #Gets the type of a list on a given block
+    def get_list_type_for_block(self, list_id = None, block_id = None):
+        #list_id should have value
+        if list_id is not None:
+            #block_id should have value
+            if block_id is not None:
+                #Index 1 of list is for primitives and lists dictionaries
+                #Index 1 of such list is specifically for lists
+                #Index 0 holds the type of a list
+                return self.function_reference_table[block_id][1][1][list_id][0]
+
+    #Gets the address of a list on a given block
+    def get_list_address_for_block(self, list_id = None, block_id = None):
+        #list_id should have value
+        if list_id is not None:
+            #block_id should have value
+            if block_id is not None:
+                #Index 1 of list is for primitives and lists dictionaries
+                #Index 1 of such list is specifically for lists
+                #Index 1 holds the address of a list
+                return self.function_reference_table[block_id][1][1][list_id][1]
 
     #Check if a function id does not exist in the Function Reference Table
     def block_id_exists(self, block_id = None):

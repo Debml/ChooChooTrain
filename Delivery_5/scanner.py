@@ -74,7 +74,7 @@ def t_cst_words(t):
     return t
 def t_cst_boolean(t):
     r'true|false'
-    t.value = bool(t.value)
+    t.type = reserved.get(t.value, 'cst_boolean')
     return t     
 def t_id(t): 
     r'[A-Za-z][A-Za-z0-9]*'
