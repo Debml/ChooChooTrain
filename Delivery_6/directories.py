@@ -248,6 +248,10 @@ class Function_Directory:
         if primitive_id is not None:
             #block_id should have value
             if block_id is not None:
+                #If a pointer is given, assume it exists
+                if primitive_id[0] == "*":
+                    return True
+
                 #Check the function name
                 if self.block_id_exists(primitive_id):
                     return True

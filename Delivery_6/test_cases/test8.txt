@@ -9,4 +9,7 @@ parameter3 of type words
 	variable c of type decimal;
 
 	b = a[1];
+	a[0] = b;
+	input(a[0]);
+
 }

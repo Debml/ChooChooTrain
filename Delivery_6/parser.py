@@ -5,10 +5,12 @@ import globalScope
 
 tokens = scanner.tokens
 
+#Prints an error message and stops the program execution
 def stop_exec(message):
 	sys.exit("Error in line %d: %s" % (globalScope.line_count, message))
 
-def printResults():
+#Prints results of compilation when succesful
+def end_compilation():
 	print('Compilation Successful!')
 	globalScope.function_directory.print_table()
 	print(globalScope.quad_list)
@@ -17,7 +19,7 @@ def p_PROGRAM(p):
 	'''
 	PROGRAM : EC_SEEN_START_PROG PROGRAM_AUX
 	'''
-	printResults()
+	end_compilation()
 
 def p_PROGRAM_AUX(p):
 	'''
@@ -78,7 +80,7 @@ def p_TYPE(p):
 		   | words
 		   | boolean
 	'''
-	p[0] = p[1]
+	p[0] = p[1] #Returns the token found
 
 def p_BODY(p):
 	'''
@@ -266,7 +268,7 @@ def p_ASSIGN(p):
 
 def p_ASSIGN_AUX(p):
 	'''
-	ASSIGN_AUX : squarebracket_open ITEM squarebracket_close
+	ASSIGN_AUX : EC_SEEN_CONST_LIST_ID squarebracket_open ITEM squarebracket_close EC_SEEN_CONST_LIST
 				 | EC_SEEN_CONST EC_SEEN_CONST_ID empty
 	'''
 
@@ -277,13 +279,13 @@ def p_RETURN(p):
 
 def p_READ(p):
 	'''
-	READ : input parenthesis_open id EC_SEEN_READ_ID READ_AUX parenthesis_close semicolon
+	READ : input parenthesis_open id READ_AUX EC_SEEN_READ_ID parenthesis_close semicolon
 	'''
 
 def p_READ_AUX(p):
 	'''
-	READ_AUX : squarebracket_open ITEM squarebracket_close
-			   | empty
+	READ_AUX : EC_SEEN_CONST_LIST_ID squarebracket_open ITEM squarebracket_close EC_SEEN_CONST_LIST
+			   | EC_SEEN_CONST EC_SEEN_CONST_ID empty
 	'''
 
 def p_WRITE(p):
@@ -426,29 +428,29 @@ def p_EC_SEEN_CONST_ID(p):
 	"EC_SEEN_CONST_ID : "
 	#checks the id type in the FRT
 	if globalScope.function_directory.primitive_id_exists(globalScope.pending_operands.peek(), globalScope.current_block_id):
-		globalScope.operand_types.push(globalScope.function_directory.get_variable_type_for_block(globalScope.pending_operands.peek(), globalScope.current_block_id))
+		globalScope.pending_operand_types.push(globalScope.function_directory.get_variable_type_for_block(globalScope.pending_operands.peek(), globalScope.current_block_id))
 	else:
 		stop_exec("ID '" + globalScope.pending_operands.peek() + "' is not declared")
 
 #CONSTANT action 3
 def p_EC_SEEN_CONST_WHOLE(p):
 	"EC_SEEN_CONST_WHOLE : "
-	globalScope.operand_types.push("whole")
+	globalScope.pending_operand_types.push("whole")
 
 #CONSTANT action 4
 def p_EC_SEEN_CONST_DECIMAL(p):
 	"EC_SEEN_CONST_DECIMAL : "
-	globalScope.operand_types.push("decimal")
+	globalScope.pending_operand_types.push("decimal")
 
 #CONSTANT action 5
 def p_EC_SEEN_CONST_WORDS(p):
 	"EC_SEEN_CONST_WORDS : "
-	globalScope.operand_types.push("words")
+	globalScope.pending_operand_types.push("words")
 
 #CONSTANT action 6
 def p_EC_SEEN_CONST_BOOLEAN(p):
 	"EC_SEEN_CONST_BOOLEAN : "
-	globalScope.operand_types.push("boolean")
+	globalScope.pending_operand_types.push("boolean")
 
 #CONSTANT action 7
 def p_EC_SEEN_CALL_VAL_BLOCK_ID(p):
@@ -475,7 +477,7 @@ def p_EC_SEEN_CONST_LIST_ID(p):
 #CONSTANT action 10
 def p_EC_SEEN_CONST_LIST(p):
 	"EC_SEEN_CONST_LIST : "
-	list_index_type = globalScope.operand_types.pop()
+	list_index_type = globalScope.pending_operand_types.pop()
 
 	if list_index_type == "whole":
 
@@ -492,7 +494,7 @@ def p_EC_SEEN_CONST_LIST(p):
 		globalScope.quad_list.append_quad("op_addition", list_index, list_address, result)
 		
 		globalScope.pending_operands.push(result)
-		globalScope.operand_types.push(list_type)
+		globalScope.pending_operand_types.push(list_type)
 		globalScope.pending_operators.pop()
 	else:
 		stop_exec("List index must be a 'whole' value, found a '" + list_index_type + "' value instead")
@@ -511,10 +513,10 @@ def p_EC_SEEN_TERM(p):
 
 	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_addition" or globalScope.pending_operators.peek() == "op_subtraction"):
 		right_operand = globalScope.pending_operands.pop()
-		right_type = globalScope.operand_types.pop()
+		right_type = globalScope.pending_operand_types.pop()
 
 		left_operand = globalScope.pending_operands.pop()
-		left_type = globalScope.operand_types.pop()
+		left_type = globalScope.pending_operand_types.pop()
 
 		operator = globalScope.pending_operators.pop()
 
@@ -527,7 +529,7 @@ def p_EC_SEEN_TERM(p):
 			globalScope.quad_list.append_quad(operator, left_operand, right_operand, result)
 
 			globalScope.pending_operands.push(result)
-			globalScope.operand_types.push(result_type)
+			globalScope.pending_operand_types.push(result_type)
 
 			#free temp operand memory
 		else:
@@ -547,10 +549,10 @@ def p_EC_SEEN_FACTOR(p):
 
 	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_multiplication" or globalScope.pending_operators.peek() == "op_division"):
 		right_operand = globalScope.pending_operands.pop()
-		right_type = globalScope.operand_types.pop()
+		right_type = globalScope.pending_operand_types.pop()
 
 		left_operand = globalScope.pending_operands.pop()
-		left_type = globalScope.operand_types.pop()
+		left_type = globalScope.pending_operand_types.pop()
 
 		operator = globalScope.pending_operators.pop()
 
@@ -563,7 +565,7 @@ def p_EC_SEEN_FACTOR(p):
 			globalScope.quad_list.append_quad(operator, left_operand, right_operand, result)
 
 			globalScope.pending_operands.push(result)
-			globalScope.operand_types.push(result_type)
+			globalScope.pending_operand_types.push(result_type)
 
 			#free temp operand memory
 		else:
@@ -595,10 +597,10 @@ def p_EC_SEEN_RELOP_ITEM(p):
 														or globalScope.pending_operators.peek() == "op_equal"
 														or globalScope.pending_operators.peek() == "op_not_equal"):
 			right_operand = globalScope.pending_operands.pop()
-			right_type = globalScope.operand_types.pop()
+			right_type = globalScope.pending_operand_types.pop()
 
 			left_operand = globalScope.pending_operands.pop()
-			left_type = globalScope.operand_types.pop()
+			left_type = globalScope.pending_operand_types.pop()
 
 			operator = globalScope.pending_operators.pop()
 
@@ -611,7 +613,7 @@ def p_EC_SEEN_RELOP_ITEM(p):
 				globalScope.quad_list.append_quad(operator, left_operand, right_operand, result)
 
 				globalScope.pending_operands.push(result)
-				globalScope.operand_types.push(result_type)
+				globalScope.pending_operand_types.push(result_type)
 
 				#free temp operand memory
 			else:
@@ -629,11 +631,11 @@ def p_EC_SEEN_ASSIGN_VALUE(p):
 	if not globalScope.pending_operators.empty() and globalScope.pending_operators.peek() == "op_assign":
 			#value to be assigned
 			right_operand = globalScope.pending_operands.pop()
-			right_type = globalScope.operand_types.pop()
+			right_type = globalScope.pending_operand_types.pop()
 
 			#id where value will be assigned
 			left_operand = globalScope.pending_operands.pop()
-			left_type = globalScope.operand_types.pop()
+			left_type = globalScope.pending_operand_types.pop()
 
 			operator = globalScope.pending_operators.pop()
 
@@ -649,7 +651,7 @@ def p_EC_SEEN_ASSIGN_VALUE(p):
 #CONDITION action 1
 def p_EC_SEEN_IF_EXP(p):
 	"EC_SEEN_IF_EXP : "
-	exp_type = globalScope.operand_types.pop()
+	exp_type = globalScope.pending_operand_types.pop()
 
 	if exp_type == "boolean":
 		result = globalScope.pending_operands.pop()
@@ -683,7 +685,7 @@ def p_EC_SEEN_DO(p):
 #LOOP action 2:
 def p_EC_SEEN_UNTIL(p):
 	"EC_SEEN_UNTIL : "
-	exp_type = globalScope.operand_types.pop()
+	exp_type = globalScope.pending_operand_types.pop()
 
 	if exp_type == "boolean":
 		evaluation_result = globalScope.pending_operands.pop()
@@ -703,7 +705,7 @@ def p_EC_SEEN_WRITE_EXP(p):
 #READ action 1:
 def p_EC_SEEN_READ_ID(p):
 	"EC_SEEN_READ_ID : "
-	id_to_read_into = p[-1]
+	id_to_read_into = globalScope.pending_operands.pop()
 
 	if globalScope.function_directory.primitive_id_exists(id_to_read_into, globalScope.current_block_id):
 		globalScope.quad_list.append_quad("op_input", "-1", "-1", id_to_read_into)
@@ -729,10 +731,10 @@ def p_EC_SEEN_EXPRESSION(p):
 	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_and" 
 														or globalScope.pending_operators.peek() == "op_or"):
 		right_operand = globalScope.pending_operands.pop()
-		right_type = globalScope.operand_types.pop()
+		right_type = globalScope.pending_operand_types.pop()
 
 		left_operand = globalScope.pending_operands.pop()
-		left_type = globalScope.operand_types.pop()
+		left_type = globalScope.pending_operand_types.pop()
 
 		operator = globalScope.pending_operators.pop()
 
@@ -745,14 +747,14 @@ def p_EC_SEEN_EXPRESSION(p):
 			globalScope.quad_list.append_quad(operator, left_operand, right_operand, result)
 
 			globalScope.pending_operands.push(result)
-			globalScope.operand_types.push(result_type)
+			globalScope.pending_operand_types.push(result_type)
 
 			#free temp operand memory
 		else:
 			stop_exec("Expressions of type '" + left_type + "' and '" + right_type + "' cannot be combined")
 	elif not globalScope.pending_operators.empty() and globalScope.pending_operators.peek() == "op_negation":
 		right_operand = globalScope.pending_operands.pop()
-		right_type = globalScope.operand_types.pop()
+		right_type = globalScope.pending_operand_types.pop()
 
 		operator = globalScope.pending_operators.pop()
 
@@ -763,7 +765,7 @@ def p_EC_SEEN_EXPRESSION(p):
 			globalScope.quad_list.append_quad(operator, "-1", right_operand, result)
 
 			globalScope.pending_operands.push(result)
-			globalScope.operand_types.push('boolean')
+			globalScope.pending_operand_types.push('boolean')
 
 			#free temp operand memory
 		else:
@@ -782,7 +784,7 @@ def p_EC_SEEN_RETURN(p):
 	block_return_type = globalScope.function_directory.get_return_type_for_block(globalScope.current_block_id)
 
 	if block_return_type != "void":
-		return_type = globalScope.operand_types.pop()
+		return_type = globalScope.pending_operand_types.pop()
 
 		if return_type == block_return_type:
 			return_value = globalScope.pending_operands.pop()
@@ -826,7 +828,7 @@ def p_EC_SEEN_START_PARAM(p):
 #CALL action 3
 def p_EC_SEEN_PARAM(p):
 	"EC_SEEN_PARAM : "
-	argument_type = globalScope.operand_types.pop()
+	argument_type = globalScope.pending_operand_types.pop()
 
 	try:
 		call_block_id = globalScope.pending_blocks.peek()
@@ -867,12 +869,12 @@ def seen_block_call(p, returns_value):
 
 			globalScope.pending_operands.push(result)
 			return_type = globalScope.function_directory.get_return_type_for_block(call_block_id)
-			globalScope.operand_types.push(return_type)
+			globalScope.pending_operand_types.push(return_type)
 
 	else:
 		stop_exec("Block '" + call_block_id + "' receives " + str(block_parameter_counter) + " parameter(s), found " + str(block_argument_counter) + " argument(s) instead")
 
-
+#Error message for unexpected tokens
 def p_error(p):
 	stop_exec("Unexpected token '" + p.value.split("\n")[0] + "' found")
 
