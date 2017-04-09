@@ -4,12 +4,8 @@ parameter1 of type decimal,
 parameter2 of type whole,
 parameter3 of type words
 {
-	list a[5] of type whole;
-	variable b of type whole;
-	variable c of type decimal;
+	variable a, b of type decimal;
+	list c[1] of type whole;
 
-	b = a[1];
-	a[0] = b;
-	input(a[0]);
-
+	a = b + 1;
 }

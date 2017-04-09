@@ -2,18 +2,7 @@ import scanner
 import sys
 import ply.yacc as yacc
 import globalScope
-
 tokens = scanner.tokens
-
-#Prints an error message and stops the program execution
-def stop_exec(message):
-	sys.exit("Error in line %d: %s" % (globalScope.line_count, message))
-
-#Prints results of compilation when succesful
-def end_compilation():
-	print('Compilation Successful!')
-	globalScope.function_directory.print_table()
-	print(globalScope.quad_list)
 
 def p_PROGRAM(p):
 	'''
@@ -307,180 +296,192 @@ def p_empty(p):
 #BLOCK action 1 - Sets starting block
 def p_EC_SEEN_STARTING(p):
 	"EC_SEEN_STARTING : "
+	#If no starting block had been found yet
 	if globalScope.function_directory.starting_block_key == "-1":
 		globalScope.is_starting_block = True
 
+		#Sets program's first quad to jump to starting block's first quad
 		go_to_start = globalScope.pending_jumps.pop()
 		globalScope.quad_list.set_result(go_to_start)
 	else:
 		stop_exec("Multiple starting blocks found")
 
-#BLOCK action 2 - Creates a new Row in FRT with block id as key
+#BLOCK action 2 - Creates a new row in the FRT for a new block
 def p_EC_SEEN_BLOCK_ID(p):
 	"EC_SEEN_BLOCK_ID : "
 	globalScope.block_returns = False
 	globalScope.current_block_id = p[-1]
 
+	#Block name should not be a duplicate
 	if not globalScope.function_directory.block_id_exists(globalScope.current_block_id):
 		if globalScope.is_starting_block:
 			globalScope.function_directory.starting_block_key = globalScope.current_block_id
 
 		globalScope.function_directory.add_block_name(globalScope.current_block_id)
 	else:
-		stop_exec("Block named '" + globalScope.current_block_id + "' is already defined")
+		stop_exec("Block named '%s' is already defined" % globalScope.current_block_id)
 
-#BLOCK action 3 - Creates the list of parameter types and adds them to the variable list
+#BLOCK action 3 - Creates the block signature and adds parameters to the block's primitives list
 def p_EC_SEEN_TYPE(p):
 	"EC_SEEN_TYPE : "
+	#Variable name should not be duplicate (in the current block)
 	if not globalScope.function_directory.id_exists(globalScope.current_var_id, globalScope.current_block_id):
-		globalScope.function_directory.add_parameter_type(globalScope.current_block_id, p[-1])
-		globalScope.function_directory.add_primitive(globalScope.current_block_id, globalScope.current_var_id, p[-1])
+		parameter_type = p[-1]
+		globalScope.function_directory.add_parameter_type(globalScope.current_block_id, parameter_type)
+		globalScope.function_directory.add_primitive(globalScope.current_block_id, globalScope.current_var_id, parameter_type)
 	else:
-		stop_exec("Parameter named '" + globalScope.current_var_id + "' is already defined")
+		stop_exec("Parameter named '%s' is already defined" % globalScope.current_var_id)
 
 #BLOCK action 4 - Sets the block return type
 def p_EC_SEEN_RETURN_TYPE(p):
 	"EC_SEEN_RETURN_TYPE : "
-	globalScope.function_directory.add_block_return_type(globalScope.current_block_id, p[-1])
+	block_return_type = p[-1]
+	globalScope.function_directory.add_block_return_type(globalScope.current_block_id, block_return_type)
 
-#BLOCK action 5 - gets the current variable id being analyzed
+#BLOCK action 5 - Gets the current parameter being analyzed
 def p_EC_SEEN_PARAM_ID(p):
 	"EC_SEEN_PARAM_ID : "
 	globalScope.current_var_id = p[-1]
 
-#BLOCK action 6 - save block initial quad in FRT row
+#BLOCK action 6 - Sets block's first quad in the FRT
 def p_EC_SEEN_BLOCK_SIGNATURE(p):
 	"EC_SEEN_BLOCK_SIGNATURE : "
 	globalScope.function_directory.add_quad_position_block(globalScope.current_block_id, globalScope.quad_list.get_quad_count())
 
-#BLOCK_BODY action 1
+#BLOCK_BODY action 1 - Validates the return type with the one saved in the FRT for the current block
 def p_EC_SEEN_BLOCK_BODY_END(p):
 	"EC_SEEN_BLOCK_BODY_END : "
 	block_return_type = globalScope.function_directory.get_return_type_for_block(globalScope.current_block_id)
 
+	#Block should be returning something if it stated it would do so (Return type validation is done EC_SEEN_RETURN)
 	if (globalScope.block_returns and block_return_type != "void") or (not globalScope.block_returns and block_return_type == "void"):
 		globalScope.quad_list.append_quad("op_end_proc", "-1", "-1", "-1")
-		globalScope.function_directory.print_variable_list(globalScope.current_block_id)
 		globalScope.function_directory.clear_variable_list(globalScope.current_block_id)
 	else:
-		stop_exec("Block '" + globalScope.current_block_id + "' should return a '" + block_return_type + "' value")
+		stop_exec("Block '%s' should return a '%s' value" % (globalScope.current_block_id, block_return_type))
 
-#VAR_DECLARATION action 1
+#VAR_DECLARATION action 1 - Resets the list of primitives for the current type
 def p_EC_SEEN_VAR_KEYWORD(p):
 	"EC_SEEN_VAR_KEYWORD : "
 	globalScope.var_names = []
 
-#VAR_DECLARATION action 2
+#VAR_DECLARATION action 2 - Adds the previously seen primitive to the primitives list for the current type
 def p_EC_SEEN_VAR_ID(p):
 	"EC_SEEN_VAR_ID : "
-	globalScope.var_names.append(p[-1])
+	primitive_name = p[-1]
+	globalScope.var_names.append(primitive_name)
 
-#VAR_DECLARATION action 3
+#VAR_DECLARATION action 3 - Adds the list of primitives for the current type into the FRT for the current block
 def p_EC_SEEN_VAR_TYPE(p):
 	"EC_SEEN_VAR_TYPE : "
 	for var_name in globalScope.var_names:
-		#Find current_var_id in primitives dictionary for current_block_id row
+		#Primitive id should not be a duplicate
 		if not globalScope.function_directory.id_exists(var_name, globalScope.current_block_id):
-			globalScope.function_directory.add_primitive(globalScope.current_block_id, var_name, p[-1])
+			primitive_type = p[-1]
+			globalScope.function_directory.add_primitive(globalScope.current_block_id, var_name, primitive_type)
 		else:
-			stop_exec("Variable named '" + var_name + "' is already defined")
+			stop_exec("Variable named '%s' is already defined" % var_name)
 
-#LIST_DECLARATION action 1
+#LIST_DECLARATION action 1 - Sets the current list id being analyzed
 def p_EC_SEEN_LIST_ID(p):
 	"EC_SEEN_LIST_ID : "
 	globalScope.current_list_id = p[-1]
 
-#LIST_DECLARATION action 2
+#LIST_DECLARATION action 2 - Sets the current list size being analyzed
 def p_EC_SEEN_LIST_SIZE(p):
 	"EC_SEEN_LIST_SIZE : "
 	globalScope.current_list_size = p[-1]
 
-#LIST_DECLARATION action 3
+#LIST_DECLARATION action 3 - Sets the current list type being analyzed
 def p_EC_SEEN_LIST_TYPE(p):
 	"EC_SEEN_LIST_TYPE : "
 	globalScope.current_list_type = p[-1]
 
-#LIST_DECLARATION action 4
+#LIST_DECLARATION action 4 - Adds a list to the FRT for the current block
 def p_EC_SEEN_LIST(p):
 	"EC_SEEN_LIST : "
+	#List id should not be a duplicate
 	if not globalScope.function_directory.id_exists(globalScope.current_list_id, globalScope.current_block_id):
 		globalScope.function_directory.add_list(globalScope.current_block_id, globalScope.current_list_id, globalScope.current_list_size, globalScope.current_list_type)
 	else:
-		stop_exec("List named '" + globalScope.current_list_id + "' is already defined")
+		stop_exec("List named '%s' is already defined" % globalScope.current_list_id)
 
-#FACTOR action 1
+#FACTOR action 1 - Adds a false bottom mark to the operators stack
 def p_EC_SEEN_FACT_LP(p):	
 	"EC_SEEN_FACT_LP : "
 	globalScope.pending_operators.push("(")
 
-#FACTOR action 2
+#FACTOR action 2 - Removes the false bottom mark of the operators stack
 def p_EC_SEEN_FACT_RP(p):	
 	"EC_SEEN_FACT_RP : "
 	globalScope.pending_operators.pop()
 
-#CONSTANT action 1
+#CONSTANT action 1 - Adds the just read constant to the operands stack
 def p_EC_SEEN_CONST(p):
 	"EC_SEEN_CONST : "
-	globalScope.pending_operands.push(p[-1])
+	operand = p[-1]
+	globalScope.pending_operands.push(operand)
 
-#CONSTANT action 2
+#CONSTANT action 2 - Adds the id type of the just read id to the operand types stack
 def p_EC_SEEN_CONST_ID(p):
 	"EC_SEEN_CONST_ID : "
-	#checks the id type in the FRT
-	if globalScope.function_directory.primitive_id_exists(globalScope.pending_operands.peek(), globalScope.current_block_id):
+	primitive_id = globalScope.pending_operands.peek()
+
+	#Primitive should exist in the current block
+	if globalScope.function_directory.primitive_id_exists(primitive_id, globalScope.current_block_id):
 		globalScope.pending_operand_types.push(globalScope.function_directory.get_variable_type_for_block(globalScope.pending_operands.peek(), globalScope.current_block_id))
 	else:
-		stop_exec("ID '" + globalScope.pending_operands.peek() + "' is not declared")
+		stop_exec("Variable '%s' is not declared in block '%s'" % (primitive_id, globalScope.current_block_id))
 
-#CONSTANT action 3
+#CONSTANT action 3 - Adds the type whole to the operand types stack
 def p_EC_SEEN_CONST_WHOLE(p):
 	"EC_SEEN_CONST_WHOLE : "
 	globalScope.pending_operand_types.push("whole")
 
-#CONSTANT action 4
+#CONSTANT action 4 - Adds the type decimal to the operand types stack
 def p_EC_SEEN_CONST_DECIMAL(p):
 	"EC_SEEN_CONST_DECIMAL : "
 	globalScope.pending_operand_types.push("decimal")
 
-#CONSTANT action 5
+#CONSTANT action 5 - Adds the type words to the operand types stack
 def p_EC_SEEN_CONST_WORDS(p):
 	"EC_SEEN_CONST_WORDS : "
 	globalScope.pending_operand_types.push("words")
 
-#CONSTANT action 6
+#CONSTANT action 6 - Adds the type boolean to the operand types stack
 def p_EC_SEEN_CONST_BOOLEAN(p):
 	"EC_SEEN_CONST_BOOLEAN : "
 	globalScope.pending_operand_types.push("boolean")
 
-#CONSTANT action 7
+#CONSTANT action 7 - Validates block return type with a return value
 def p_EC_SEEN_CALL_VAL_BLOCK_ID(p):
 	"EC_SEEN_CALL_VAL_BLOCK_ID : "
-	seen_block_id(p, True)
+	abstract_seen_block_id(p, True)
 
-#CONSTANT action 8
+#CONSTANT action 8 - Generate block call quads for blocks with a return value
 def p_EC_SEEN_BLOCK_CALL_VAL(p):
 	"EC_SEEN_BLOCK_CALL_VAL : "
-	seen_block_call(p, True)
+	abstract_seen_block_call(p, True)
 
-#CONSTANT action 9
+#CONSTANT action 9 - Adds the just read list to the pending lists stack
 def p_EC_SEEN_CONST_LIST_ID(p):
 	"EC_SEEN_CONST_LIST_ID : "
 	list_id = p[-1]
-	id_is_list = globalScope.function_directory.list_id_exists(list_id, globalScope.current_block_id)
 
-	if id_is_list:
+	#ID should belong to a list
+	if globalScope.function_directory.list_id_exists(list_id, globalScope.current_block_id):
 		globalScope.pending_lists.push(list_id)
 		globalScope.pending_operators.push("(")
 	else:
-		stop_exec("Id '" + list_id + "' is not a list")
+		stop_exec("ID '%s' is not a list" % list_id)
 
-#CONSTANT action 10
+#CONSTANT action 10 - Generates quads to access list index
 def p_EC_SEEN_CONST_LIST(p):
 	"EC_SEEN_CONST_LIST : "
 	list_index_type = globalScope.pending_operand_types.pop()
 
+	#List index type should resolve to whole
 	if list_index_type == "whole":
-
 		list_id = globalScope.pending_lists.pop()
 		list_address = globalScope.function_directory.get_list_address_for_block(list_id, globalScope.current_block_id)
 		list_index = globalScope.pending_operands.pop()
@@ -497,20 +498,22 @@ def p_EC_SEEN_CONST_LIST(p):
 		globalScope.pending_operand_types.push(list_type)
 		globalScope.pending_operators.pop()
 	else:
-		stop_exec("List index must be a 'whole' value, found a '" + list_index_type + "' value instead")
+		stop_exec("List index must be a 'whole' value, found a '%s' value instead" % list_index_type)
 
-#ITEM action 1
+#ITEM action 1 - Pushes the appropriate operator into the operators stack
 def p_EC_SEEN_ITEM_OP(p):
 	"EC_SEEN_ITEM_OP : "
-	if p[-1] == "+":
+	operator = p[-1]
+
+	if operator == "+":
 		globalScope.pending_operators.push("op_addition")
-	elif p[-1] == "-":
+	elif operator == "-":
 		globalScope.pending_operators.push("op_subtraction")
 
-#ITEM action 2
+#ITEM action 2 - Generates quad for the addition or subtraction operation
 def p_EC_SEEN_TERM(p):
 	"EC_SEEN_TERM : "
-
+	#Checks that the next operator is an addition or subtraction to respect order of operations
 	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_addition" or globalScope.pending_operators.peek() == "op_subtraction"):
 		right_operand = globalScope.pending_operands.pop()
 		right_type = globalScope.pending_operand_types.pop()
@@ -520,8 +523,10 @@ def p_EC_SEEN_TERM(p):
 
 		operator = globalScope.pending_operators.pop()
 
+		#Checks if operand types are interoperable
 		result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
 
+		#Types should be interoperable
 		if result_type != -1:
 			result = "t" + str(globalScope.temp_space)
 			globalScope.temp_space = globalScope.temp_space + 1
@@ -533,20 +538,22 @@ def p_EC_SEEN_TERM(p):
 
 			#free temp operand memory
 		else:
-			stop_exec("Expressions of type '" + left_type + "' and '" + right_type + "' cannot be combined")
+			stop_exec("Expressions of type '%s' and '%s' cannot be combined" % (left_type, right_type))
 
-#TERM action 1
+#TERM action 1 - Pushes the appropriate operator into the operators stack
 def p_EC_SEEN_TERM_OP(p):
 	"EC_SEEN_TERM_OP : "
-	if p[-1] == "*":
+	operator = p[-1]
+
+	if operator == "*":
 		globalScope.pending_operators.push("op_multiplication")
-	elif p[-1] == "/":
+	elif operator == "/":
 		globalScope.pending_operators.push("op_division")
 
-#TERM action 2
+#TERM action 2 - Generates quad for the multiplication or division operation
 def p_EC_SEEN_FACTOR(p):
 	"EC_SEEN_FACTOR : "
-
+	#Checks that the next operator is a multplication or division to respect order of operations
 	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_multiplication" or globalScope.pending_operators.peek() == "op_division"):
 		right_operand = globalScope.pending_operands.pop()
 		right_type = globalScope.pending_operand_types.pop()
@@ -556,8 +563,10 @@ def p_EC_SEEN_FACTOR(p):
 
 		operator = globalScope.pending_operators.pop()
 
+		#Checks if operand types are interoperable
 		result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
 
+		#Types should be interoperable
 		if result_type != -1:
 			result = "t" + str(globalScope.temp_space)
 			globalScope.temp_space = globalScope.temp_space + 1
@@ -569,27 +578,30 @@ def p_EC_SEEN_FACTOR(p):
 
 			#free temp operand memory
 		else:
-			stop_exec("Expressions of type '" + left_type + "' and '" + right_type + "' cannot be combined")
+			stop_exec("Expressions of type '%s' and '%s' cannot be combined" % (left_type, right_type))
 
-#EXP action 1
+#EXP action 1 - Pushes the appropriate operator into the operators stack
 def p_EC_SEEN_RELOP(p):
 	"EC_SEEN_RELOP : "
-	if p[-1] == ">":
+	operator = p[-1]
+
+	if operator == ">":
 		globalScope.pending_operators.push("op_greater")
-	elif p[-1] == ">=":
+	elif operator == ">=":
 		globalScope.pending_operators.push("op_greater_equal")
-	elif p[-1] == "<":
+	elif operator == "<":
 		globalScope.pending_operators.push("op_less")
-	elif p[-1] == "<=":
+	elif operator == "<=":
 		globalScope.pending_operators.push("op_less_equal")
-	elif p[-1] == "==":
+	elif operator == "==":
 		globalScope.pending_operators.push("op_equal")
-	elif p[-1] == "!=":
+	elif operator == "!=":
 		globalScope.pending_operators.push("op_not_equal")
 
-#EXP action 2
+#EXP action 2 - Generates quad for relational operations
 def p_EC_SEEN_RELOP_ITEM(p):
 	"EC_SEEN_RELOP_ITEM : "
+	#Checks that the next operator is a relational operator to respect order of operations
 	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_greater" 
 														or globalScope.pending_operators.peek() == "op_greater_equal"
 														or globalScope.pending_operators.peek() == "op_less"
@@ -604,8 +616,10 @@ def p_EC_SEEN_RELOP_ITEM(p):
 
 			operator = globalScope.pending_operators.pop()
 
+			#Checks if operand types are interoperable
 			result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
 
+			#Types should be interoperable
 			if result_type != -1:
 				result = "t" + str(globalScope.temp_space)
 				globalScope.temp_space = globalScope.temp_space + 1
@@ -617,42 +631,45 @@ def p_EC_SEEN_RELOP_ITEM(p):
 
 				#free temp operand memory
 			else:
-				stop_exec("Expressions of type '" + left_type + "' and '" + right_type + "' cannot be combined")
+				stop_exec("Expressions of type '%s' and '%s' cannot be combined" % (left_type, right_type))
 
-
-#ASSIGN action 1
+#ASSIGN action 1 - Pushes the assignment operator to the operators stack
 def p_EC_SEEN_ASSIGN_OP(p):
 	"EC_SEEN_ASSIGN_OP : "
 	globalScope.pending_operators.push("op_assign")
 
-#ASSIGN action 2
+#ASSIGN action 2 - Generates quad for assignment operations
 def p_EC_SEEN_ASSIGN_VALUE(p):
 	"EC_SEEN_ASSIGN_VALUE : "
+	#Checks that the next operator is an assignment operator to respect order of operations
 	if not globalScope.pending_operators.empty() and globalScope.pending_operators.peek() == "op_assign":
-			#value to be assigned
+			#Value to be assigned
 			right_operand = globalScope.pending_operands.pop()
 			right_type = globalScope.pending_operand_types.pop()
 
-			#id where value will be assigned
+			#Space where value will be assigned
 			left_operand = globalScope.pending_operands.pop()
 			left_type = globalScope.pending_operand_types.pop()
 
 			operator = globalScope.pending_operators.pop()
 
+			#Checks if right_operand can be stored in a left_operand container
 			result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
 
+			#Assignment should be valid
 			if result_type != -1:
 				globalScope.quad_list.append_quad(operator, right_operand, "-1", left_operand)
 
 				#free temp operand memory
 			else:
-				stop_exec("Expression of type '" + right_type + "' cannot be assigned to ID of type '" + left_type + "'")
+				stop_exec("Expression of type '%s' cannot be assigned to ID of type '%s'" % (right_type, left_type))
 
-#CONDITION action 1
+#CONDITION action 1 - Generates jump if false quad and pushes it into pending jumps stack
 def p_EC_SEEN_IF_EXP(p):
 	"EC_SEEN_IF_EXP : "
 	exp_type = globalScope.pending_operand_types.pop()
 
+	#The expression should resolve to a boolean value
 	if exp_type == "boolean":
 		result = globalScope.pending_operands.pop()
 
@@ -660,72 +677,81 @@ def p_EC_SEEN_IF_EXP(p):
 
 		globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count() - 1)
 	else:
-		stop_exec("Expected a boolean expression, found '" + exp_type + "' expression instead")
+		stop_exec("Expected a boolean expression, found a '%s' expression instead" % exp_type)
 
-#CONDITION action 2
+#CONDITION action 2 - Fills the 'if' pending jump, and generates a quad for the true case
+def p_EC_SEEN_ELSE(p):
+	"EC_SEEN_ELSE : "
+	#Quad for the true case
+	globalScope.quad_list.append_quad("op_go_to", "-1", "-1", "-1")
+
+	#Fills the 'if' pending jump
+	if_false = globalScope.pending_jumps.pop()
+	globalScope.quad_list.set_result(if_false)
+
+	#Pushes jump to the end of the 'else' to the pending jumps stack
+	globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count() - 1)
+
+#CONDITION action 3 - Fills the 'else' pending jump, or the 'if' pending jump if there was no 'else'
 def p_EC_SEEN_END_IF(p):
 	"EC_SEEN_END_IF : "
 	end_if = globalScope.pending_jumps.pop()
 	globalScope.quad_list.set_result(end_if)
 
-#CONDITION action 3
-def p_EC_SEEN_ELSE(p):
-	"EC_SEEN_ELSE : "
-	globalScope.quad_list.append_quad("op_go_to", "-1", "-1", "-1")
-
-	if_false = globalScope.pending_jumps.pop()
-	globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count() - 1)
-	globalScope.quad_list.set_result(if_false)
-
-#LOOP action 1
+#LOOP action 1 - Pushes starting point of loop to the pending jumps stack
 def p_EC_SEEN_DO(p):
 	"EC_SEEN_DO : "
 	globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count())
 
-#LOOP action 2:
+#LOOP action 2: - Generates quad to go to the beginning of the loop
 def p_EC_SEEN_UNTIL(p):
 	"EC_SEEN_UNTIL : "
 	exp_type = globalScope.pending_operand_types.pop()
 
+	#The expression should resolve to a boolean value
 	if exp_type == "boolean":
 		evaluation_result = globalScope.pending_operands.pop()
 		loop_start = globalScope.pending_jumps.pop()
 
 		globalScope.quad_list.append_quad("op_go_to_t", evaluation_result, "-1", loop_start)
 	else:
-		stop_exec("Expected a boolean expression, found '" + exp_type + "' expression instead")
+		stop_exec("Expected a boolean expression, found a '%s' expression instead" % exp_type)
 
-#WRITE action 1:
+
+#WRITE action 1 - Generates quad for the write action
 def p_EC_SEEN_WRITE_EXP(p):
 	"EC_SEEN_WRITE_EXP : "
 	expression_to_print = globalScope.pending_operands.pop()
 
 	globalScope.quad_list.append_quad("op_print", expression_to_print, "-1", "-1")
 
-#READ action 1:
+#READ action 1 - Generates quad for the read action
 def p_EC_SEEN_READ_ID(p):
 	"EC_SEEN_READ_ID : "
 	id_to_read_into = globalScope.pending_operands.pop()
 
+	#The ID that will store whatever is read should exist
 	if globalScope.function_directory.primitive_id_exists(id_to_read_into, globalScope.current_block_id):
 		globalScope.quad_list.append_quad("op_input", "-1", "-1", id_to_read_into)
 	else:
-		stop_exec("ID '" + id_to_read_into + "' is not declared")
+		stop_exec("ID '%s' is not declared" % id_to_read_into)
 
-#EXPRESSION action 1:
+#EXPRESSION action 1 - Pushes the negation operator into the operators stack
 def p_EC_SEEN_NOT(p):
 	"EC_SEEN_NOT : "
 	globalScope.pending_operators.push("op_negation")
 
-#EXPRESSION action 2:	
+#EXPRESSION action 2 - Pushes the appropriate operator into the operators stack
 def p_EC_SEEN_AND_OR(p):
 	"EC_SEEN_AND_OR : "
-	if p[-1] == "and":
+	operator = p[-1]
+
+	if operator == "and":
 		globalScope.pending_operators.push("op_and")
-	elif p[-1] == "or":
+	elif operator == "or":
 		globalScope.pending_operators.push("op_or")
 
-#EXPRESSION action 3:
+#EXPRESSION action 3 - Generates quad for logical operations
 def p_EC_SEEN_EXPRESSION(p):
 	"EC_SEEN_EXPRESSION : "
 	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_and" 
@@ -738,8 +764,10 @@ def p_EC_SEEN_EXPRESSION(p):
 
 		operator = globalScope.pending_operators.pop()
 
+		#Checks if operand types are interoperable
 		result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
 
+		#Types should be interoperable
 		if result_type != -1:
 			result = "t" + str(globalScope.temp_space)
 			globalScope.temp_space = globalScope.temp_space + 1
@@ -751,13 +779,15 @@ def p_EC_SEEN_EXPRESSION(p):
 
 			#free temp operand memory
 		else:
-			stop_exec("Expressions of type '" + left_type + "' and '" + right_type + "' cannot be combined")
+			stop_exec("Expressions of type '%s' and '%s' cannot be combined" % (left_type, right_type))
+
 	elif not globalScope.pending_operators.empty() and globalScope.pending_operators.peek() == "op_negation":
 		right_operand = globalScope.pending_operands.pop()
 		right_type = globalScope.pending_operand_types.pop()
 
 		operator = globalScope.pending_operators.pop()
 
+		#Negation only applies to boolean type
 		if right_type == "boolean":
 			result = "t" + str(globalScope.temp_space)
 			globalScope.temp_space = globalScope.temp_space + 1
@@ -769,63 +799,48 @@ def p_EC_SEEN_EXPRESSION(p):
 
 			#free temp operand memory
 		else:
-			stop_exec("Not operator can only be applied to 'boolean' expression, found '" + right_type + "' expression")
+			stop_exec("Negation operator can only be applied to 'boolean' expression, found '%s' expression" % right_type)
 	
-#PROGRAM action 1
+#PROGRAM action 1 - Generates jump to starting block and pushes to pending jumps stack
 def p_EC_SEEN_START_PROG(p):
 	"EC_SEEN_START_PROG : "
 	globalScope.quad_list.append_quad("op_go_to", "-1", "-1", "pending")
 
 	globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count() - 1)
 
-#RETURN action 1
+#RETURN action 1 - Validates return type
 def p_EC_SEEN_RETURN(p):
 	"EC_SEEN_RETURN : "
 	block_return_type = globalScope.function_directory.get_return_type_for_block(globalScope.current_block_id)
 
+	#blocks should only return when stated in the definition
 	if block_return_type != "void":
 		return_type = globalScope.pending_operand_types.pop()
 
+		#Validates return value with the block definition
 		if return_type == block_return_type:
 			return_value = globalScope.pending_operands.pop()
 			globalScope.quad_list.append_quad("op_return", return_value, "-1", "-1")
 			globalScope.block_returns = True
 		else:
-			stop_exec("Block '" + globalScope.current_block_id + "' should return a '" + block_return_type + "' value, found a '" + return_type + "' value instead")
+			stop_exec("Block '%s' should return a '%s' value, found a '%s' value instead" % (globalScope.current_block_id, block_return_type, return_type))
 
 	else:
-		stop_exec("Block '" + globalScope.current_block_id + "' should not return a value")
+		stop_exec("Block '%s' should not return a value" % globalScope.current_block_id)
 
-#CALL action 1
+#CALL action 1 - Validates block return type with no return value
 def p_EC_SEEN_CALL_VOID_BLOCK_ID(p):
 	"EC_SEEN_CALL_VOID_BLOCK_ID : "
-	seen_block_id(p, False)
+	abstract_seen_block_id(p, False)
 
-def seen_block_id(p, returns_value):
-	call_block_id = p[-1]
-	globalScope.pending_blocks.push(call_block_id)
-
-	if globalScope.function_directory.block_id_exists(call_block_id):
-		call_block_return_type = globalScope.function_directory.get_return_type_for_block(call_block_id)
-
-		if not returns_value:
-			if call_block_return_type != "void":
-				stop_exec("Block '" + call_block_id + "' returns a '" + call_block_return_type + "' value, but is not being assigned to anything")
-		else:
-			if call_block_return_type == "void":
-				stop_exec("Block '" + call_block_id + "' does not return a value")
-	else:
-		stop_exec("Block '" + call_block_id + "' does not exist or is declared below '" + globalScope.current_block_id + "'")
-
-
-#CALL action 2
+#CALL action 2 - Generates quad for ERA and initializes argument counter
 def p_EC_SEEN_START_PARAM(p):
 	"EC_SEEN_START_PARAM : "
 	call_block_id = globalScope.pending_blocks.peek()
 	globalScope.quad_list.append_quad("op_era", call_block_id, "-1", "-1")
 	globalScope.pending_blocks_argument_counter.push(0)			
 
-#CALL action 3
+#CALL action 3 - Validates argument counter with parameter number
 def p_EC_SEEN_PARAM(p):
 	"EC_SEEN_PARAM : "
 	argument_type = globalScope.pending_operand_types.pop()
@@ -834,34 +849,45 @@ def p_EC_SEEN_PARAM(p):
 		call_block_id = globalScope.pending_blocks.peek()
 		block_argument_counter = globalScope.pending_blocks_argument_counter.pop()
 		parameter_type = globalScope.function_directory.get_parameter_type_for_block(call_block_id, block_argument_counter)
+	#If the argument counter is greater than the parameter counter
 	except IndexError:
 		block_parameter_counter = globalScope.function_directory.get_parameter_count_for_block(call_block_id)
-		stop_exec("Block '" + call_block_id + "' receives " + str(block_parameter_counter) + " parameter(s), found " + str(block_argument_counter + 1) + " argument(s) instead")
+		stop_exec("Block '%s' receives %d parameter(s), found %d argument(s) instead" % (call_block_id, block_parameter_counter, block_argument_counter + 1))
 
 	block_argument_counter = block_argument_counter + 1
 	globalScope.pending_blocks_argument_counter.push(block_argument_counter)
 
+	#Validates argument type with parameter type
 	if argument_type == parameter_type:
 		argument = globalScope.pending_operands.pop()
 		result = "param" + str(block_argument_counter)
 		globalScope.quad_list.append_quad("op_param", argument, "-1", result)
 	else:
-		stop_exec("Argument #" + str(block_argument_counter) + " of block '" + call_block_id + "' should be a '" + parameter_type + "' value, found a '" + argument_type + "' value instead")
+		stop_exec("Argument #%d of block '%s' should be a '%s' value, found a '%s' value instead" % (block_argument_counter, call_block_id, parameter_type, argument_type))
 
-#CALL action 4
+#CALL action 4 - Generate block call quads for blocks with no return value
 def p_EC_SEEN_BLOCK_CALL(p):
 	"EC_SEEN_BLOCK_CALL : "
-	seen_block_call(p, False)
+	abstract_seen_block_call(p, False)
 
-def seen_block_call(p, returns_value):
+#ERROR - Prints message for unexpected tokens
+def p_error(p):
+	stop_exec("Unexpected token '%s' found" % p.value.split("\n")[0])
+
+#Helper functions for Embedded Actions Code
+#Generates quads for block calls
+#returns_value is a boolean value that indicates if the block returns a value or not
+def abstract_seen_block_call(p, returns_value):
 	call_block_id = globalScope.pending_blocks.pop()
 	block_parameter_counter = globalScope.function_directory.get_parameter_count_for_block(call_block_id)
 	block_argument_counter = globalScope.pending_blocks_argument_counter.pop()
 
+	#Arguments number should match block's parameters number
 	if  block_parameter_counter == block_argument_counter:
 		call_block_initial_quad = globalScope.function_directory.get_quad_position_block(call_block_id)
 		globalScope.quad_list.append_quad("op_go_sub", call_block_id, "-1", call_block_initial_quad)
 
+		#If the block will resolve to a value
 		if returns_value:
 			result = "t" + str(globalScope.temp_space)
 			globalScope.temp_space = globalScope.temp_space + 1
@@ -872,23 +898,50 @@ def seen_block_call(p, returns_value):
 			globalScope.pending_operand_types.push(return_type)
 
 	else:
-		stop_exec("Block '" + call_block_id + "' receives " + str(block_parameter_counter) + " parameter(s), found " + str(block_argument_counter) + " argument(s) instead")
+		stop_exec("Block '%s' receives %d parameter(s), found %d argument(s) instead" % (call_block_id, block_parameter_counter, block_argument_counter))
 
-#Error message for unexpected tokens
-def p_error(p):
-	stop_exec("Unexpected token '" + p.value.split("\n")[0] + "' found")
+#Validates block return type with usage
+#returns_value is a boolean value that indicates if the block returns a value or not
+def abstract_seen_block_id(p, returns_value):
+	call_block_id = p[-1]
+	globalScope.pending_blocks.push(call_block_id)
 
-# Build the parser
+	#Block should exist
+	if globalScope.function_directory.block_id_exists(call_block_id):
+		call_block_return_type = globalScope.function_directory.get_return_type_for_block(call_block_id)
+
+		#Validate the return type with usage
+		if not returns_value:
+			if call_block_return_type != "void":
+				stop_exec("Block '%s' returns a '%s' value, but is not being assigned to anything" % (call_block_id, call_block_return_type))
+		else:
+			if call_block_return_type == "void":
+				stop_exec("Block '%s' does not return a value" % call_block_id)
+	else:
+		stop_exec("Block '%s' does not exist or is declared below block '%s'" % (call_block_id, globalScope.current_block_id))
+
+#Prints an error message and stops the program execution
+#message is a string with an appropriate error message
+def stop_exec(message):
+	sys.exit("Error in line %d: %s" % (globalScope.line_count, message))
+
+#Prints results of compilation when successful
+def end_compilation():
+	print('Compilation Successful!')
+	globalScope.function_directory.print_table()
+	print(globalScope.quad_list)
+
+#Build the parser
 parser = yacc.yacc()
 
-# If no argument was given, make the user input a file
+#If no argument was given, make the user input a file
 if(len(sys.argv) < 2):
     fileName = raw_input('Input the name of the file to parse: ')
     fileToParse = open(fileName, "r")
-# If an argument was given, read that file
+#If an argument was given, read that file
 else:
     fileToParse = open(sys.argv[1], "r")
 
-# Read the file sent as argument and parse it
+#Read the file sent as argument and parse it
 code = fileToParse.read()
 parser.parse(code)
