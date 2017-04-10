@@ -1,7 +1,7 @@
 import scanner
 import sys
 import ply.yacc as yacc
-import globalScope
+import global_scope
 import constants
 tokens = scanner.tokens
 
@@ -298,161 +298,161 @@ def p_empty(p):
 def p_EC_SEEN_STARTING(p):
 	"EC_SEEN_STARTING : "
 	#If no starting block had been found yet
-	if globalScope.function_directory.starting_block_key == "-1":
-		globalScope.is_starting_block = True
+	if global_scope.function_directory.starting_block_key == "-1":
+		global_scope.is_starting_block = True
 
 		#Sets program's first quad to jump to starting block's first quad
-		go_to_start = globalScope.pending_jumps.pop()
-		globalScope.quad_list.set_result(go_to_start)
+		go_to_start = global_scope.pending_jumps.pop()
+		global_scope.quad_list.set_result(go_to_start)
 	else:
 		stop_exec("Multiple starting blocks found")
 
 #BLOCK action 2 - Creates a new row in the FRT for a new block
 def p_EC_SEEN_BLOCK_ID(p):
 	"EC_SEEN_BLOCK_ID : "
-	globalScope.block_returns = False
-	globalScope.current_block_id = p[-1]
+	global_scope.block_returns = False
+	global_scope.current_block_id = p[-1]
 
 	#Block name should not be a duplicate
-	if not globalScope.function_directory.block_id_exists(globalScope.current_block_id):
-		if globalScope.is_starting_block:
-			globalScope.function_directory.starting_block_key = globalScope.current_block_id
+	if not global_scope.function_directory.block_id_exists(global_scope.current_block_id):
+		if global_scope.is_starting_block:
+			global_scope.function_directory.starting_block_key = global_scope.current_block_id
 
-		globalScope.function_directory.add_block_name(globalScope.current_block_id)
+		global_scope.function_directory.add_block_name(global_scope.current_block_id)
 	else:
-		stop_exec("Block named '%s' is already defined" % globalScope.current_block_id)
+		stop_exec("Block named '%s' is already defined" % global_scope.current_block_id)
 
 #BLOCK action 3 - Creates the block signature and adds parameters to the block's primitives list
 def p_EC_SEEN_TYPE(p):
 	"EC_SEEN_TYPE : "
 	#Variable name should not be duplicate (in the current block)
-	if not globalScope.function_directory.id_exists(globalScope.current_var_id, globalScope.current_block_id):
+	if not global_scope.function_directory.id_exists(global_scope.current_var_id, global_scope.current_block_id):
 		parameter_type = p[-1]
-		globalScope.function_directory.add_parameter_type(globalScope.current_block_id, parameter_type)
-		globalScope.function_directory.add_primitive(globalScope.current_block_id, globalScope.current_var_id, parameter_type)
+		global_scope.function_directory.add_parameter_type(global_scope.current_block_id, parameter_type)
+		global_scope.function_directory.add_primitive(global_scope.current_block_id, global_scope.current_var_id, parameter_type)
 	else:
-		stop_exec("Parameter named '%s' is already defined" % globalScope.current_var_id)
+		stop_exec("Parameter named '%s' is already defined" % global_scope.current_var_id)
 
 #BLOCK action 4 - Sets the block return type
 def p_EC_SEEN_RETURN_TYPE(p):
 	"EC_SEEN_RETURN_TYPE : "
 	block_return_type = p[-1]
-	globalScope.function_directory.add_block_return_type(globalScope.current_block_id, block_return_type)
+	global_scope.function_directory.add_block_return_type(global_scope.current_block_id, block_return_type)
 
 #BLOCK action 5 - Gets the current parameter being analyzed
 def p_EC_SEEN_PARAM_ID(p):
 	"EC_SEEN_PARAM_ID : "
-	globalScope.current_var_id = p[-1]
+	global_scope.current_var_id = p[-1]
 
 #BLOCK action 6 - Sets block's first quad in the FRT
 def p_EC_SEEN_BLOCK_SIGNATURE(p):
 	"EC_SEEN_BLOCK_SIGNATURE : "
-	globalScope.function_directory.add_quad_position_block(globalScope.current_block_id, globalScope.quad_list.get_quad_count())
+	global_scope.function_directory.add_quad_position_block(global_scope.current_block_id, global_scope.quad_list.get_quad_count())
 
 #BLOCK_BODY action 1 - Validates the return type with the one saved in the FRT for the current block
 def p_EC_SEEN_BLOCK_BODY_END(p):
 	"EC_SEEN_BLOCK_BODY_END : "
-	block_return_type = globalScope.function_directory.get_return_type_for_block(globalScope.current_block_id)
+	block_return_type = global_scope.function_directory.get_return_type_for_block(global_scope.current_block_id)
 
 	#Block should be returning something if it stated it would do so (Return type validation is done EC_SEEN_RETURN)
-	if (globalScope.block_returns and block_return_type != constants.DataTypes.VOID) or (not globalScope.block_returns and block_return_type == constants.DataTypes.VOID):
-		globalScope.quad_list.append_quad(constants.Operators.OP_END_PROC, "-1", "-1", "-1")
-		globalScope.function_directory.clear_variable_list(globalScope.current_block_id)
+	if (global_scope.block_returns and block_return_type != constants.DataTypes.VOID) or (not global_scope.block_returns and block_return_type == constants.DataTypes.VOID):
+		global_scope.quad_list.append_quad(constants.Operators.OP_END_PROC, "-1", "-1", "-1")
+		global_scope.function_directory.clear_variable_list(global_scope.current_block_id)
 	else:
-		stop_exec("Block '%s' should return a '%s' value" % (globalScope.current_block_id, block_return_type))
+		stop_exec("Block '%s' should return a '%s' value" % (global_scope.current_block_id, block_return_type))
 
 #VAR_DECLARATION action 1 - Resets the list of primitives for the current type
 def p_EC_SEEN_VAR_KEYWORD(p):
 	"EC_SEEN_VAR_KEYWORD : "
-	globalScope.primitive_names = []
+	global_scope.primitive_names = []
 
 #VAR_DECLARATION action 2 - Adds the previously seen primitive to the primitives list for the current type
 def p_EC_SEEN_VAR_ID(p):
 	"EC_SEEN_VAR_ID : "
 	primitive_name = p[-1]
-	globalScope.primitive_names.append(primitive_name)
+	global_scope.primitive_names.append(primitive_name)
 
 #VAR_DECLARATION action 3 - Adds the list of primitives for the current type into the FRT for the current block
 def p_EC_SEEN_VAR_TYPE(p):
 	"EC_SEEN_VAR_TYPE : "
-	for var_name in globalScope.primitive_names:
+	for var_name in global_scope.primitive_names:
 		#Primitive id should not be a duplicate
-		if not globalScope.function_directory.id_exists(var_name, globalScope.current_block_id):
+		if not global_scope.function_directory.id_exists(var_name, global_scope.current_block_id):
 			primitive_type = p[-1]
-			globalScope.function_directory.add_primitive(globalScope.current_block_id, var_name, primitive_type)
+			global_scope.function_directory.add_primitive(global_scope.current_block_id, var_name, primitive_type)
 		else:
 			stop_exec("Variable named '%s' is already defined" % var_name)
 
 #LIST_DECLARATION action 1 - Sets the current list id being analyzed
 def p_EC_SEEN_LIST_ID(p):
 	"EC_SEEN_LIST_ID : "
-	globalScope.current_list_id = p[-1]
+	global_scope.current_list_id = p[-1]
 
 #LIST_DECLARATION action 2 - Sets the current list size being analyzed
 def p_EC_SEEN_LIST_SIZE(p):
 	"EC_SEEN_LIST_SIZE : "
-	globalScope.current_list_size = p[-1]
+	global_scope.current_list_size = p[-1]
 
 #LIST_DECLARATION action 3 - Sets the current list type being analyzed
 def p_EC_SEEN_LIST_TYPE(p):
 	"EC_SEEN_LIST_TYPE : "
-	globalScope.current_list_type = p[-1]
+	global_scope.current_list_type = p[-1]
 
 #LIST_DECLARATION action 4 - Adds a list to the FRT for the current block
 def p_EC_SEEN_LIST(p):
 	"EC_SEEN_LIST : "
 	#List id should not be a duplicate
-	if not globalScope.function_directory.id_exists(globalScope.current_list_id, globalScope.current_block_id):
-		globalScope.function_directory.add_list(globalScope.current_block_id, globalScope.current_list_id, globalScope.current_list_size, globalScope.current_list_type)
+	if not global_scope.function_directory.id_exists(global_scope.current_list_id, global_scope.current_block_id):
+		global_scope.function_directory.add_list(global_scope.current_block_id, global_scope.current_list_id, global_scope.current_list_size, global_scope.current_list_type)
 	else:
-		stop_exec("List named '%s' is already defined" % globalScope.current_list_id)
+		stop_exec("List named '%s' is already defined" % global_scope.current_list_id)
 
 #FACTOR action 1 - Adds a false bottom mark to the operators stack
 def p_EC_SEEN_FACT_LP(p):	
 	"EC_SEEN_FACT_LP : "
-	globalScope.pending_operators.push("(")
+	global_scope.pending_operators.push("(")
 
 #FACTOR action 2 - Removes the false bottom mark of the operators stack
 def p_EC_SEEN_FACT_RP(p):	
 	"EC_SEEN_FACT_RP : "
-	globalScope.pending_operators.pop()
+	global_scope.pending_operators.pop()
 
 #CONSTANT action 1 - Adds the just read constant to the operands stack
 def p_EC_SEEN_CONST(p):
 	"EC_SEEN_CONST : "
 	operand = p[-1]
-	globalScope.pending_operands.push(operand)
+	global_scope.pending_operands.push(operand)
 
 #CONSTANT action 2 - Adds the id type of the just read id to the operand types stack
 def p_EC_SEEN_CONST_ID(p):
 	"EC_SEEN_CONST_ID : "
-	primitive_id = globalScope.pending_operands.peek()
+	primitive_id = global_scope.pending_operands.peek()
 
 	#Primitive should exist in the current block
-	if globalScope.function_directory.primitive_id_exists(primitive_id, globalScope.current_block_id):
-		globalScope.pending_operand_types.push(globalScope.function_directory.get_variable_type_for_block(globalScope.pending_operands.peek(), globalScope.current_block_id))
+	if global_scope.function_directory.primitive_id_exists(primitive_id, global_scope.current_block_id):
+		global_scope.pending_operand_types.push(global_scope.function_directory.get_variable_type_for_block(global_scope.pending_operands.peek(), global_scope.current_block_id))
 	else:
-		stop_exec("Variable '%s' is not declared in block '%s'" % (primitive_id, globalScope.current_block_id))
+		stop_exec("Variable '%s' is not declared in block '%s'" % (primitive_id, global_scope.current_block_id))
 
 #CONSTANT action 3 - Adds the type whole to the operand types stack
 def p_EC_SEEN_CONST_WHOLE(p):
 	"EC_SEEN_CONST_WHOLE : "
-	globalScope.pending_operand_types.push(constants.DataTypes.WHOLE)
+	global_scope.pending_operand_types.push(constants.DataTypes.WHOLE)
 
 #CONSTANT action 4 - Adds the type decimal to the operand types stack
 def p_EC_SEEN_CONST_DECIMAL(p):
 	"EC_SEEN_CONST_DECIMAL : "
-	globalScope.pending_operand_types.push(constants.DataTypes.DECIMAL)
+	global_scope.pending_operand_types.push(constants.DataTypes.DECIMAL)
 
 #CONSTANT action 5 - Adds the type words to the operand types stack
 def p_EC_SEEN_CONST_WORDS(p):
 	"EC_SEEN_CONST_WORDS : "
-	globalScope.pending_operand_types.push(constants.DataTypes.WORDS)
+	global_scope.pending_operand_types.push(constants.DataTypes.WORDS)
 
 #CONSTANT action 6 - Adds the type boolean to the operand types stack
 def p_EC_SEEN_CONST_BOOLEAN(p):
 	"EC_SEEN_CONST_BOOLEAN : "
-	globalScope.pending_operand_types.push(constants.DataTypes.BOOLEAN)
+	global_scope.pending_operand_types.push(constants.DataTypes.BOOLEAN)
 
 #CONSTANT action 7 - Validates block return type with a return value
 def p_EC_SEEN_CALL_VAL_BLOCK_ID(p):
@@ -470,34 +470,34 @@ def p_EC_SEEN_CONST_LIST_ID(p):
 	list_id = p[-1]
 
 	#ID should belong to a list
-	if globalScope.function_directory.list_id_exists(list_id, globalScope.current_block_id):
-		globalScope.pending_lists.push(list_id)
-		globalScope.pending_operators.push("(")
+	if global_scope.function_directory.list_id_exists(list_id, global_scope.current_block_id):
+		global_scope.pending_lists.push(list_id)
+		global_scope.pending_operators.push("(")
 	else:
 		stop_exec("ID '%s' is not a list" % list_id)
 
 #CONSTANT action 10 - Generates quads to access list index
 def p_EC_SEEN_CONST_LIST(p):
 	"EC_SEEN_CONST_LIST : "
-	list_index_type = globalScope.pending_operand_types.pop()
+	list_index_type = global_scope.pending_operand_types.pop()
 
 	#List index type should resolve to whole
 	if list_index_type == constants.DataTypes.WHOLE:
-		list_id = globalScope.pending_lists.pop()
-		list_address = globalScope.function_directory.get_list_address_for_block(list_id, globalScope.current_block_id)
-		list_index = globalScope.pending_operands.pop()
-		list_size = globalScope.function_directory.get_list_size_for_block(list_id, globalScope.current_block_id)
-		list_type = globalScope.function_directory.get_list_type_for_block(list_id, globalScope.current_block_id)	
+		list_id = global_scope.pending_lists.pop()
+		list_address = global_scope.function_directory.get_list_address_for_block(list_id, global_scope.current_block_id)
+		list_index = global_scope.pending_operands.pop()
+		list_size = global_scope.function_directory.get_list_size_for_block(list_id, global_scope.current_block_id)
+		list_type = global_scope.function_directory.get_list_type_for_block(list_id, global_scope.current_block_id)	
 
-		globalScope.quad_list.append_quad(constants.Operators.OP_VERIFY_INDEX, list_index, list_size, "-1")
+		global_scope.quad_list.append_quad(constants.Operators.OP_VERIFY_INDEX, list_index, list_size, "-1")
 
-		result = "*t" + str(globalScope.temp_space)
-		globalScope.temp_space = globalScope.temp_space + 1
-		globalScope.quad_list.append_quad(constants.Operators.OP_ADDITION, list_index, list_address, result)
+		result = "*t" + str(global_scope.temp_space)
+		global_scope.temp_space = global_scope.temp_space + 1
+		global_scope.quad_list.append_quad(constants.Operators.OP_ADDITION, list_index, list_address, result)
 		
-		globalScope.pending_operands.push(result)
-		globalScope.pending_operand_types.push(list_type)
-		globalScope.pending_operators.pop()
+		global_scope.pending_operands.push(result)
+		global_scope.pending_operand_types.push(list_type)
+		global_scope.pending_operators.pop()
 	else:
 		stop_exec("List index must be a 'whole' value, found a '%s' value instead" % list_index_type)
 
@@ -507,15 +507,15 @@ def p_EC_SEEN_ITEM_OP(p):
 	operator = p[-1]
 
 	if operator == "+":
-		globalScope.pending_operators.push(constants.Operators.OP_ADDITION)
+		global_scope.pending_operators.push(constants.Operators.OP_ADDITION)
 	elif operator == "-":
-		globalScope.pending_operators.push(constants.Operators.OP_SUBTRACTION)
+		global_scope.pending_operators.push(constants.Operators.OP_SUBTRACTION)
 
 #ITEM action 2 - Generates quad for the addition or subtraction operation
 def p_EC_SEEN_TERM(p):
 	"EC_SEEN_TERM : "
 	#Checks that the next operator is an addition or subtraction to respect order of operations
-	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == constants.Operators.OP_ADDITION or globalScope.pending_operators.peek() == constants.Operators.OP_SUBTRACTION):
+	if not global_scope.pending_operators.empty() and (global_scope.pending_operators.peek() == constants.Operators.OP_ADDITION or global_scope.pending_operators.peek() == constants.Operators.OP_SUBTRACTION):
 		create_binary_operation_quad()
 
 #TERM action 1 - Pushes the appropriate operator into the operators stack
@@ -524,15 +524,15 @@ def p_EC_SEEN_TERM_OP(p):
 	operator = p[-1]
 
 	if operator == "*":
-		globalScope.pending_operators.push(constants.Operators.OP_MULTIPLICATION)
+		global_scope.pending_operators.push(constants.Operators.OP_MULTIPLICATION)
 	elif operator == "/":
-		globalScope.pending_operators.push(constants.Operators.OP_DIVISION)
+		global_scope.pending_operators.push(constants.Operators.OP_DIVISION)
 
 #TERM action 2 - Generates quad for the multiplication or division operation
 def p_EC_SEEN_FACTOR(p):
 	"EC_SEEN_FACTOR : "
 	#Checks that the next operator is a multplication or division to respect order of operations
-	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == constants.Operators.OP_MULTIPLICATION or globalScope.pending_operators.peek() == constants.Operators.OP_DIVISION):
+	if not global_scope.pending_operators.empty() and (global_scope.pending_operators.peek() == constants.Operators.OP_MULTIPLICATION or global_scope.pending_operators.peek() == constants.Operators.OP_DIVISION):
 		create_binary_operation_quad()
 
 #EXP action 1 - Pushes the appropriate operator into the operators stack
@@ -541,56 +541,56 @@ def p_EC_SEEN_RELOP(p):
 	operator = p[-1]
 
 	if operator == ">":
-		globalScope.pending_operators.push(constants.Operators.OP_GREATER)
+		global_scope.pending_operators.push(constants.Operators.OP_GREATER)
 	elif operator == ">=":
-		globalScope.pending_operators.push(constants.Operators.OP_GREATER_EQUAL)
+		global_scope.pending_operators.push(constants.Operators.OP_GREATER_EQUAL)
 	elif operator == "<":
-		globalScope.pending_operators.push(constants.Operators.OP_LESS)
+		global_scope.pending_operators.push(constants.Operators.OP_LESS)
 	elif operator == "<=":
-		globalScope.pending_operators.push(constants.Operators.OP_LESS_EQUAL)
+		global_scope.pending_operators.push(constants.Operators.OP_LESS_EQUAL)
 	elif operator == "==":
-		globalScope.pending_operators.push(constants.Operators.OP_EQUAL)
+		global_scope.pending_operators.push(constants.Operators.OP_EQUAL)
 	elif operator == "!=":
-		globalScope.pending_operators.push(constants.Operators.OP_NOT_EQUAL)
+		global_scope.pending_operators.push(constants.Operators.OP_NOT_EQUAL)
 
 #EXP action 2 - Generates quad for equality operations
 def p_EC_SEEN_RELOP_ITEM(p):
 	"EC_SEEN_RELOP_ITEM : "
 	#Checks that the next operator is a equality operator to respect order of operations
-	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == constants.Operators.OP_GREATER
-														or globalScope.pending_operators.peek() == constants.Operators.OP_GREATER_EQUAL
-														or globalScope.pending_operators.peek() == constants.Operators.OP_LESS
-														or globalScope.pending_operators.peek() == constants.Operators.OP_LESS_EQUAL
-														or globalScope.pending_operators.peek() == constants.Operators.OP_EQUAL
-														or globalScope.pending_operators.peek() == constants.Operators.OP_NOT_EQUAL):
+	if not global_scope.pending_operators.empty() and (global_scope.pending_operators.peek() == constants.Operators.OP_GREATER
+														or global_scope.pending_operators.peek() == constants.Operators.OP_GREATER_EQUAL
+														or global_scope.pending_operators.peek() == constants.Operators.OP_LESS
+														or global_scope.pending_operators.peek() == constants.Operators.OP_LESS_EQUAL
+														or global_scope.pending_operators.peek() == constants.Operators.OP_EQUAL
+														or global_scope.pending_operators.peek() == constants.Operators.OP_NOT_EQUAL):
 		create_binary_operation_quad()
 
 #ASSIGN action 1 - Pushes the assignment operator to the operators stack
 def p_EC_SEEN_ASSIGN_OP(p):
 	"EC_SEEN_ASSIGN_OP : "
-	globalScope.pending_operators.push(constants.Operators.OP_ASSIGN)
+	global_scope.pending_operators.push(constants.Operators.OP_ASSIGN)
 
 #ASSIGN action 2 - Generates quad for assignment operations
 def p_EC_SEEN_ASSIGN_VALUE(p):
 	"EC_SEEN_ASSIGN_VALUE : "
 	#Checks that the next operator is an assignment operator to respect order of operations
-	if not globalScope.pending_operators.empty() and globalScope.pending_operators.peek() == constants.Operators.OP_ASSIGN:
+	if not global_scope.pending_operators.empty() and global_scope.pending_operators.peek() == constants.Operators.OP_ASSIGN:
 			#Value to be assigned
-			right_operand = globalScope.pending_operands.pop()
-			right_type = globalScope.pending_operand_types.pop()
+			right_operand = global_scope.pending_operands.pop()
+			right_type = global_scope.pending_operand_types.pop()
 
 			#Space where value will be assigned
-			left_operand = globalScope.pending_operands.pop()
-			left_type = globalScope.pending_operand_types.pop()
+			left_operand = global_scope.pending_operands.pop()
+			left_type = global_scope.pending_operand_types.pop()
 
-			operator = globalScope.pending_operators.pop()
+			operator = global_scope.pending_operators.pop()
 
 			#Checks if right_operand can be stored in a left_operand container
-			result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
+			result_type = global_scope.semantic_cube.validate_operation(operator, left_type, right_type)
 
 			#Assignment should be valid
 			if result_type != -1:
-				globalScope.quad_list.append_quad(operator, right_operand, "-1", left_operand)
+				global_scope.quad_list.append_quad(operator, right_operand, "-1", left_operand)
 
 				#free temp operand memory
 			else:
@@ -599,15 +599,15 @@ def p_EC_SEEN_ASSIGN_VALUE(p):
 #CONDITION action 1 - Generates jump if false quad and pushes it into pending jumps stack
 def p_EC_SEEN_IF_EXP(p):
 	"EC_SEEN_IF_EXP : "
-	exp_type = globalScope.pending_operand_types.pop()
+	exp_type = global_scope.pending_operand_types.pop()
 
 	#The expression should resolve to a boolean value
 	if exp_type == constants.DataTypes.BOOLEAN:
-		result = globalScope.pending_operands.pop()
+		result = global_scope.pending_operands.pop()
 
-		globalScope.quad_list.append_quad(constants.Operators.OP_GO_TO_F, result, "-1", "pending")
+		global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO_F, result, "-1", "pending")
 
-		globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count() - 1)
+		global_scope.pending_jumps.push(global_scope.quad_list.get_quad_count() - 1)
 	else:
 		stop_exec("Expected a boolean expression, found a '%s' expression instead" % exp_type)
 
@@ -615,37 +615,37 @@ def p_EC_SEEN_IF_EXP(p):
 def p_EC_SEEN_ELSE(p):
 	"EC_SEEN_ELSE : "
 	#Quad for the true case
-	globalScope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "-1")
+	global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "-1")
 
 	#Fills the 'if' pending jump
-	if_false = globalScope.pending_jumps.pop()
-	globalScope.quad_list.set_result(if_false)
+	if_false = global_scope.pending_jumps.pop()
+	global_scope.quad_list.set_result(if_false)
 
 	#Pushes jump to the end of the 'else' to the pending jumps stack
-	globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count() - 1)
+	global_scope.pending_jumps.push(global_scope.quad_list.get_quad_count() - 1)
 
 #CONDITION action 3 - Fills the 'else' pending jump, or the 'if' pending jump if there was no 'else'
 def p_EC_SEEN_END_IF(p):
 	"EC_SEEN_END_IF : "
-	end_if = globalScope.pending_jumps.pop()
-	globalScope.quad_list.set_result(end_if)
+	end_if = global_scope.pending_jumps.pop()
+	global_scope.quad_list.set_result(end_if)
 
 #LOOP action 1 - Pushes starting point of loop to the pending jumps stack
 def p_EC_SEEN_DO(p):
 	"EC_SEEN_DO : "
-	globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count())
+	global_scope.pending_jumps.push(global_scope.quad_list.get_quad_count())
 
 #LOOP action 2: - Generates quad to go to the beginning of the loop
 def p_EC_SEEN_UNTIL(p):
 	"EC_SEEN_UNTIL : "
-	exp_type = globalScope.pending_operand_types.pop()
+	exp_type = global_scope.pending_operand_types.pop()
 
 	#The expression should resolve to a boolean value
 	if exp_type == constants.DataTypes.BOOLEAN:
-		evaluation_result = globalScope.pending_operands.pop()
-		loop_start = globalScope.pending_jumps.pop()
+		evaluation_result = global_scope.pending_operands.pop()
+		loop_start = global_scope.pending_jumps.pop()
 
-		globalScope.quad_list.append_quad(constants.Operators.OP_GO_TO_T, evaluation_result, "-1", loop_start)
+		global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO_T, evaluation_result, "-1", loop_start)
 	else:
 		stop_exec("Expected a boolean expression, found a '%s' expression instead" % exp_type)
 
@@ -653,25 +653,25 @@ def p_EC_SEEN_UNTIL(p):
 #WRITE action 1 - Generates quad for the write action
 def p_EC_SEEN_WRITE_EXP(p):
 	"EC_SEEN_WRITE_EXP : "
-	expression_to_print = globalScope.pending_operands.pop()
+	expression_to_print = global_scope.pending_operands.pop()
 
-	globalScope.quad_list.append_quad(constants.Operators.OP_PRINT, expression_to_print, "-1", "-1")
+	global_scope.quad_list.append_quad(constants.Operators.OP_PRINT, expression_to_print, "-1", "-1")
 
 #READ action 1 - Generates quad for the read action
 def p_EC_SEEN_READ_ID(p):
 	"EC_SEEN_READ_ID : "
-	id_to_read_into = globalScope.pending_operands.pop()
+	id_to_read_into = global_scope.pending_operands.pop()
 
 	#The ID that will store whatever is read should exist
-	if globalScope.function_directory.primitive_id_exists(id_to_read_into, globalScope.current_block_id):
-		globalScope.quad_list.append_quad(constants.Operators.OP_INPUT, "-1", "-1", id_to_read_into)
+	if global_scope.function_directory.primitive_id_exists(id_to_read_into, global_scope.current_block_id):
+		global_scope.quad_list.append_quad(constants.Operators.OP_INPUT, "-1", "-1", id_to_read_into)
 	else:
 		stop_exec("ID '%s' is not declared" % id_to_read_into)
 
 #EXPRESSION action 1 - Pushes the negation operator into the operators stack
 def p_EC_SEEN_NOT(p):
 	"EC_SEEN_NOT : "
-	globalScope.pending_operators.push(constants.Operators.OP_NEGATION)
+	global_scope.pending_operators.push(constants.Operators.OP_NEGATION)
 
 #EXPRESSION action 2 - Pushes the appropriate operator into the operators stack
 def p_EC_SEEN_AND_OR(p):
@@ -679,34 +679,34 @@ def p_EC_SEEN_AND_OR(p):
 	operator = p[-1]
 
 	if operator == "and":
-		globalScope.pending_operators.push(constants.Operators.OP_AND)
+		global_scope.pending_operators.push(constants.Operators.OP_AND)
 	elif operator == "or":
-		globalScope.pending_operators.push(constants.Operators.OP_OR)
+		global_scope.pending_operators.push(constants.Operators.OP_OR)
 
 #EXPRESSION action 3 - Generates quad for logical operations
 def p_EC_SEEN_EXPRESSION(p):
 	"EC_SEEN_EXPRESSION : "
 	#Checks that the next operator is a relational operator to respect order of operations
-	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == constants.Operators.OP_AND
-														or globalScope.pending_operators.peek() == constants.Operators.OP_OR):
+	if not global_scope.pending_operators.empty() and (global_scope.pending_operators.peek() == constants.Operators.OP_AND
+														or global_scope.pending_operators.peek() == constants.Operators.OP_OR):
 		create_binary_operation_quad()	
 
 	#Checks that the next operator is a negation operator to respect order of operations
-	elif not globalScope.pending_operators.empty() and globalScope.pending_operators.peek() == constants.Operators.OP_NEGATION:
-		right_operand = globalScope.pending_operands.pop()
-		right_type = globalScope.pending_operand_types.pop()
+	elif not global_scope.pending_operators.empty() and global_scope.pending_operators.peek() == constants.Operators.OP_NEGATION:
+		right_operand = global_scope.pending_operands.pop()
+		right_type = global_scope.pending_operand_types.pop()
 
-		operator = globalScope.pending_operators.pop()
+		operator = global_scope.pending_operators.pop()
 
 		#Negation only applies to boolean type
 		if right_type == constants.DataTypes.BOOLEAN:
-			result = "t" + str(globalScope.temp_space)
-			globalScope.temp_space = globalScope.temp_space + 1
+			result = "t" + str(global_scope.temp_space)
+			global_scope.temp_space = global_scope.temp_space + 1
 
-			globalScope.quad_list.append_quad(operator, "-1", right_operand, result)
+			global_scope.quad_list.append_quad(operator, "-1", right_operand, result)
 
-			globalScope.pending_operands.push(result)
-			globalScope.pending_operand_types.push(constants.DataTypes.BOOLEAN)
+			global_scope.pending_operands.push(result)
+			global_scope.pending_operand_types.push(constants.DataTypes.BOOLEAN)
 
 			#free temp operand memory
 		else:
@@ -715,29 +715,29 @@ def p_EC_SEEN_EXPRESSION(p):
 #PROGRAM action 1 - Generates jump to starting block and pushes to pending jumps stack
 def p_EC_SEEN_START_PROG(p):
 	"EC_SEEN_START_PROG : "
-	globalScope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "pending")
+	global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "pending")
 
-	globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count() - 1)
+	global_scope.pending_jumps.push(global_scope.quad_list.get_quad_count() - 1)
 
 #RETURN action 1 - Validates return type
 def p_EC_SEEN_RETURN(p):
 	"EC_SEEN_RETURN : "
-	block_return_type = globalScope.function_directory.get_return_type_for_block(globalScope.current_block_id)
+	block_return_type = global_scope.function_directory.get_return_type_for_block(global_scope.current_block_id)
 
 	#blocks should only return when stated in the definition
 	if block_return_type != constants.DataTypes.VOID:
-		return_type = globalScope.pending_operand_types.pop()
+		return_type = global_scope.pending_operand_types.pop()
 
 		#Validates return value with the block definition
 		if return_type == block_return_type:
-			return_value = globalScope.pending_operands.pop()
-			globalScope.quad_list.append_quad(constants.Operators.OP_RETURN, return_value, "-1", "-1")
-			globalScope.block_returns = True
+			return_value = global_scope.pending_operands.pop()
+			global_scope.quad_list.append_quad(constants.Operators.OP_RETURN, return_value, "-1", "-1")
+			global_scope.block_returns = True
 		else:
-			stop_exec("Block '%s' should return a '%s' value, found a '%s' value instead" % (globalScope.current_block_id, block_return_type, return_type))
+			stop_exec("Block '%s' should return a '%s' value, found a '%s' value instead" % (global_scope.current_block_id, block_return_type, return_type))
 
 	else:
-		stop_exec("Block '%s' should not return a value" % globalScope.current_block_id)
+		stop_exec("Block '%s' should not return a value" % global_scope.current_block_id)
 
 #CALL action 1 - Validates block return type with no return value
 def p_EC_SEEN_CALL_VOID_BLOCK_ID(p):
@@ -747,32 +747,32 @@ def p_EC_SEEN_CALL_VOID_BLOCK_ID(p):
 #CALL action 2 - Generates quad for ERA and initializes argument counter
 def p_EC_SEEN_START_PARAM(p):
 	"EC_SEEN_START_PARAM : "
-	call_block_id = globalScope.pending_blocks.peek()
-	globalScope.quad_list.append_quad(constants.Operators.OP_ERA, call_block_id, "-1", "-1")
-	globalScope.pending_blocks_argument_counter.push(0)			
+	call_block_id = global_scope.pending_blocks.peek()
+	global_scope.quad_list.append_quad(constants.Operators.OP_ERA, call_block_id, "-1", "-1")
+	global_scope.pending_blocks_argument_counter.push(0)			
 
 #CALL action 3 - Validates argument counter with parameter number
 def p_EC_SEEN_PARAM(p):
 	"EC_SEEN_PARAM : "
-	argument_type = globalScope.pending_operand_types.pop()
+	argument_type = global_scope.pending_operand_types.pop()
 
 	try:
-		call_block_id = globalScope.pending_blocks.peek()
-		block_argument_counter = globalScope.pending_blocks_argument_counter.pop()
-		parameter_type = globalScope.function_directory.get_parameter_type_for_block(call_block_id, block_argument_counter)
+		call_block_id = global_scope.pending_blocks.peek()
+		block_argument_counter = global_scope.pending_blocks_argument_counter.pop()
+		parameter_type = global_scope.function_directory.get_parameter_type_for_block(call_block_id, block_argument_counter)
 	#If the argument counter is greater than the parameter counter
 	except IndexError:
-		block_parameter_counter = globalScope.function_directory.get_parameter_count_for_block(call_block_id)
+		block_parameter_counter = global_scope.function_directory.get_parameter_count_for_block(call_block_id)
 		stop_exec("Block '%s' receives %d parameter(s), found %d argument(s) instead" % (call_block_id, block_parameter_counter, block_argument_counter + 1))
 
 	block_argument_counter = block_argument_counter + 1
-	globalScope.pending_blocks_argument_counter.push(block_argument_counter)
+	global_scope.pending_blocks_argument_counter.push(block_argument_counter)
 
 	#Validates argument type with parameter type
 	if argument_type == parameter_type:
-		argument = globalScope.pending_operands.pop()
+		argument = global_scope.pending_operands.pop()
 		result = "param" + str(block_argument_counter)
-		globalScope.quad_list.append_quad(constants.Operators.OP_PARAM, argument, "-1", result)
+		global_scope.quad_list.append_quad(constants.Operators.OP_PARAM, argument, "-1", result)
 	else:
 		stop_exec("Argument #%d of block '%s' should be a '%s' value, found a '%s' value instead" % (block_argument_counter, call_block_id, parameter_type, argument_type))
 
@@ -789,24 +789,24 @@ def p_error(p):
 #Generates quads for block calls
 #returns_value is a boolean value that indicates if the block returns a value or not
 def abstract_seen_block_call(p, returns_value):
-	call_block_id = globalScope.pending_blocks.pop()
-	block_parameter_counter = globalScope.function_directory.get_parameter_count_for_block(call_block_id)
-	block_argument_counter = globalScope.pending_blocks_argument_counter.pop()
+	call_block_id = global_scope.pending_blocks.pop()
+	block_parameter_counter = global_scope.function_directory.get_parameter_count_for_block(call_block_id)
+	block_argument_counter = global_scope.pending_blocks_argument_counter.pop()
 
 	#Arguments number should match block's parameters number
 	if  block_parameter_counter == block_argument_counter:
-		call_block_initial_quad = globalScope.function_directory.get_quad_position_block(call_block_id)
-		globalScope.quad_list.append_quad(constants.Operators.OP_GO_SUB, call_block_id, "-1", call_block_initial_quad)
+		call_block_initial_quad = global_scope.function_directory.get_quad_position_block(call_block_id)
+		global_scope.quad_list.append_quad(constants.Operators.OP_GO_SUB, call_block_id, "-1", call_block_initial_quad)
 
 		#If the block will resolve to a value
 		if returns_value:
-			result = "t" + str(globalScope.temp_space)
-			globalScope.temp_space = globalScope.temp_space + 1
-			globalScope.quad_list.append_quad(constants.Operators.OP_ASSIGN, call_block_id, "-1", result)
+			result = "t" + str(global_scope.temp_space)
+			global_scope.temp_space = global_scope.temp_space + 1
+			global_scope.quad_list.append_quad(constants.Operators.OP_ASSIGN, call_block_id, "-1", result)
 
-			globalScope.pending_operands.push(result)
-			return_type = globalScope.function_directory.get_return_type_for_block(call_block_id)
-			globalScope.pending_operand_types.push(return_type)
+			global_scope.pending_operands.push(result)
+			return_type = global_scope.function_directory.get_return_type_for_block(call_block_id)
+			global_scope.pending_operand_types.push(return_type)
 
 	else:
 		stop_exec("Block '%s' receives %d parameter(s), found %d argument(s) instead" % (call_block_id, block_parameter_counter, block_argument_counter))
@@ -815,11 +815,11 @@ def abstract_seen_block_call(p, returns_value):
 #returns_value is a boolean value that indicates if the block returns a value or not
 def abstract_seen_block_id(p, returns_value):
 	call_block_id = p[-1]
-	globalScope.pending_blocks.push(call_block_id)
+	global_scope.pending_blocks.push(call_block_id)
 
 	#Block should exist
-	if globalScope.function_directory.block_id_exists(call_block_id):
-		call_block_return_type = globalScope.function_directory.get_return_type_for_block(call_block_id)
+	if global_scope.function_directory.block_id_exists(call_block_id):
+		call_block_return_type = global_scope.function_directory.get_return_type_for_block(call_block_id)
 
 		#Validate the return type with usage
 		if not returns_value:
@@ -829,30 +829,30 @@ def abstract_seen_block_id(p, returns_value):
 			if call_block_return_type == constants.DataTypes.VOID:
 				stop_exec("Block '%s' does not return a value" % call_block_id)
 	else:
-		stop_exec("Block '%s' does not exist or is declared below block '%s'" % (call_block_id, globalScope.current_block_id))
+		stop_exec("Block '%s' does not exist or is declared below block '%s'" % (call_block_id, global_scope.current_block_id))
 
 #Creates a quad for binary operations (arithmetic, and/or)
 def create_binary_operation_quad():
-	right_operand = globalScope.pending_operands.pop()
-	right_type = globalScope.pending_operand_types.pop()
+	right_operand = global_scope.pending_operands.pop()
+	right_type = global_scope.pending_operand_types.pop()
 
-	left_operand = globalScope.pending_operands.pop()
-	left_type = globalScope.pending_operand_types.pop()
+	left_operand = global_scope.pending_operands.pop()
+	left_type = global_scope.pending_operand_types.pop()
 
-	operator = globalScope.pending_operators.pop()
+	operator = global_scope.pending_operators.pop()
 
 	#Checks if operand types are interoperable
-	result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
+	result_type = global_scope.semantic_cube.validate_operation(operator, left_type, right_type)
 
 	#Types should be interoperable
 	if result_type != -1:
-		result = "t" + str(globalScope.temp_space)
-		globalScope.temp_space = globalScope.temp_space + 1
+		result = "t" + str(global_scope.temp_space)
+		global_scope.temp_space = global_scope.temp_space + 1
 
-		globalScope.quad_list.append_quad(operator, left_operand, right_operand, result)
+		global_scope.quad_list.append_quad(operator, left_operand, right_operand, result)
 
-		globalScope.pending_operands.push(result)
-		globalScope.pending_operand_types.push(result_type)
+		global_scope.pending_operands.push(result)
+		global_scope.pending_operand_types.push(result_type)
 
 		#free temp operand memory
 	else:
@@ -861,13 +861,13 @@ def create_binary_operation_quad():
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message
 def stop_exec(message):
-	sys.exit("Error in line %d: %s" % (globalScope.line_count, message))
+	sys.exit("Error in line %d: %s" % (global_scope.line_count, message))
 
 #Prints results of compilation when successful
 def end_compilation():
 	print('Compilation Successful!')
-	globalScope.function_directory.print_table()
-	print(globalScope.quad_list)
+	global_scope.function_directory.print_table()
+	print(global_scope.quad_list)
 
 #Build the parser
 parser = yacc.yacc()
