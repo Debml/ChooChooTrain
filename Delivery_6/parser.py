@@ -2,6 +2,7 @@ import scanner
 import sys
 import ply.yacc as yacc
 import globalScope
+import constants
 tokens = scanner.tokens
 
 def p_PROGRAM(p):
@@ -355,7 +356,7 @@ def p_EC_SEEN_BLOCK_BODY_END(p):
 
 	#Block should be returning something if it stated it would do so (Return type validation is done EC_SEEN_RETURN)
 	if (globalScope.block_returns and block_return_type != "void") or (not globalScope.block_returns and block_return_type == "void"):
-		globalScope.quad_list.append_quad("op_end_proc", "-1", "-1", "-1")
+		globalScope.quad_list.append_quad(constants.Operators.OP_END_PROC, "-1", "-1", "-1")
 		globalScope.function_directory.clear_variable_list(globalScope.current_block_id)
 	else:
 		stop_exec("Block '%s' should return a '%s' value" % (globalScope.current_block_id, block_return_type))
@@ -363,18 +364,18 @@ def p_EC_SEEN_BLOCK_BODY_END(p):
 #VAR_DECLARATION action 1 - Resets the list of primitives for the current type
 def p_EC_SEEN_VAR_KEYWORD(p):
 	"EC_SEEN_VAR_KEYWORD : "
-	globalScope.var_names = []
+	globalScope.primitive_names = []
 
 #VAR_DECLARATION action 2 - Adds the previously seen primitive to the primitives list for the current type
 def p_EC_SEEN_VAR_ID(p):
 	"EC_SEEN_VAR_ID : "
 	primitive_name = p[-1]
-	globalScope.var_names.append(primitive_name)
+	globalScope.primitive_names.append(primitive_name)
 
 #VAR_DECLARATION action 3 - Adds the list of primitives for the current type into the FRT for the current block
 def p_EC_SEEN_VAR_TYPE(p):
 	"EC_SEEN_VAR_TYPE : "
-	for var_name in globalScope.var_names:
+	for var_name in globalScope.primitive_names:
 		#Primitive id should not be a duplicate
 		if not globalScope.function_directory.id_exists(var_name, globalScope.current_block_id):
 			primitive_type = p[-1]
@@ -488,11 +489,11 @@ def p_EC_SEEN_CONST_LIST(p):
 		list_size = globalScope.function_directory.get_list_size_for_block(list_id, globalScope.current_block_id)
 		list_type = globalScope.function_directory.get_list_type_for_block(list_id, globalScope.current_block_id)	
 
-		globalScope.quad_list.append_quad("op_verify_index", list_index, list_size, "-1")
+		globalScope.quad_list.append_quad(constants.Operators.OP_VERIFY_INDEX, list_index, list_size, "-1")
 
 		result = "*t" + str(globalScope.temp_space)
 		globalScope.temp_space = globalScope.temp_space + 1
-		globalScope.quad_list.append_quad("op_addition", list_index, list_address, result)
+		globalScope.quad_list.append_quad(constants.Operators.OP_ADDITION, list_index, list_address, result)
 		
 		globalScope.pending_operands.push(result)
 		globalScope.pending_operand_types.push(list_type)
@@ -506,15 +507,15 @@ def p_EC_SEEN_ITEM_OP(p):
 	operator = p[-1]
 
 	if operator == "+":
-		globalScope.pending_operators.push("op_addition")
+		globalScope.pending_operators.push(constants.Operators.OP_ADDITION)
 	elif operator == "-":
-		globalScope.pending_operators.push("op_subtraction")
+		globalScope.pending_operators.push(constants.Operators.OP_SUBTRACTION)
 
 #ITEM action 2 - Generates quad for the addition or subtraction operation
 def p_EC_SEEN_TERM(p):
 	"EC_SEEN_TERM : "
 	#Checks that the next operator is an addition or subtraction to respect order of operations
-	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_addition" or globalScope.pending_operators.peek() == "op_subtraction"):
+	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == constants.Operators.OP_ADDITION or globalScope.pending_operators.peek() == constants.Operators.OP_SUBTRACTION):
 		create_binary_operation_quad()
 
 #TERM action 1 - Pushes the appropriate operator into the operators stack
@@ -523,15 +524,15 @@ def p_EC_SEEN_TERM_OP(p):
 	operator = p[-1]
 
 	if operator == "*":
-		globalScope.pending_operators.push("op_multiplication")
+		globalScope.pending_operators.push(constants.Operators.OP_MULTIPLICATION)
 	elif operator == "/":
-		globalScope.pending_operators.push("op_division")
+		globalScope.pending_operators.push(constants.Operators.OP_DIVISION)
 
 #TERM action 2 - Generates quad for the multiplication or division operation
 def p_EC_SEEN_FACTOR(p):
 	"EC_SEEN_FACTOR : "
 	#Checks that the next operator is a multplication or division to respect order of operations
-	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_multiplication" or globalScope.pending_operators.peek() == "op_division"):
+	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == constants.Operators.OP_MULTIPLICATION or globalScope.pending_operators.peek() == constants.Operators.OP_DIVISION):
 		create_binary_operation_quad()
 
 #EXP action 1 - Pushes the appropriate operator into the operators stack
@@ -540,40 +541,40 @@ def p_EC_SEEN_RELOP(p):
 	operator = p[-1]
 
 	if operator == ">":
-		globalScope.pending_operators.push("op_greater")
+		globalScope.pending_operators.push(constants.Operators.OP_GREATER)
 	elif operator == ">=":
-		globalScope.pending_operators.push("op_greater_equal")
+		globalScope.pending_operators.push(constants.Operators.OP_GREATER_EQUAL)
 	elif operator == "<":
-		globalScope.pending_operators.push("op_less")
+		globalScope.pending_operators.push(constants.Operators.OP_LESS)
 	elif operator == "<=":
-		globalScope.pending_operators.push("op_less_equal")
+		globalScope.pending_operators.push(constants.Operators.OP_LESS_EQUAL)
 	elif operator == "==":
-		globalScope.pending_operators.push("op_equal")
+		globalScope.pending_operators.push(constants.Operators.OP_EQUAL)
 	elif operator == "!=":
-		globalScope.pending_operators.push("op_not_equal")
+		globalScope.pending_operators.push(constants.Operators.OP_NOT_EQUAL)
 
 #EXP action 2 - Generates quad for equality operations
 def p_EC_SEEN_RELOP_ITEM(p):
 	"EC_SEEN_RELOP_ITEM : "
 	#Checks that the next operator is a equality operator to respect order of operations
-	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_greater" 
-														or globalScope.pending_operators.peek() == "op_greater_equal"
-														or globalScope.pending_operators.peek() == "op_less"
-														or globalScope.pending_operators.peek() == "op_less_equal"
-														or globalScope.pending_operators.peek() == "op_equal"
-														or globalScope.pending_operators.peek() == "op_not_equal"):
+	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == constants.Operators.OP_GREATER
+														or globalScope.pending_operators.peek() == constants.Operators.OP_GREATER_EQUAL
+														or globalScope.pending_operators.peek() == constants.Operators.OP_LESS
+														or globalScope.pending_operators.peek() == constants.Operators.OP_LESS_EQUAL
+														or globalScope.pending_operators.peek() == constants.Operators.OP_EQUAL
+														or globalScope.pending_operators.peek() == constants.Operators.OP_NOT_EQUAL):
 		create_binary_operation_quad()
 
 #ASSIGN action 1 - Pushes the assignment operator to the operators stack
 def p_EC_SEEN_ASSIGN_OP(p):
 	"EC_SEEN_ASSIGN_OP : "
-	globalScope.pending_operators.push("op_assign")
+	globalScope.pending_operators.push(constants.Operators.OP_ASSIGN)
 
 #ASSIGN action 2 - Generates quad for assignment operations
 def p_EC_SEEN_ASSIGN_VALUE(p):
 	"EC_SEEN_ASSIGN_VALUE : "
 	#Checks that the next operator is an assignment operator to respect order of operations
-	if not globalScope.pending_operators.empty() and globalScope.pending_operators.peek() == "op_assign":
+	if not globalScope.pending_operators.empty() and globalScope.pending_operators.peek() == constants.Operators.OP_ASSIGN:
 			#Value to be assigned
 			right_operand = globalScope.pending_operands.pop()
 			right_type = globalScope.pending_operand_types.pop()
@@ -604,7 +605,7 @@ def p_EC_SEEN_IF_EXP(p):
 	if exp_type == "boolean":
 		result = globalScope.pending_operands.pop()
 
-		globalScope.quad_list.append_quad("op_go_to_f", result, "-1", "pending")
+		globalScope.quad_list.append_quad(constants.Operators.OP_GO_TO_F, result, "-1", "pending")
 
 		globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count() - 1)
 	else:
@@ -614,7 +615,7 @@ def p_EC_SEEN_IF_EXP(p):
 def p_EC_SEEN_ELSE(p):
 	"EC_SEEN_ELSE : "
 	#Quad for the true case
-	globalScope.quad_list.append_quad("op_go_to", "-1", "-1", "-1")
+	globalScope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "-1")
 
 	#Fills the 'if' pending jump
 	if_false = globalScope.pending_jumps.pop()
@@ -644,7 +645,7 @@ def p_EC_SEEN_UNTIL(p):
 		evaluation_result = globalScope.pending_operands.pop()
 		loop_start = globalScope.pending_jumps.pop()
 
-		globalScope.quad_list.append_quad("op_go_to_t", evaluation_result, "-1", loop_start)
+		globalScope.quad_list.append_quad(constants.Operators.OP_GO_TO_T, evaluation_result, "-1", loop_start)
 	else:
 		stop_exec("Expected a boolean expression, found a '%s' expression instead" % exp_type)
 
@@ -654,7 +655,7 @@ def p_EC_SEEN_WRITE_EXP(p):
 	"EC_SEEN_WRITE_EXP : "
 	expression_to_print = globalScope.pending_operands.pop()
 
-	globalScope.quad_list.append_quad("op_print", expression_to_print, "-1", "-1")
+	globalScope.quad_list.append_quad(constants.Operators.OP_PRINT, expression_to_print, "-1", "-1")
 
 #READ action 1 - Generates quad for the read action
 def p_EC_SEEN_READ_ID(p):
@@ -663,14 +664,14 @@ def p_EC_SEEN_READ_ID(p):
 
 	#The ID that will store whatever is read should exist
 	if globalScope.function_directory.primitive_id_exists(id_to_read_into, globalScope.current_block_id):
-		globalScope.quad_list.append_quad("op_input", "-1", "-1", id_to_read_into)
+		globalScope.quad_list.append_quad(constants.Operators.OP_INPUT, "-1", "-1", id_to_read_into)
 	else:
 		stop_exec("ID '%s' is not declared" % id_to_read_into)
 
 #EXPRESSION action 1 - Pushes the negation operator into the operators stack
 def p_EC_SEEN_NOT(p):
 	"EC_SEEN_NOT : "
-	globalScope.pending_operators.push("op_negation")
+	globalScope.pending_operators.push(constants.Operators.OP_NEGATION)
 
 #EXPRESSION action 2 - Pushes the appropriate operator into the operators stack
 def p_EC_SEEN_AND_OR(p):
@@ -678,20 +679,20 @@ def p_EC_SEEN_AND_OR(p):
 	operator = p[-1]
 
 	if operator == "and":
-		globalScope.pending_operators.push("op_and")
+		globalScope.pending_operators.push(constants.Operators.OP_AND)
 	elif operator == "or":
-		globalScope.pending_operators.push("op_or")
+		globalScope.pending_operators.push(constants.Operators.OP_OR)
 
 #EXPRESSION action 3 - Generates quad for logical operations
 def p_EC_SEEN_EXPRESSION(p):
 	"EC_SEEN_EXPRESSION : "
 	#Checks that the next operator is a relational operator to respect order of operations
-	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_and" 
-														or globalScope.pending_operators.peek() == "op_or"):
+	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == constants.Operators.OP_AND
+														or globalScope.pending_operators.peek() == constants.Operators.OP_OR):
 		create_binary_operation_quad()	
 
 	#Checks that the next operator is a negation operator to respect order of operations
-	elif not globalScope.pending_operators.empty() and globalScope.pending_operators.peek() == "op_negation":
+	elif not globalScope.pending_operators.empty() and globalScope.pending_operators.peek() == constants.Operators.OP_NEGATION:
 		right_operand = globalScope.pending_operands.pop()
 		right_type = globalScope.pending_operand_types.pop()
 
@@ -714,7 +715,7 @@ def p_EC_SEEN_EXPRESSION(p):
 #PROGRAM action 1 - Generates jump to starting block and pushes to pending jumps stack
 def p_EC_SEEN_START_PROG(p):
 	"EC_SEEN_START_PROG : "
-	globalScope.quad_list.append_quad("op_go_to", "-1", "-1", "pending")
+	globalScope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "pending")
 
 	globalScope.pending_jumps.push(globalScope.quad_list.get_quad_count() - 1)
 
@@ -730,7 +731,7 @@ def p_EC_SEEN_RETURN(p):
 		#Validates return value with the block definition
 		if return_type == block_return_type:
 			return_value = globalScope.pending_operands.pop()
-			globalScope.quad_list.append_quad("op_return", return_value, "-1", "-1")
+			globalScope.quad_list.append_quad(constants.Operators.OP_RETURN, return_value, "-1", "-1")
 			globalScope.block_returns = True
 		else:
 			stop_exec("Block '%s' should return a '%s' value, found a '%s' value instead" % (globalScope.current_block_id, block_return_type, return_type))
@@ -747,7 +748,7 @@ def p_EC_SEEN_CALL_VOID_BLOCK_ID(p):
 def p_EC_SEEN_START_PARAM(p):
 	"EC_SEEN_START_PARAM : "
 	call_block_id = globalScope.pending_blocks.peek()
-	globalScope.quad_list.append_quad("op_era", call_block_id, "-1", "-1")
+	globalScope.quad_list.append_quad(constants.Operators.OP_ERA, call_block_id, "-1", "-1")
 	globalScope.pending_blocks_argument_counter.push(0)			
 
 #CALL action 3 - Validates argument counter with parameter number
@@ -771,7 +772,7 @@ def p_EC_SEEN_PARAM(p):
 	if argument_type == parameter_type:
 		argument = globalScope.pending_operands.pop()
 		result = "param" + str(block_argument_counter)
-		globalScope.quad_list.append_quad("op_param", argument, "-1", result)
+		globalScope.quad_list.append_quad(constants.Operators.OP_PARAM, argument, "-1", result)
 	else:
 		stop_exec("Argument #%d of block '%s' should be a '%s' value, found a '%s' value instead" % (block_argument_counter, call_block_id, parameter_type, argument_type))
 
@@ -795,13 +796,13 @@ def abstract_seen_block_call(p, returns_value):
 	#Arguments number should match block's parameters number
 	if  block_parameter_counter == block_argument_counter:
 		call_block_initial_quad = globalScope.function_directory.get_quad_position_block(call_block_id)
-		globalScope.quad_list.append_quad("op_go_sub", call_block_id, "-1", call_block_initial_quad)
+		globalScope.quad_list.append_quad(constants.Operators.OP_GO_SUB, call_block_id, "-1", call_block_initial_quad)
 
 		#If the block will resolve to a value
 		if returns_value:
 			result = "t" + str(globalScope.temp_space)
 			globalScope.temp_space = globalScope.temp_space + 1
-			globalScope.quad_list.append_quad("op_assign", call_block_id, "-1", result)
+			globalScope.quad_list.append_quad(constants.Operators.OP_ASSIGN, call_block_id, "-1", result)
 
 			globalScope.pending_operands.push(result)
 			return_type = globalScope.function_directory.get_return_type_for_block(call_block_id)

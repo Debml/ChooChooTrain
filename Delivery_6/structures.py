@@ -5,6 +5,7 @@ January 19, 2016
 """
 #import deque for implementation of queue
 from collections import deque
+import constants
 
 """
 Fixed Semantic cube class defining a data structure behving like a semantic
@@ -25,74 +26,74 @@ class Semantic_Cube:
 		#create operator depth for each type
 		#whole-whole
 		whole_whole_valid_operators = Dictionary()
-		whole_whole_valid_operators.insert("op_addition","whole")
-		whole_whole_valid_operators.insert("op_subtraction","whole")
-		whole_whole_valid_operators.insert("op_multiplication","whole")
-		whole_whole_valid_operators.insert("op_division","decimal")
+		whole_whole_valid_operators.insert(constants.Operators.OP_ADDITION, "whole")
+		whole_whole_valid_operators.insert(constants.Operators.OP_SUBTRACTION, "whole")
+		whole_whole_valid_operators.insert(constants.Operators.OP_MULTIPLICATION, "whole")
+		whole_whole_valid_operators.insert(constants.Operators.OP_DIVISION, "decimal")
 
-		whole_whole_valid_operators.insert("op_less","boolean")
-		whole_whole_valid_operators.insert("op_less_equal","boolean")
-		whole_whole_valid_operators.insert("op_greater","boolean")
-		whole_whole_valid_operators.insert("op_greater_equal","boolean")
-		whole_whole_valid_operators.insert("op_equal","boolean")
-		whole_whole_valid_operators.insert("op_not_equal","boolean")
-		whole_whole_valid_operators.insert("op_assign","whole")
+		whole_whole_valid_operators.insert(constants.Operators.OP_LESS, "boolean")
+		whole_whole_valid_operators.insert(constants.Operators.OP_LESS_EQUAL, "boolean")
+		whole_whole_valid_operators.insert(constants.Operators.OP_GREATER, "boolean")
+		whole_whole_valid_operators.insert(constants.Operators.OP_GREATER_EQUAL, "boolean")
+		whole_whole_valid_operators.insert(constants.Operators.OP_EQUAL, "boolean")
+		whole_whole_valid_operators.insert(constants.Operators.OP_NOT_EQUAL, "boolean")
+		whole_whole_valid_operators.insert(constants.Operators.OP_ASSIGN, "whole")
 
 		#whole-decimal
 		whole_decimal_valid_operators = Dictionary()
-		whole_decimal_valid_operators.insert("op_addition","decimal")
-		whole_decimal_valid_operators.insert("op_subtraction","decimal")
-		whole_decimal_valid_operators.insert("op_multiplication","decimal")
-		whole_decimal_valid_operators.insert("op_division","decimal")
+		whole_decimal_valid_operators.insert(constants.Operators.OP_ADDITION, "decimal")
+		whole_decimal_valid_operators.insert(constants.Operators.OP_SUBTRACTION, "decimal")
+		whole_decimal_valid_operators.insert(constants.Operators.OP_MULTIPLICATION, "decimal")
+		whole_decimal_valid_operators.insert(constants.Operators.OP_DIVISION, "decimal")
 
-		whole_decimal_valid_operators.insert("op_less","boolean")
-		whole_decimal_valid_operators.insert("op_less_equal","boolean")
-		whole_decimal_valid_operators.insert("op_greater","boolean")
-		whole_decimal_valid_operators.insert("op_greater_equal","boolean")
-		whole_decimal_valid_operators.insert("op_equal","boolean")
-		whole_decimal_valid_operators.insert("op_not_equal","boolean")
+		whole_decimal_valid_operators.insert(constants.Operators.OP_LESS, "boolean")
+		whole_decimal_valid_operators.insert(constants.Operators.OP_LESS_EQUAL, "boolean")
+		whole_decimal_valid_operators.insert(constants.Operators.OP_GREATER, "boolean")
+		whole_decimal_valid_operators.insert(constants.Operators.OP_GREATER_EQUAL, "boolean")
+		whole_decimal_valid_operators.insert(constants.Operators.OP_EQUAL, "boolean")
+		whole_decimal_valid_operators.insert(constants.Operators.OP_NOT_EQUAL, "boolean")
 
 		#decimal-whole, decimal-decimal
 		decimal_valid_operators = Dictionary()
-		decimal_valid_operators.insert("op_addition","decimal")
-		decimal_valid_operators.insert("op_subtraction","decimal")
-		decimal_valid_operators.insert("op_multiplication","decimal")
-		decimal_valid_operators.insert("op_division","decimal")
+		decimal_valid_operators.insert(constants.Operators.OP_ADDITION, "decimal")
+		decimal_valid_operators.insert(constants.Operators.OP_SUBTRACTION, "decimal")
+		decimal_valid_operators.insert(constants.Operators.OP_MULTIPLICATION, "decimal")
+		decimal_valid_operators.insert(constants.Operators.OP_DIVISION, "decimal")
 
-		decimal_valid_operators.insert("op_less","boolean")
-		decimal_valid_operators.insert("op_less_equal","boolean")
-		decimal_valid_operators.insert("op_greater","boolean")
-		decimal_valid_operators.insert("op_greater_equal","boolean")
-		decimal_valid_operators.insert("op_equal","boolean")
-		decimal_valid_operators.insert("op_not_equal","boolean")
-		decimal_valid_operators.insert("op_assign","decimal")
+		decimal_valid_operators.insert(constants.Operators.OP_LESS, "boolean")
+		decimal_valid_operators.insert(constants.Operators.OP_LESS_EQUAL, "boolean")
+		decimal_valid_operators.insert(constants.Operators.OP_GREATER, "boolean")
+		decimal_valid_operators.insert(constants.Operators.OP_GREATER_EQUAL, "boolean")
+		decimal_valid_operators.insert(constants.Operators.OP_EQUAL, "boolean")
+		decimal_valid_operators.insert(constants.Operators.OP_NOT_EQUAL, "boolean")
+		decimal_valid_operators.insert(constants.Operators.OP_ASSIGN, "decimal")
 
 		#words-words
 		words_valid_operators = Dictionary()
-		words_valid_operators.insert("op_addition","words")
-		words_valid_operators.insert("op_equal","boolean")
-		words_valid_operators.insert("op_not_equal","boolean")
-		words_valid_operators.insert("op_assign","words")
+		words_valid_operators.insert(constants.Operators.OP_ADDITION, "words")
+		words_valid_operators.insert(constants.Operators.OP_EQUAL, "boolean")
+		words_valid_operators.insert(constants.Operators.OP_NOT_EQUAL, "boolean")
+		words_valid_operators.insert(constants.Operators.OP_ASSIGN, "words")
 
 		#bool-bool
 		bool_valid_operators = Dictionary()
-		bool_valid_operators.insert("op_and","boolean")
-		bool_valid_operators.insert("op_or","boolean")		
-		bool_valid_operators.insert("op_negation","boolean")	
-		bool_valid_operators.insert("op_assign","boolean")	
+		bool_valid_operators.insert(constants.Operators.OP_AND, "boolean")
+		bool_valid_operators.insert(constants.Operators.OP_OR, "boolean")		
+		bool_valid_operators.insert(constants.Operators.OP_NEGATION, "boolean")	
+		bool_valid_operators.insert(constants.Operators.OP_ASSIGN, "boolean")	
 
 		#insert operator depth
-		dictionary_whole.insert("whole",whole_whole_valid_operators)
-		dictionary_whole.insert("decimal",whole_decimal_valid_operators)
+		dictionary_whole.insert("whole", whole_whole_valid_operators)
+		dictionary_whole.insert("decimal", whole_decimal_valid_operators)
 
-		dictionary_decimal.insert("whole",decimal_valid_operators)
-		dictionary_decimal.insert("decimal",decimal_valid_operators)
+		dictionary_decimal.insert("whole", decimal_valid_operators)
+		dictionary_decimal.insert("decimal", decimal_valid_operators)
 
-		dictionary_words.insert("words",words_valid_operators)
+		dictionary_words.insert("words", words_valid_operators)
 
-		dictionary_bool.insert("boolean",bool_valid_operators)
+		dictionary_bool.insert("boolean", bool_valid_operators)
 
-		self.cube = [dictionary_whole,dictionary_decimal,dictionary_words,dictionary_bool]
+		self.cube = [dictionary_whole, dictionary_decimal, dictionary_words, dictionary_bool]
 
 	#gets operand type code
 	def get_operand_type_code(self, operand = None):
@@ -117,7 +118,7 @@ class Semantic_Cube:
 		if operator is not None:
 			if operand_one_type is not None:
 				#if operator is negation, then operand_two is boolean by default for cube look-up
-				if (operator == "op_negation"):
+				if (operator == constants.Operators.OP_NEGATION):
 					operand_two_type = "boolean"
 
 				#all operands now have data
@@ -432,18 +433,18 @@ class Stack:
 
 #for testing purposes
 if __name__ == '__main__':
-    quad_1 = Quad('=', '5', '-1', 'B')
-    quad_2 = Quad('+', '10', '20', 'A')
-    quad_3 = Quad('goto', '-1', '20', 'C')
-    quad_4 = Quad('gotoT', 'T1', '20', 'D')
+    quad_1 = Quad(constants.Operators.OP_ASSIGN, '5', '-1', 'B')
+    quad_2 = Quad(constants.Operators.OP_ADDITION, '10', '20', 'A')
+    quad_3 = Quad(constants.Operators.OP_GO_TO, '-1', '20', 'C')
+    quad_4 = Quad(constants.Operators.OP_GO_TO_T, 'T1', '20', 'D')
 
     cube = Semantic_Cube()
-    print cube.validate_operation("op_addition","words","whole")
+    print cube.validate_operation(constants.Operators.OP_ADDITION, "words", "whole")
 
     quadli = QuadList()
-    quadli.append_quad('=', '5', '-1', 'B')
-    quadli.append_quad('+', '10', '20', 'A')
-    quadli.append_quad('goto', '-1', '20', "pending")
-    quadli.append_quad('gotoT', 'T1', '20', 'D')
+    quadli.append_quad(constants.Operators.OP_ASSIGN, '5', '-1', 'B')
+    quadli.append_quad(constants.Operators.OP_ADDITION, '10', '20', 'A')
+    quadli.append_quad(constants.Operators.OP_GO_TO, '-1', '20', "pending")
+    quadli.append_quad(constants.Operators.OP_GO_TO_T, 'T1', '20', 'D')
 
     print quadli
