@@ -515,30 +515,7 @@ def p_EC_SEEN_TERM(p):
 	"EC_SEEN_TERM : "
 	#Checks that the next operator is an addition or subtraction to respect order of operations
 	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_addition" or globalScope.pending_operators.peek() == "op_subtraction"):
-		right_operand = globalScope.pending_operands.pop()
-		right_type = globalScope.pending_operand_types.pop()
-
-		left_operand = globalScope.pending_operands.pop()
-		left_type = globalScope.pending_operand_types.pop()
-
-		operator = globalScope.pending_operators.pop()
-
-		#Checks if operand types are interoperable
-		result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
-
-		#Types should be interoperable
-		if result_type != -1:
-			result = "t" + str(globalScope.temp_space)
-			globalScope.temp_space = globalScope.temp_space + 1
-
-			globalScope.quad_list.append_quad(operator, left_operand, right_operand, result)
-
-			globalScope.pending_operands.push(result)
-			globalScope.pending_operand_types.push(result_type)
-
-			#free temp operand memory
-		else:
-			stop_exec("Expressions of type '%s' and '%s' cannot be combined" % (left_type, right_type))
+		create_binary_operation_quad()
 
 #TERM action 1 - Pushes the appropriate operator into the operators stack
 def p_EC_SEEN_TERM_OP(p):
@@ -555,30 +532,7 @@ def p_EC_SEEN_FACTOR(p):
 	"EC_SEEN_FACTOR : "
 	#Checks that the next operator is a multplication or division to respect order of operations
 	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_multiplication" or globalScope.pending_operators.peek() == "op_division"):
-		right_operand = globalScope.pending_operands.pop()
-		right_type = globalScope.pending_operand_types.pop()
-
-		left_operand = globalScope.pending_operands.pop()
-		left_type = globalScope.pending_operand_types.pop()
-
-		operator = globalScope.pending_operators.pop()
-
-		#Checks if operand types are interoperable
-		result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
-
-		#Types should be interoperable
-		if result_type != -1:
-			result = "t" + str(globalScope.temp_space)
-			globalScope.temp_space = globalScope.temp_space + 1
-
-			globalScope.quad_list.append_quad(operator, left_operand, right_operand, result)
-
-			globalScope.pending_operands.push(result)
-			globalScope.pending_operand_types.push(result_type)
-
-			#free temp operand memory
-		else:
-			stop_exec("Expressions of type '%s' and '%s' cannot be combined" % (left_type, right_type))
+		create_binary_operation_quad()
 
 #EXP action 1 - Pushes the appropriate operator into the operators stack
 def p_EC_SEEN_RELOP(p):
@@ -598,40 +552,17 @@ def p_EC_SEEN_RELOP(p):
 	elif operator == "!=":
 		globalScope.pending_operators.push("op_not_equal")
 
-#EXP action 2 - Generates quad for relational operations
+#EXP action 2 - Generates quad for equality operations
 def p_EC_SEEN_RELOP_ITEM(p):
 	"EC_SEEN_RELOP_ITEM : "
-	#Checks that the next operator is a relational operator to respect order of operations
+	#Checks that the next operator is a equality operator to respect order of operations
 	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_greater" 
 														or globalScope.pending_operators.peek() == "op_greater_equal"
 														or globalScope.pending_operators.peek() == "op_less"
 														or globalScope.pending_operators.peek() == "op_less_equal"
 														or globalScope.pending_operators.peek() == "op_equal"
 														or globalScope.pending_operators.peek() == "op_not_equal"):
-			right_operand = globalScope.pending_operands.pop()
-			right_type = globalScope.pending_operand_types.pop()
-
-			left_operand = globalScope.pending_operands.pop()
-			left_type = globalScope.pending_operand_types.pop()
-
-			operator = globalScope.pending_operators.pop()
-
-			#Checks if operand types are interoperable
-			result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
-
-			#Types should be interoperable
-			if result_type != -1:
-				result = "t" + str(globalScope.temp_space)
-				globalScope.temp_space = globalScope.temp_space + 1
-
-				globalScope.quad_list.append_quad(operator, left_operand, right_operand, result)
-
-				globalScope.pending_operands.push(result)
-				globalScope.pending_operand_types.push(result_type)
-
-				#free temp operand memory
-			else:
-				stop_exec("Expressions of type '%s' and '%s' cannot be combined" % (left_type, right_type))
+		create_binary_operation_quad()
 
 #ASSIGN action 1 - Pushes the assignment operator to the operators stack
 def p_EC_SEEN_ASSIGN_OP(p):
@@ -754,33 +685,12 @@ def p_EC_SEEN_AND_OR(p):
 #EXPRESSION action 3 - Generates quad for logical operations
 def p_EC_SEEN_EXPRESSION(p):
 	"EC_SEEN_EXPRESSION : "
+	#Checks that the next operator is a relational operator to respect order of operations
 	if not globalScope.pending_operators.empty() and (globalScope.pending_operators.peek() == "op_and" 
 														or globalScope.pending_operators.peek() == "op_or"):
-		right_operand = globalScope.pending_operands.pop()
-		right_type = globalScope.pending_operand_types.pop()
+		create_binary_operation_quad()	
 
-		left_operand = globalScope.pending_operands.pop()
-		left_type = globalScope.pending_operand_types.pop()
-
-		operator = globalScope.pending_operators.pop()
-
-		#Checks if operand types are interoperable
-		result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
-
-		#Types should be interoperable
-		if result_type != -1:
-			result = "t" + str(globalScope.temp_space)
-			globalScope.temp_space = globalScope.temp_space + 1
-
-			globalScope.quad_list.append_quad(operator, left_operand, right_operand, result)
-
-			globalScope.pending_operands.push(result)
-			globalScope.pending_operand_types.push(result_type)
-
-			#free temp operand memory
-		else:
-			stop_exec("Expressions of type '%s' and '%s' cannot be combined" % (left_type, right_type))
-
+	#Checks that the next operator is a negation operator to respect order of operations
 	elif not globalScope.pending_operators.empty() and globalScope.pending_operators.peek() == "op_negation":
 		right_operand = globalScope.pending_operands.pop()
 		right_type = globalScope.pending_operand_types.pop()
@@ -919,6 +829,33 @@ def abstract_seen_block_id(p, returns_value):
 				stop_exec("Block '%s' does not return a value" % call_block_id)
 	else:
 		stop_exec("Block '%s' does not exist or is declared below block '%s'" % (call_block_id, globalScope.current_block_id))
+
+#Creates a quad for binary operations (arithmetic, and/or)
+def create_binary_operation_quad():
+	right_operand = globalScope.pending_operands.pop()
+	right_type = globalScope.pending_operand_types.pop()
+
+	left_operand = globalScope.pending_operands.pop()
+	left_type = globalScope.pending_operand_types.pop()
+
+	operator = globalScope.pending_operators.pop()
+
+	#Checks if operand types are interoperable
+	result_type = globalScope.semantic_cube.validate_operation(operator, left_type, right_type)
+
+	#Types should be interoperable
+	if result_type != -1:
+		result = "t" + str(globalScope.temp_space)
+		globalScope.temp_space = globalScope.temp_space + 1
+
+		globalScope.quad_list.append_quad(operator, left_operand, right_operand, result)
+
+		globalScope.pending_operands.push(result)
+		globalScope.pending_operand_types.push(result_type)
+
+		#free temp operand memory
+	else:
+		stop_exec("Expressions of type '%s' and '%s' cannot be combined" % (left_type, right_type))
 
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message
