@@ -9,6 +9,7 @@ This Class contains two instance variables representing values for
 from structures import Dictionary
 from structures import Stack
 from memory import Memory_Handler
+import constants
 
 class Function_Directory:
     def __init__(self):
@@ -29,7 +30,7 @@ class Function_Directory:
         #block_name should have value
         if block_name is not None:
             #public variable for block return type (string)
-            return_type = "void"
+            return_type = constants.DataTypes.VOID
 
             #public variable for block primitives (Dictionary)
             primitives = Dictionary()
@@ -344,28 +345,28 @@ if __name__ == '__main__':
     directory.add_block_name("Block1")
     directory.add_block_name("Block2")
 
-    directory.add_block_return_type("Block1","whole")
+    directory.add_block_return_type("Block1", constants.DataTypes.WHOLE)
 
-    directory.add_parameter_type("Block1","decimal")
-    directory.add_parameter_type("Block1","whole")
-    directory.add_parameter_type("Block1","words")
+    directory.add_parameter_type("Block1", constants.DataTypes.DECIMAL)
+    directory.add_parameter_type("Block1", constants.DataTypes.WHOLE)
+    directory.add_parameter_type("Block1", constants.DataTypes.WORDS)
 
-    directory.add_parameter_type("Block2","whole")
-    directory.add_parameter_type("Block2","words")
+    directory.add_parameter_type("Block2", constants.DataTypes.WHOLE)
+    directory.add_parameter_type("Block2", constants.DataTypes.WORDS)
 
     #parameters
-    directory.add_primitive("Block1","parameter1","decimal")
-    directory.add_primitive("Block1","parameter2","whole")
-    directory.add_primitive("Block1","parameter3","words")
+    directory.add_primitive("Block1", "parameter1", constants.DataTypes.DECIMALw)
+    directory.add_primitive("Block1", "parameter2", constants.DataTypes.WHOLE)
+    directory.add_primitive("Block1", "parameter3", constants.DataTypes.WORDS)
 
-    directory.add_primitive("Block2","parameter1","whole")
-    directory.add_primitive("Block2","parameter2","words")
+    directory.add_primitive("Block2", "parameter1", constants.DataTypes.WHOLE)
+    directory.add_primitive("Block2", "parameter2", constants.DataTypes.WORDS)
 
     #variables
-    directory.add_primitive("Block1","variable1","words")
-    directory.add_primitive("Block1","variable2","words")
+    directory.add_primitive("Block1", "variable1", constants.DataTypes.WORDS)
+    directory.add_primitive("Block1", "variable2", constants.DataTypes.WORDS)
 
-    directory.add_list("Block2","listvariable1","5","whole")
+    directory.add_list("Block2", "listvariable1", "5", constants.DataTypes.WHOLE)
 
     directory.print_table()
 

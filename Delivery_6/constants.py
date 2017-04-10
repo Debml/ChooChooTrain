@@ -25,11 +25,10 @@ class Operators:
     OP_RETURN = 24
     OP_END_PROC = 25
 
-
 class DataTypes:
-    WHOLE = 1
-    DECIMAL = 2
-    WORDS = 3
-    BOOLEAN = 4
-    VOID = 5    
+    WHOLE = "whole"
+    DECIMAL = "decimal"
+    WORDS = "words"
+    BOOLEAN = "boolean"
+    VOID = "void"
 

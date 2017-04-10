@@ -355,7 +355,7 @@ def p_EC_SEEN_BLOCK_BODY_END(p):
 	block_return_type = globalScope.function_directory.get_return_type_for_block(globalScope.current_block_id)
 
 	#Block should be returning something if it stated it would do so (Return type validation is done EC_SEEN_RETURN)
-	if (globalScope.block_returns and block_return_type != "void") or (not globalScope.block_returns and block_return_type == "void"):
+	if (globalScope.block_returns and block_return_type != constants.DataTypes.VOID) or (not globalScope.block_returns and block_return_type == constants.DataTypes.VOID):
 		globalScope.quad_list.append_quad(constants.Operators.OP_END_PROC, "-1", "-1", "-1")
 		globalScope.function_directory.clear_variable_list(globalScope.current_block_id)
 	else:
@@ -437,22 +437,22 @@ def p_EC_SEEN_CONST_ID(p):
 #CONSTANT action 3 - Adds the type whole to the operand types stack
 def p_EC_SEEN_CONST_WHOLE(p):
 	"EC_SEEN_CONST_WHOLE : "
-	globalScope.pending_operand_types.push("whole")
+	globalScope.pending_operand_types.push(constants.DataTypes.WHOLE)
 
 #CONSTANT action 4 - Adds the type decimal to the operand types stack
 def p_EC_SEEN_CONST_DECIMAL(p):
 	"EC_SEEN_CONST_DECIMAL : "
-	globalScope.pending_operand_types.push("decimal")
+	globalScope.pending_operand_types.push(constants.DataTypes.DECIMAL)
 
 #CONSTANT action 5 - Adds the type words to the operand types stack
 def p_EC_SEEN_CONST_WORDS(p):
 	"EC_SEEN_CONST_WORDS : "
-	globalScope.pending_operand_types.push("words")
+	globalScope.pending_operand_types.push(constants.DataTypes.WORDS)
 
 #CONSTANT action 6 - Adds the type boolean to the operand types stack
 def p_EC_SEEN_CONST_BOOLEAN(p):
 	"EC_SEEN_CONST_BOOLEAN : "
-	globalScope.pending_operand_types.push("boolean")
+	globalScope.pending_operand_types.push(constants.DataTypes.BOOLEAN)
 
 #CONSTANT action 7 - Validates block return type with a return value
 def p_EC_SEEN_CALL_VAL_BLOCK_ID(p):
@@ -482,7 +482,7 @@ def p_EC_SEEN_CONST_LIST(p):
 	list_index_type = globalScope.pending_operand_types.pop()
 
 	#List index type should resolve to whole
-	if list_index_type == "whole":
+	if list_index_type == constants.DataTypes.WHOLE:
 		list_id = globalScope.pending_lists.pop()
 		list_address = globalScope.function_directory.get_list_address_for_block(list_id, globalScope.current_block_id)
 		list_index = globalScope.pending_operands.pop()
@@ -602,7 +602,7 @@ def p_EC_SEEN_IF_EXP(p):
 	exp_type = globalScope.pending_operand_types.pop()
 
 	#The expression should resolve to a boolean value
-	if exp_type == "boolean":
+	if exp_type == constants.DataTypes.BOOLEAN:
 		result = globalScope.pending_operands.pop()
 
 		globalScope.quad_list.append_quad(constants.Operators.OP_GO_TO_F, result, "-1", "pending")
@@ -641,7 +641,7 @@ def p_EC_SEEN_UNTIL(p):
 	exp_type = globalScope.pending_operand_types.pop()
 
 	#The expression should resolve to a boolean value
-	if exp_type == "boolean":
+	if exp_type == constants.DataTypes.BOOLEAN:
 		evaluation_result = globalScope.pending_operands.pop()
 		loop_start = globalScope.pending_jumps.pop()
 
@@ -699,14 +699,14 @@ def p_EC_SEEN_EXPRESSION(p):
 		operator = globalScope.pending_operators.pop()
 
 		#Negation only applies to boolean type
-		if right_type == "boolean":
+		if right_type == constants.DataTypes.BOOLEAN:
 			result = "t" + str(globalScope.temp_space)
 			globalScope.temp_space = globalScope.temp_space + 1
 
 			globalScope.quad_list.append_quad(operator, "-1", right_operand, result)
 
 			globalScope.pending_operands.push(result)
-			globalScope.pending_operand_types.push('boolean')
+			globalScope.pending_operand_types.push(constants.DataTypes.BOOLEAN)
 
 			#free temp operand memory
 		else:
@@ -725,7 +725,7 @@ def p_EC_SEEN_RETURN(p):
 	block_return_type = globalScope.function_directory.get_return_type_for_block(globalScope.current_block_id)
 
 	#blocks should only return when stated in the definition
-	if block_return_type != "void":
+	if block_return_type != constants.DataTypes.VOID:
 		return_type = globalScope.pending_operand_types.pop()
 
 		#Validates return value with the block definition
@@ -823,10 +823,10 @@ def abstract_seen_block_id(p, returns_value):
 
 		#Validate the return type with usage
 		if not returns_value:
-			if call_block_return_type != "void":
+			if call_block_return_type != constants.DataTypes.VOID:
 				stop_exec("Block '%s' returns a '%s' value, but is not being assigned to anything" % (call_block_id, call_block_return_type))
 		else:
-			if call_block_return_type == "void":
+			if call_block_return_type == constants.DataTypes.VOID:
 				stop_exec("Block '%s' does not return a value" % call_block_id)
 	else:
 		stop_exec("Block '%s' does not exist or is declared below block '%s'" % (call_block_id, globalScope.current_block_id))

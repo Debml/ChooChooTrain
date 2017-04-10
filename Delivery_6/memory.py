@@ -1,3 +1,5 @@
+import constants
+
 """Module for memory handling, contains memory implementations,
 memory handling, and other functions as detailed in the class"""
 class Memory_Handler:
@@ -12,25 +14,25 @@ class Memory_Handler:
 		#variable_type should have value
 		if variable_type is not None:
 			#memory address for whole
-			if(variable_type == "whole"):
+			if(variable_type == constants.DataTypes.WHOLE):
 				address = (200+self._variable_memory[0])
 				self._variable_memory[0] = self._variable_memory[0]+1
 				return address
 
 			#memory address for decimal
-			elif(variable_type == "decimal"):
+			elif(variable_type == constants.DataTypes.DECIMAL):
 				address = (300+self._variable_memory[1])
 				self._variable_memory[1] = self._variable_memory[1]+1
 				return address
 
 			#memory address for words
-			elif(variable_type == "words"):
+			elif(variable_type == constants.DataTypes.WORDS):
 				address = (400+self._variable_memory[2])
 				self._variable_memory[2] = self._variable_memory[2]+1
 				return address
 
 			#memory address for boolean
-			elif(variable_type == "boolean"):
+			elif(variable_type == constants.DataTypes.BOOLEAN):
 				address = (500+self._variable_memory[3])
 				self._variable_memory[3] = self._variable_memory[3]+1
 				return address
