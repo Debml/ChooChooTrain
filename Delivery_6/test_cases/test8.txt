@@ -5,7 +5,8 @@ parameter2 of type whole,
 parameter3 of type words
 {
 	variable a, b of type decimal;
-	list c[1] of type whole;
+	list c[6] of type decimal;
+	variable d, e of type decimal;
 
-	a = b + 1;
+	a = b + 1 * c[2];
 }

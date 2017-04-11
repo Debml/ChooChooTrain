@@ -357,6 +357,7 @@ def p_EC_SEEN_BLOCK_BODY_END(p):
 	#Block should be returning something if it stated it would do so (Return type validation is done EC_SEEN_RETURN)
 	if (global_scope.block_returns and block_return_type != constants.DataTypes.VOID) or (not global_scope.block_returns and block_return_type == constants.DataTypes.VOID):
 		global_scope.quad_list.append_quad(constants.Operators.OP_END_PROC, "-1", "-1", "-1")
+		global_scope.function_directory.print_variable_list(global_scope.current_block_id)
 		global_scope.function_directory.clear_variable_list(global_scope.current_block_id)
 	else:
 		stop_exec("Block '%s' should return a '%s' value" % (global_scope.current_block_id, block_return_type))
@@ -426,11 +427,12 @@ def p_EC_SEEN_CONST(p):
 #CONSTANT action 2 - Adds the id type of the just read id to the operand types stack
 def p_EC_SEEN_CONST_ID(p):
 	"EC_SEEN_CONST_ID : "
-	primitive_id = global_scope.pending_operands.peek()
+	primitive_id = global_scope.pending_operands.pop()
 
 	#Primitive should exist in the current block
 	if global_scope.function_directory.primitive_id_exists(primitive_id, global_scope.current_block_id):
-		global_scope.pending_operand_types.push(global_scope.function_directory.get_variable_type_for_block(global_scope.pending_operands.peek(), global_scope.current_block_id))
+		global_scope.pending_operand_types.push(global_scope.function_directory.get_variable_type_for_block(primitive_id, global_scope.current_block_id))
+		global_scope.pending_operands.push(global_scope.function_directory.get_primitive_address_for_block(primitive_id, global_scope.current_block_id))
 	else:
 		stop_exec("Variable '%s' is not declared in block '%s'" % (primitive_id, global_scope.current_block_id))
 
@@ -700,8 +702,9 @@ def p_EC_SEEN_EXPRESSION(p):
 
 		#Negation only applies to boolean type
 		if right_type == constants.DataTypes.BOOLEAN:
-			result = "t" + str(global_scope.temp_space)
-			global_scope.temp_space = global_scope.temp_space + 1
+			#result = "t" + str(global_scope.temp_space)
+			#global_scope.temp_space = global_scope.temp_space + 1
+			result = global_scope.function_directory.get_temporary_address(constants.DataTypes.BOOLEAN)
 
 			global_scope.quad_list.append_quad(operator, "-1", right_operand, result)
 
@@ -800,12 +803,14 @@ def abstract_seen_block_call(p, returns_value):
 
 		#If the block will resolve to a value
 		if returns_value:
-			result = "t" + str(global_scope.temp_space)
-			global_scope.temp_space = global_scope.temp_space + 1
+			return_type = global_scope.function_directory.get_return_type_for_block(call_block_id)
+			#result = "t" + str(global_scope.temp_space)
+			#global_scope.temp_space = global_scope.temp_space + 1
+			result = global_scope.function_directory.get_temporary_address(return_type)
+			
 			global_scope.quad_list.append_quad(constants.Operators.OP_ASSIGN, call_block_id, "-1", result)
 
 			global_scope.pending_operands.push(result)
-			return_type = global_scope.function_directory.get_return_type_for_block(call_block_id)
 			global_scope.pending_operand_types.push(return_type)
 
 	else:
@@ -846,8 +851,9 @@ def create_binary_operation_quad():
 
 	#Types should be interoperable
 	if result_type != -1:
-		result = "t" + str(global_scope.temp_space)
-		global_scope.temp_space = global_scope.temp_space + 1
+		#result = "t" + str(global_scope.temp_space)
+		#global_scope.temp_space = global_scope.temp_space + 1
+		result = global_scope.function_directory.get_temporary_address(result_type)
 
 		global_scope.quad_list.append_quad(operator, left_operand, right_operand, result)
 
