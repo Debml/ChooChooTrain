@@ -1,3 +1,4 @@
+#"Enum" for QUADRUPLE operators
 '''class Operators:
     OP_ADDITION = 1
     OP_SUBTRACTION = 2
@@ -53,6 +54,7 @@ class Operators:
     OP_RETURN = "op_return"
     OP_END_PROC = "op_end_proc"
 
+#"Enum" for data types
 class DataTypes:
     WHOLE = "whole"
     DECIMAL = "decimal"
@@ -60,3 +62,8 @@ class DataTypes:
     BOOLEAN = "boolean"
     VOID = "void"
 
+#"Enum" for misc strings
+class Misc:
+    FALSE_BOTTOM = "("
+    POINTER = "*"
+    ADDRESS = "&"

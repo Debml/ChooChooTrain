@@ -394,6 +394,10 @@ def p_EC_SEEN_LIST_SIZE(p):
 	"EC_SEEN_LIST_SIZE : "
 	global_scope.current_list_size = p[-1]
 
+	#Lists shouldn't be empty
+	if global_scope.current_list_size == 0:
+		stop_exec("List '%s' has a size of '0'" % global_scope.current_list_id)
+
 #LIST_DECLARATION action 3 - Sets the current list type being analyzed
 def p_EC_SEEN_LIST_TYPE(p):
 	"EC_SEEN_LIST_TYPE : "
@@ -411,7 +415,7 @@ def p_EC_SEEN_LIST(p):
 #FACTOR action 1 - Adds a false bottom mark to the operators stack
 def p_EC_SEEN_FACT_LP(p):	
 	"EC_SEEN_FACT_LP : "
-	global_scope.pending_operators.push("(")
+	global_scope.pending_operators.push(constants.Misc.FALSE_BOTTOM)
 
 #FACTOR action 2 - Removes the false bottom mark of the operators stack
 def p_EC_SEEN_FACT_RP(p):	
@@ -474,7 +478,7 @@ def p_EC_SEEN_CONST_LIST_ID(p):
 	#ID should belong to a list
 	if global_scope.function_directory.list_id_exists(list_id, global_scope.current_block_id):
 		global_scope.pending_lists.push(list_id)
-		global_scope.pending_operators.push("(")
+		global_scope.pending_operators.push(constants.Misc.FALSE_BOTTOM)
 	else:
 		stop_exec("ID '%s' is not a list" % list_id)
 
@@ -486,15 +490,15 @@ def p_EC_SEEN_CONST_LIST(p):
 	#List index type should resolve to whole
 	if list_index_type == constants.DataTypes.WHOLE:
 		list_id = global_scope.pending_lists.pop()
-		list_address = global_scope.function_directory.get_list_address_for_block(list_id, global_scope.current_block_id)
+		list_address = constants.Misc.ADDRESS + str(global_scope.function_directory.get_list_address_for_block(list_id, global_scope.current_block_id))
 		list_index = global_scope.pending_operands.pop()
 		list_size = global_scope.function_directory.get_list_size_for_block(list_id, global_scope.current_block_id)
 		list_type = global_scope.function_directory.get_list_type_for_block(list_id, global_scope.current_block_id)	
 
 		global_scope.quad_list.append_quad(constants.Operators.OP_VERIFY_INDEX, list_index, list_size, "-1")
 
-		result = "*t" + str(global_scope.temp_space)
-		global_scope.temp_space = global_scope.temp_space + 1
+		#Value in result is an address
+		result = constants.Misc.POINTER + str(global_scope.function_directory.get_temporary_address(constants.DataTypes.WHOLE))
 		global_scope.quad_list.append_quad(constants.Operators.OP_ADDITION, list_index, list_address, result)
 		
 		global_scope.pending_operands.push(result)
@@ -593,8 +597,6 @@ def p_EC_SEEN_ASSIGN_VALUE(p):
 			#Assignment should be valid
 			if result_type != -1:
 				global_scope.quad_list.append_quad(operator, right_operand, "-1", left_operand)
-
-				#free temp operand memory
 			else:
 				stop_exec("Expression of type '%s' cannot be assigned to ID of type '%s'" % (right_type, left_type))
 
@@ -708,8 +710,6 @@ def p_EC_SEEN_EXPRESSION(p):
 
 			global_scope.pending_operands.push(result)
 			global_scope.pending_operand_types.push(constants.DataTypes.BOOLEAN)
-
-			#free temp operand memory
 		else:
 			stop_exec("Negation operator can only be applied to 'boolean' expression, found '%s' expression" % right_type)
 	
@@ -853,8 +853,6 @@ def create_binary_operation_quad():
 
 		global_scope.pending_operands.push(result)
 		global_scope.pending_operand_types.push(result_type)
-
-		#free temp operand memory
 	else:
 		stop_exec("Expressions of type '%s' and '%s' cannot be combined" % (left_type, right_type))
 
