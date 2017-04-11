@@ -439,22 +439,22 @@ def p_EC_SEEN_CONST_ID(p):
 #CONSTANT action 3 - Adds the type whole to the operand types stack
 def p_EC_SEEN_CONST_WHOLE(p):
 	"EC_SEEN_CONST_WHOLE : "
-	global_scope.pending_operand_types.push(constants.DataTypes.WHOLE)
+	push_constant_address(constants.DataTypes.WHOLE)
 
 #CONSTANT action 4 - Adds the type decimal to the operand types stack
 def p_EC_SEEN_CONST_DECIMAL(p):
 	"EC_SEEN_CONST_DECIMAL : "
-	global_scope.pending_operand_types.push(constants.DataTypes.DECIMAL)
+	push_constant_address(constants.DataTypes.DECIMAL)
 
 #CONSTANT action 5 - Adds the type words to the operand types stack
 def p_EC_SEEN_CONST_WORDS(p):
 	"EC_SEEN_CONST_WORDS : "
-	global_scope.pending_operand_types.push(constants.DataTypes.WORDS)
+	push_constant_address(constants.DataTypes.WORDS)
 
 #CONSTANT action 6 - Adds the type boolean to the operand types stack
 def p_EC_SEEN_CONST_BOOLEAN(p):
 	"EC_SEEN_CONST_BOOLEAN : "
-	global_scope.pending_operand_types.push(constants.DataTypes.BOOLEAN)
+	push_constant_address(constants.DataTypes.BOOLEAN)
 
 #CONSTANT action 7 - Validates block return type with a return value
 def p_EC_SEEN_CALL_VAL_BLOCK_ID(p):
@@ -702,8 +702,6 @@ def p_EC_SEEN_EXPRESSION(p):
 
 		#Negation only applies to boolean type
 		if right_type == constants.DataTypes.BOOLEAN:
-			#result = "t" + str(global_scope.temp_space)
-			#global_scope.temp_space = global_scope.temp_space + 1
 			result = global_scope.function_directory.get_temporary_address(constants.DataTypes.BOOLEAN)
 
 			global_scope.quad_list.append_quad(operator, "-1", right_operand, result)
@@ -763,7 +761,7 @@ def p_EC_SEEN_PARAM(p):
 		call_block_id = global_scope.pending_blocks.peek()
 		block_argument_counter = global_scope.pending_blocks_argument_counter.pop()
 		parameter_type = global_scope.function_directory.get_parameter_type_for_block(call_block_id, block_argument_counter)
-	#If the argument counter is greater than the parameter counter
+	#If the argument counter is greater than the parameter counter, there is a counter mismatch
 	except IndexError:
 		block_parameter_counter = global_scope.function_directory.get_parameter_count_for_block(call_block_id)
 		stop_exec("Block '%s' receives %d parameter(s), found %d argument(s) instead" % (call_block_id, block_parameter_counter, block_argument_counter + 1))
@@ -804,8 +802,6 @@ def abstract_seen_block_call(p, returns_value):
 		#If the block will resolve to a value
 		if returns_value:
 			return_type = global_scope.function_directory.get_return_type_for_block(call_block_id)
-			#result = "t" + str(global_scope.temp_space)
-			#global_scope.temp_space = global_scope.temp_space + 1
 			result = global_scope.function_directory.get_temporary_address(return_type)
 			
 			global_scope.quad_list.append_quad(constants.Operators.OP_ASSIGN, call_block_id, "-1", result)
@@ -851,8 +847,6 @@ def create_binary_operation_quad():
 
 	#Types should be interoperable
 	if result_type != -1:
-		#result = "t" + str(global_scope.temp_space)
-		#global_scope.temp_space = global_scope.temp_space + 1
 		result = global_scope.function_directory.get_temporary_address(result_type)
 
 		global_scope.quad_list.append_quad(operator, left_operand, right_operand, result)
@@ -863,6 +857,15 @@ def create_binary_operation_quad():
 		#free temp operand memory
 	else:
 		stop_exec("Expressions of type '%s' and '%s' cannot be combined" % (left_type, right_type))
+
+#Transforms a constant to its address in the constant table and pushes it to the pending operands stack
+#constant_type is the data type of the constant to be transformed
+def push_constant_address(constant_type):
+	constant_value = global_scope.pending_operands.pop()
+	constant_address = global_scope.function_directory.get_constant_address(constant_value, constant_type)
+	
+	global_scope.pending_operands.push(constant_address)
+	global_scope.pending_operand_types.push(constant_type)	
 
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message

@@ -103,25 +103,25 @@ class Memory_Handler:
 		#constant_type should have value
 		if constant_type is not None:
 			#memory address for constant whole
-			if(constant_type == "cst_whole"):
+			if(constant_type == constants.DataTypes.WHOLE):
 				address = (self._constant_ranges[0] + self._constant_counter[0])
 				self._constant_counter[0] = self._constant_counter[0] + 1
 				return address
 
 			#memory address for constant decimal
-			elif(constant_type == "cst_decimal"):
+			elif(constant_type == constants.DataTypes.DECIMAL):
 				address = (self._constant_ranges[1] + self._constant_counter[1])
 				self._constant_counter[1] = self._constant_counter[1] + 1
 				return address
 
 			#memory address for constant words
-			elif(constant_type == "cst_words"):
+			elif(constant_type == constants.DataTypes.WORDS):
 				address = (self._constant_ranges[2] + self._constant_counter[2])
 				self._constant_counter[2] = self._constant_counter[2] + 1
 				return address
 
 			#memory address for constant boolean
-			elif(constant_type == "cst_boolean"):
+			elif(constant_type == constants.DataTypes.BOOLEAN):
 				address = (self._constant_ranges[3] + self._constant_counter[3])
 				self._constant_counter[3] = self._constant_counter[3] + 1
 				return address

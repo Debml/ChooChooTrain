@@ -53,6 +53,7 @@ class Function_Directory:
             #add new block name as key
             self.function_reference_table.insert(block_name, block_data)
 
+    #adds a return value to a block
     def push_block_return_value(self, key = None, block_return_value = None):
         #key should have value
         if key is not None:
@@ -60,6 +61,7 @@ class Function_Directory:
             if block_return_value is not None:
                 self.function_reference_table[key][4].push(block_return_value)
 
+    #Removes a return value from a block
     def pop_block_return_value(self,key = None):
         #key should have value
         if key is not None:
@@ -118,6 +120,8 @@ class Function_Directory:
                 
                 #insert to constant table
                 self.constant_table.insert(constant_value, constant_data)
+
+                return memory_address
 
     #Key for current block, add one parameter found to parameters list
     def add_parameter_type(self, key = None, parameter_type = None):
@@ -296,20 +300,19 @@ class Function_Directory:
                                     
                 return False
 
-    #returns if value exists in constant table
-    def constant_exists(self, constant_value = None, constant_type = None):
+    #gets the address of a constant if it exists or adds it and then returns it
+    def get_constant_address(self, constant_value = None, constant_type = None):
         #constant_id should have value
         if constant_value is not None:
             #constant_type should have value
             if constant_type is not None:
-                #check if entry exists
-                if self.constant_table.contains(constant_value):
-                    #check if entry exists as its corresponding type
-                    if (self.constant_table[constant_value][0] == constant_type):
-                        #value exists with corresponding type
-                        return True
+                #check if entry exists with corresponding type
+                if self.constant_table.contains(constant_value) and self.constant_table[constant_value][0] == constant_type:
+                    return self.constant_table[constant_value][1]
+                #add it to the constant table and return the address
+                else:
+                    return self.add_constant(constant_value, constant_type)
 
-                    return False
 
     #clears variable list (primitives and lists) in a function
     def clear_variable_list(self, block_key = None):
