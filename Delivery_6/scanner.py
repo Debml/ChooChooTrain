@@ -1,5 +1,5 @@
 import ply.lex as lex
-import globalScope
+import global_scope
 
 #List of reserved keywords
 #keyword : tokenName
@@ -83,7 +83,7 @@ def t_id(t):
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
-    globalScope.line_count = t.lexer.lineno
+    global_scope.line_count = t.lexer.lineno
 def t_error(t):
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)        

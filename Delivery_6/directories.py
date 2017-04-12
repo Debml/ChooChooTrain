@@ -9,6 +9,7 @@ This Class contains two instance variables representing values for
 from structures import Dictionary
 from structures import Stack
 from memory import Memory_Handler
+import constants
 
 class Function_Directory:
     def __init__(self):
@@ -29,7 +30,7 @@ class Function_Directory:
         #block_name should have value
         if block_name is not None:
             #public variable for block return type (string)
-            return_type = "void"
+            return_type = constants.DataTypes.VOID
 
             #public variable for block primitives (Dictionary)
             primitives = Dictionary()
@@ -52,6 +53,7 @@ class Function_Directory:
             #add new block name as key
             self.function_reference_table.insert(block_name, block_data)
 
+    #adds a return value to a block
     def push_block_return_value(self, key = None, block_return_value = None):
         #key should have value
         if key is not None:
@@ -59,6 +61,7 @@ class Function_Directory:
             if block_return_value is not None:
                 self.function_reference_table[key][4].push(block_return_value)
 
+    #Removes a return value from a block
     def pop_block_return_value(self,key = None):
         #key should have value
         if key is not None:
@@ -84,9 +87,9 @@ class Function_Directory:
                 if variable_type is not None:
                     #Index 1 of list is for primitives and lists dictionaries
                     #Index 0 of such list is specifically for primitives
-                    memory_address =  self._memory_handler._get_memory_address_variable(variable_type)
+                    memory_address = self._memory_handler._assign_memory_address_local_variable(variable_type, 1)
                     variable_data = [variable_type, memory_address]
-                    self.function_reference_table[key][1][0].insert(variable_name,variable_data)
+                    self.function_reference_table[key][1][0].insert(variable_name, variable_data)
 
     #Key for current block, add list to list dictionary 
     def add_list(self, key = None, list_id = None, list_size = None, list_type = None):
@@ -101,7 +104,7 @@ class Function_Directory:
                     if list_type is not None:
                         #Index 1 of list is for primitives and lists dictionaries
                         #Index 1 of such list is specifically for lists
-                        memory_address = self._memory_handler._get_memory_address_variable(list_type)
+                        memory_address = self._memory_handler._assign_memory_address_local_variable(list_type, list_size)
                         list_data = [list_type, memory_address, list_size]
                         self.function_reference_table[key][1][1].insert(list_id, list_data)
 
@@ -112,11 +115,13 @@ class Function_Directory:
             if constant_type is not None:
                 #create list for entry
                 #value for dictionary entry
-                memory_address =  self._memory_handler._get_memory_address_constant(constant_type)
+                memory_address =  self._memory_handler._assign_memory_address_constant(constant_type)
                 constant_data = [constant_type, memory_address]
                 
                 #insert to constant table
-                self.constant_table.insert(constant_value,constant_data)
+                self.constant_table.insert(constant_value, constant_data)
+
+                return memory_address
 
     #Key for current block, add one parameter found to parameters list
     def add_parameter_type(self, key = None, parameter_type = None):
@@ -201,6 +206,23 @@ class Function_Directory:
                 #Index 0 holds the type of a list
                 return self.function_reference_table[block_id][1][1][list_id][0]
 
+    #Gets the address of a primitive variable on a given block
+    def get_primitive_address_for_block(self, primitive_id = None, block_id = None):
+        #primitive_id should have value
+        if primitive_id is not None:
+            #block_id should have value
+            if block_id is not None:
+                #Index 1 of list is for primitives and lists dictionaries
+                #Index 0 of such list is specifically for primitives
+                #Index 1 holds the address of a primitive
+                return self.function_reference_table[block_id][1][0][primitive_id][1]
+
+    #Gets the next available temporary address for a given type
+    def get_temporary_address(self, variable_type = None):
+        #variable_type should have value
+        if variable_type is not None:
+            return self._memory_handler._assign_memory_address_temporary_variable(variable_type)
+
     #Gets the address of a list on a given block
     def get_list_address_for_block(self, list_id = None, block_id = None):
         #list_id should have value
@@ -248,6 +270,10 @@ class Function_Directory:
         if primitive_id is not None:
             #block_id should have value
             if block_id is not None:
+                #If a pointer is given, assume it exists
+                if primitive_id[0] == "*":
+                    return True
+
                 #Check the function name
                 if self.block_id_exists(primitive_id):
                     return True
@@ -274,20 +300,19 @@ class Function_Directory:
                                     
                 return False
 
-    #returns if value exists in constant table
-    def constant_exists(self, constant_value = None, constant_type = None):
+    #gets the address of a constant if it exists or adds it and then returns it
+    def get_constant_address(self, constant_value = None, constant_type = None):
         #constant_id should have value
         if constant_value is not None:
             #constant_type should have value
             if constant_type is not None:
-                #check if entry exists
-                if self.constant_table.contains(constant_value):
-                    #check if entry exists as its corresponding type
-                    if (self.constant_table[constant_value][0] == constant_type):
-                        #value exists with corresponding type
-                        return True
+                #check if entry exists with corresponding type
+                if self.constant_table.contains(constant_value) and self.constant_table[constant_value][0] == constant_type:
+                    return self.constant_table[constant_value][1]
+                #add it to the constant table and return the address
+                else:
+                    return self.add_constant(constant_value, constant_type)
 
-                    return False
 
     #clears variable list (primitives and lists) in a function
     def clear_variable_list(self, block_key = None):
@@ -340,28 +365,28 @@ if __name__ == '__main__':
     directory.add_block_name("Block1")
     directory.add_block_name("Block2")
 
-    directory.add_block_return_type("Block1","whole")
+    directory.add_block_return_type("Block1", constants.DataTypes.WHOLE)
 
-    directory.add_parameter_type("Block1","decimal")
-    directory.add_parameter_type("Block1","whole")
-    directory.add_parameter_type("Block1","words")
+    directory.add_parameter_type("Block1", constants.DataTypes.DECIMAL)
+    directory.add_parameter_type("Block1", constants.DataTypes.WHOLE)
+    directory.add_parameter_type("Block1", constants.DataTypes.WORDS)
 
-    directory.add_parameter_type("Block2","whole")
-    directory.add_parameter_type("Block2","words")
+    directory.add_parameter_type("Block2", constants.DataTypes.WHOLE)
+    directory.add_parameter_type("Block2", constants.DataTypes.WORDS)
 
     #parameters
-    directory.add_primitive("Block1","parameter1","decimal")
-    directory.add_primitive("Block1","parameter2","whole")
-    directory.add_primitive("Block1","parameter3","words")
+    directory.add_primitive("Block1", "parameter1", constants.DataTypes.DECIMALw)
+    directory.add_primitive("Block1", "parameter2", constants.DataTypes.WHOLE)
+    directory.add_primitive("Block1", "parameter3", constants.DataTypes.WORDS)
 
-    directory.add_primitive("Block2","parameter1","whole")
-    directory.add_primitive("Block2","parameter2","words")
+    directory.add_primitive("Block2", "parameter1", constants.DataTypes.WHOLE)
+    directory.add_primitive("Block2", "parameter2", constants.DataTypes.WORDS)
 
     #variables
-    directory.add_primitive("Block1","variable1","words")
-    directory.add_primitive("Block1","variable2","words")
+    directory.add_primitive("Block1", "variable1", constants.DataTypes.WORDS)
+    directory.add_primitive("Block1", "variable2", constants.DataTypes.WORDS)
 
-    directory.add_list("Block2","listvariable1","5","whole")
+    directory.add_list("Block2", "listvariable1", "5", constants.DataTypes.WHOLE)
 
     directory.print_table()
 

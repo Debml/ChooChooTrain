@@ -105,30 +105,30 @@ def p_CONDITION_AUX(p):
 def p_CONSTANT(p):
 	'''
 	CONSTANT : id CONSTANT_AUX
-			   | cst_whole  EC_SEEN_CONST SEEN_CONST_WHOLE
-	   		   | cst_decimal  EC_SEEN_CONST SEEN_CONST_DECIMAL
-		 	   | cst_words  EC_SEEN_CONST SEEN_CONST_WORDS
-			   | cst_boolean  EC_SEEN_CONST SEEN_CONST_BOOLEAN
+			   | cst_whole  EC_SEEN_CONST EC_SEEN_CONST_WHOLE
+	   		   | cst_decimal  EC_SEEN_CONST EC_SEEN_CONST_DECIMAL
+		 	   | cst_words  EC_SEEN_CONST EC_SEEN_CONST_WORDS
+			   | cst_boolean  EC_SEEN_CONST EC_SEEN_CONST_BOOLEAN
 	'''
 	p[0] = p[1]
 
 def p_CONSTANT_AUX(p):
 	'''
-	CONSTANT_AUX : squarebracket_open ITEM squarebracket_close
-				   | parenthesis_open CONSTANT_AUX1 parenthesis_close
-				   |  EC_SEEN_CONST SEEN_CONST_ID empty
+	CONSTANT_AUX : EC_SEEN_CONST_LIST_ID squarebracket_open ITEM squarebracket_close EC_SEEN_CONST_LIST
+				   |  EC_SEEN_CALL_VAL_BLOCK_ID parenthesis_open EC_SEEN_START_PARAM CONSTANT_AUX1 parenthesis_close EC_SEEN_BLOCK_CALL_VAL
+				   |  EC_SEEN_CONST EC_SEEN_CONST_ID empty
 	'''
 
 def p_CONSTANT_AUX1(p):
 	'''
-	CONSTANT_AUX1 : EXPRESSION CONSTANT_AUX2
+	CONSTANT_AUX1 : EXPRESSION EC_SEEN_PARAM CONSTANT_AUX2
 			   | empty
 
 	'''	
 
 def p_CONSTANT_AUX2(p):
 	'''
-	CONSTANT_AUX2 : comma EXPRESSION CONSTANT_AUX2
+	CONSTANT_AUX2 : comma EXPRESSION EC_SEEN_PARAM CONSTANT_AUX2
 			    | empty
 	'''	
 
@@ -151,7 +151,7 @@ def p_VAR_DECLARATION_AUX(p):
 
 def p_LIST_DECLARATION(p):
 	'''
-	LIST_DECLARATION : list id EC_SEEN_LIST_ID squarebracket_open ITEM EC_SEEN_LIST_SIZE squarebracket_close of type TYPE EC_SEEN_LIST_TYPE semicolon EC_SEEN_LIST
+	LIST_DECLARATION : list id EC_SEEN_LIST_ID squarebracket_open cst_whole EC_SEEN_LIST_SIZE squarebracket_close of type TYPE EC_SEEN_LIST_TYPE semicolon EC_SEEN_LIST
 	'''
 
 def p_EXPRESSION(p):
@@ -267,7 +267,7 @@ def p_ASSIGN(p):
 def p_ASSIGN_AUX(p):
 	'''
 	ASSIGN_AUX : squarebracket_open ITEM squarebracket_close
-				 | EC_SEEN_CONST SEEN_CONST_ID empty
+				 | EC_SEEN_CONST EC_SEEN_CONST_ID empty
 	'''
 
 def p_RETURN(p):
@@ -358,6 +358,7 @@ def p_EC_SEEN_BLOCK_BODY_END(p):
 
 	if (globalScope.block_returns and block_return_type != "void") or (not globalScope.block_returns and block_return_type == "void"):
 		globalScope.quad_list.append_quad("op_end_proc", "-1", "-1", "-1")
+		globalScope.function_directory.print_variable_list(globalScope.current_block_id)
 		globalScope.function_directory.clear_variable_list(globalScope.current_block_id)
 	else:
 		stop_exec("Block '" + globalScope.current_block_id + "' should return a '" + block_return_type + "' value")
@@ -421,8 +422,8 @@ def p_EC_SEEN_CONST(p):
 	globalScope.pending_operands.push(p[-1])
 
 #CONSTANT action 2
-def p_SEEN_CONST_ID(p):
-	"SEEN_CONST_ID : "
+def p_EC_SEEN_CONST_ID(p):
+	"EC_SEEN_CONST_ID : "
 	#checks the id type in the FRT
 	if globalScope.function_directory.primitive_id_exists(globalScope.pending_operands.peek(), globalScope.current_block_id):
 		globalScope.operand_types.push(globalScope.function_directory.get_variable_type_for_block(globalScope.pending_operands.peek(), globalScope.current_block_id))
@@ -430,24 +431,71 @@ def p_SEEN_CONST_ID(p):
 		stop_exec("ID '" + globalScope.pending_operands.peek() + "' is not declared")
 
 #CONSTANT action 3
-def p_SEEN_CONST_WHOLE(p):
-	"SEEN_CONST_WHOLE : "
+def p_EC_SEEN_CONST_WHOLE(p):
+	"EC_SEEN_CONST_WHOLE : "
 	globalScope.operand_types.push("whole")
 
 #CONSTANT action 4
-def p_SEEN_CONST_DECIMAL(p):
-	"SEEN_CONST_DECIMAL : "
+def p_EC_SEEN_CONST_DECIMAL(p):
+	"EC_SEEN_CONST_DECIMAL : "
 	globalScope.operand_types.push("decimal")
 
 #CONSTANT action 5
-def p_SEEN_CONST_WORDS(p):
-	"SEEN_CONST_WORDS : "
+def p_EC_SEEN_CONST_WORDS(p):
+	"EC_SEEN_CONST_WORDS : "
 	globalScope.operand_types.push("words")
 
 #CONSTANT action 6
-def p_SEEN_CONST_BOOLEAN(p):
-	"SEEN_CONST_BOOLEAN : "
+def p_EC_SEEN_CONST_BOOLEAN(p):
+	"EC_SEEN_CONST_BOOLEAN : "
 	globalScope.operand_types.push("boolean")
+
+#CONSTANT action 7
+def p_EC_SEEN_CALL_VAL_BLOCK_ID(p):
+	"EC_SEEN_CALL_VAL_BLOCK_ID : "
+	seen_block_id(p, True)
+
+#CONSTANT action 8
+def p_EC_SEEN_BLOCK_CALL_VAL(p):
+	"EC_SEEN_BLOCK_CALL_VAL : "
+	seen_block_call(p, True)
+
+#CONSTANT action 9
+def p_EC_SEEN_CONST_LIST_ID(p):
+	"EC_SEEN_CONST_LIST_ID : "
+	list_id = p[-1]
+	id_is_list = globalScope.function_directory.list_id_exists(list_id, globalScope.current_block_id)
+
+	if id_is_list:
+		globalScope.pending_lists.push(list_id)
+		globalScope.pending_operators.push("(")
+	else:
+		stop_exec("Id '" + list_id + "' is not a list")
+
+#CONSTANT action 10
+def p_EC_SEEN_CONST_LIST(p):
+	"EC_SEEN_CONST_LIST : "
+	list_index_type = globalScope.operand_types.pop()
+
+	if list_index_type == "whole":
+
+		list_id = globalScope.pending_lists.pop()
+		list_address = globalScope.function_directory.get_list_address_for_block(list_id, globalScope.current_block_id)
+		list_index = globalScope.pending_operands.pop()
+		list_size = globalScope.function_directory.get_list_size_for_block(list_id, globalScope.current_block_id)
+		list_type = globalScope.function_directory.get_list_type_for_block(list_id, globalScope.current_block_id)	
+
+		globalScope.quad_list.append_quad("op_verify_index", list_index, list_size, "-1")
+
+		result = "*t" + str(globalScope.temp_space)
+		globalScope.temp_space = globalScope.temp_space + 1
+		globalScope.quad_list.append_quad("op_addition", list_index, list_address, result)
+		
+		globalScope.pending_operands.push(result)
+		globalScope.operand_types.push(list_type)
+		globalScope.pending_operators.pop()
+	else:
+		stop_exec("List index must be a 'whole' value, found a '" + list_index_type + "' value instead")
 
 #ITEM action 1
 def p_EC_SEEN_ITEM_OP(p):
@@ -749,21 +797,31 @@ def p_EC_SEEN_RETURN(p):
 #CALL action 1
 def p_EC_SEEN_CALL_VOID_BLOCK_ID(p):
 	"EC_SEEN_CALL_VOID_BLOCK_ID : "
-	globalScope.call_block_id = p[-1]
+	seen_block_id(p, False)
 
-	if globalScope.function_directory.block_id_exists(globalScope.call_block_id):
-		call_block_return_type = globalScope.function_directory.get_return_type_for_block(globalScope.call_block_id)
+def seen_block_id(p, returns_value):
+	call_block_id = p[-1]
+	globalScope.pending_blocks.push(call_block_id)
 
-		if  call_block_return_type != "void":
-			stop_exec("Block '" + globalScope.call_block_id + "' returns a '" + call_block_return_type + "' value, but is not being assigned to anything")
+	if globalScope.function_directory.block_id_exists(call_block_id):
+		call_block_return_type = globalScope.function_directory.get_return_type_for_block(call_block_id)
+
+		if not returns_value:
+			if call_block_return_type != "void":
+				stop_exec("Block '" + call_block_id + "' returns a '" + call_block_return_type + "' value, but is not being assigned to anything")
+		else:
+			if call_block_return_type == "void":
+				stop_exec("Block '" + call_block_id + "' does not return a value")
 	else:
-		stop_exec("Block '" + globalScope.call_block_id + "' does not exist or is declared below '" + globalScope.current_block_id + "'")
+		stop_exec("Block '" + call_block_id + "' does not exist or is declared below '" + globalScope.current_block_id + "'")
+
 
 #CALL action 2
 def p_EC_SEEN_START_PARAM(p):
 	"EC_SEEN_START_PARAM : "
-	globalScope.quad_list.append_quad("op_era", globalScope.call_block_id, "-1", "-1")			
-	globalScope.block_argument_counter = 0
+	call_block_id = globalScope.pending_blocks.peek()
+	globalScope.quad_list.append_quad("op_era", call_block_id, "-1", "-1")
+	globalScope.pending_blocks_argument_counter.push(0)			
 
 #CALL action 3
 def p_EC_SEEN_PARAM(p):
@@ -771,30 +829,49 @@ def p_EC_SEEN_PARAM(p):
 	argument_type = globalScope.operand_types.pop()
 
 	try:
-		parameter_type = globalScope.function_directory.get_parameter_type_for_block(globalScope.call_block_id, globalScope.block_argument_counter)
+		call_block_id = globalScope.pending_blocks.peek()
+		block_argument_counter = globalScope.pending_blocks_argument_counter.pop()
+		parameter_type = globalScope.function_directory.get_parameter_type_for_block(call_block_id, block_argument_counter)
 	except IndexError:
-		block_parameter_counter = globalScope.function_directory.get_parameter_count_for_block(globalScope.call_block_id)
-		stop_exec("Block '" + globalScope.call_block_id + "' receives " + str(block_parameter_counter) + " parameter(s), found " + str(globalScope.block_argument_counter + 1) + " argument(s) instead")
+		block_parameter_counter = globalScope.function_directory.get_parameter_count_for_block(call_block_id)
+		stop_exec("Block '" + call_block_id + "' receives " + str(block_parameter_counter) + " parameter(s), found " + str(block_argument_counter + 1) + " argument(s) instead")
 
-	globalScope.block_argument_counter = globalScope.block_argument_counter + 1
+	block_argument_counter = block_argument_counter + 1
+	globalScope.pending_blocks_argument_counter.push(block_argument_counter)
 
 	if argument_type == parameter_type:
 		argument = globalScope.pending_operands.pop()
-		result = "param" + str(globalScope.block_argument_counter)
+		result = "param" + str(block_argument_counter)
 		globalScope.quad_list.append_quad("op_param", argument, "-1", result)
 	else:
-		stop_exec("Argument #" + str(globalScope.block_argument_counter) + " of block '" + globalScope.call_block_id + "' should be a '" + parameter_type + "' value, found a '" + argument_type + "' value instead")
+		stop_exec("Argument #" + str(block_argument_counter) + " of block '" + call_block_id + "' should be a '" + parameter_type + "' value, found a '" + argument_type + "' value instead")
 
 #CALL action 4
 def p_EC_SEEN_BLOCK_CALL(p):
 	"EC_SEEN_BLOCK_CALL : "
-	block_parameter_counter = globalScope.function_directory.get_parameter_count_for_block(globalScope.call_block_id)
+	seen_block_call(p, False)
 
-	if  block_parameter_counter == globalScope.block_argument_counter:
-		call_block_initial_quad = globalScope.function_directory.get_quad_position_block(globalScope.call_block_id)
-		globalScope.quad_list.append_quad("op_go_sub", globalScope.call_block_id, "-1", call_block_initial_quad)
+def seen_block_call(p, returns_value):
+	call_block_id = globalScope.pending_blocks.pop()
+	block_parameter_counter = globalScope.function_directory.get_parameter_count_for_block(call_block_id)
+	block_argument_counter = globalScope.pending_blocks_argument_counter.pop()
+
+	if  block_parameter_counter == block_argument_counter:
+		call_block_initial_quad = globalScope.function_directory.get_quad_position_block(call_block_id)
+		globalScope.quad_list.append_quad("op_go_sub", call_block_id, "-1", call_block_initial_quad)
+
+		if returns_value:
+			result = "t" + str(globalScope.temp_space)
+			globalScope.temp_space = globalScope.temp_space + 1
+			globalScope.quad_list.append_quad("op_assign", call_block_id, "-1", result)
+
+			globalScope.pending_operands.push(result)
+			return_type = globalScope.function_directory.get_return_type_for_block(call_block_id)
+			globalScope.operand_types.push(return_type)
+
 	else:
-		stop_exec("Block '" + globalScope.call_block_id + "' receives " + str(block_parameter_counter) + " parameter(s), found " + str(globalScope.block_argument_counter) + " argument(s) instead")
+		stop_exec("Block '" + call_block_id + "' receives " + str(block_parameter_counter) + " parameter(s), found " + str(block_argument_counter) + " argument(s) instead")
+
 
 def p_error(p):
 	stop_exec("Unexpected token '" + p.value.split("\n")[0] + "' found")
