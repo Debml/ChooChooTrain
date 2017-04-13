@@ -1,0 +1,44 @@
+block uno
+receives :
+a of type whole 
+{
+	variable b of type whole;
+
+	a = a + b * a;
+	print(a, b, a + b);
+}
+
+block dos
+receives :
+a of type whole,
+b of type whole,
+g of type decimal
+{
+	variable i of type whole;
+
+	i = b;
+	do{
+		a = a + b * i + b;
+		call uno(i*2);
+		print(a);
+		i = i - 1;
+	}until(i > 0)
+}
+
+starting block main
+{
+	variable a, b of type whole;
+	variable f of type decimal;
+
+	a = 3;
+	b = a + 1;
+	
+	print(a, b);
+
+	f = 3.14;
+
+	call dos(a + b * 2, b, f * 3);
+
+	print(a, b, f * 2 + 1);
+}
+
