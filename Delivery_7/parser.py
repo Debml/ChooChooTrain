@@ -697,21 +697,21 @@ def p_EC_SEEN_EXPRESSION(p):
 
 	#Checks that the next operator is a negation operator to respect order of operations
 	elif not global_scope.pending_operators.empty() and global_scope.pending_operators.peek() == constants.Operators.OP_NEGATION:
-		right_operand = global_scope.pending_operands.pop()
-		right_type = global_scope.pending_operand_types.pop()
+		left_operand = global_scope.pending_operands.pop()
+		left_type = global_scope.pending_operand_types.pop()
 
 		operator = global_scope.pending_operators.pop()
 
 		#Negation only applies to boolean type
-		if right_type == constants.DataTypes.BOOLEAN:
+		if left_type == constants.DataTypes.BOOLEAN:
 			result = global_scope.function_directory.get_temporary_address(constants.DataTypes.BOOLEAN)
 
-			global_scope.quad_list.append_quad(operator, "-1", right_operand, result)
+			global_scope.quad_list.append_quad(operator, left_operand, "-1", result)
 
 			global_scope.pending_operands.push(result)
 			global_scope.pending_operand_types.push(constants.DataTypes.BOOLEAN)
 		else:
-			stop_exec("Negation operator can only be applied to 'boolean' expression, found '%s' expression" % right_type)
+			stop_exec("Negation operator can only be applied to 'boolean' expression, found '%s' expression" % left_type)
 	
 #PROGRAM action 1 - Generates jump to starting block and pushes to pending jumps stack
 def p_EC_SEEN_START_PROG(p):
@@ -868,7 +868,7 @@ def push_constant_address(constant_type):
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message
 def stop_exec(message):
-	sys.exit("Error in line %d: %s" % (global_scope.line_count, message))
+	sys.exit("Compilation error in line %d: %s" % (global_scope.line_count, message))
 
 #Prints results of compilation when successful
 def end_compilation():
