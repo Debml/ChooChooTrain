@@ -7,7 +7,7 @@ tokens = scanner.tokens
 
 def p_PROGRAM(p):
 	'''
-	PROGRAM : EC_SEEN_START_PROG PROGRAM_AUX
+	PROGRAM : EC_SEEN_START_PROG PROGRAM_AUX EC_SEEN_END_PROG
 	'''
 	end_compilation()
 
@@ -719,6 +719,14 @@ def p_EC_SEEN_START_PROG(p):
 	global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "pending")
 
 	global_scope.pending_jumps.push(global_scope.quad_list.get_quad_count() - 1)
+
+#PROGRAM action 2 - Validates that there is a starting block
+def p_EC_SEEN_END_PROG(p):
+	"EC_SEEN_END_PROG : "
+	starting_block_key = global_scope.function_directory.starting_block_key
+
+	if starting_block_key == "-1":
+		stop_exec("No starting block found")
 
 #RETURN action 1 - Validates return type
 def p_EC_SEEN_RETURN(p):
