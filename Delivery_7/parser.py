@@ -619,7 +619,7 @@ def p_EC_SEEN_IF_EXP(p):
 def p_EC_SEEN_ELSE(p):
 	"EC_SEEN_ELSE : "
 	#Quad for the true case
-	global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "-1")
+	global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "pending")
 
 	#Fills the 'if' pending jump
 	if_false = global_scope.pending_jumps.pop()

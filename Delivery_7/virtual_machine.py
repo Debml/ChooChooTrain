@@ -1,12 +1,13 @@
 import sys
 import global_scope
 import constants
+from structures import Quad
 
-#Function that reads the current quad operation and executes it
+#Reads the current instruction (Quad) operation and executes it
 def execute_code():
     global_scope.instruction_pointer = 1
 
-    #Loops until break (end_proc is in charge of doing this)
+    #Loops until break (end_proc is in charge of breaking)
     while True:
         current_instruction = read_current_quad(global_scope.instruction_pointer)
         operator = current_instruction.get_operator()
@@ -57,10 +58,13 @@ def execute_code():
             print "verify index"
         elif operator == constants.Operators.OP_GO_TO:
             print "go to"
+            go_to_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_GO_TO_T:
             print "go to if true"
+            go_to_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_GO_TO_F:
             print "go to if false"
+            go_to_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_PRINT:
             print "print"
             print_operation(current_instruction)
@@ -187,6 +191,33 @@ def input_operation(current_instruction):
     store_in_memory(input_value, input_address)
 
     global_scope.instruction_pointer += 1
+
+#Executes a Go-To (True/False/Independent) operation
+def go_to_operation(operator, current_instruction):
+    new_instruction = current_instruction.get_result()
+
+    if operator == constants.Operators.OP_GO_TO:
+        global_scope.instruction_pointer = new_instruction
+    elif operator == constants.Operators.OP_GO_TO_T:
+        evaluation_result = current_instruction.get_left_operand()
+
+        #If evaluation_result resolves to true, go to the given instruction
+        if evaluation_result:
+            global_scope.instruction_pointer = new_instruction
+        #If evaluation_result resolves to false, go to the next instruction
+        else:
+            global_scope.instruction_pointer += 1
+    elif operator == constants.Operators.OP_GO_TO_F:
+        evaluation_result = current_instruction.get_left_operand()
+
+        #If evaluation_result resolves to false, go to the given instruction
+        if not evaluation_result:
+            global_scope.instruction_pointer = new_instruction
+        #If evaluation_result resolves to true, go to the next instruction
+        else:
+            global_scope.instruction_pointer += 1
+    else:
+        unknown_operation()
 
 #Shows an unknown operation error and stops program execution
 def unknown_operation():
