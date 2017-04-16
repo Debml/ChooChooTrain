@@ -15,8 +15,8 @@ else:
     file_name = sys.argv[1]
 
 parser.start_compilation(file_name)
-virtual_machine.start_execution()
+#virtual_machine.start_execution()
 
 #finished execution
-execution_time = time.time() - global_scope.timer_counter - start_time
-print execution_time, "seconds"
+#execution_time = time.time() - global_scope.timer_counter - start_time
+#print execution_time, "seconds"

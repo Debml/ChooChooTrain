@@ -762,6 +762,13 @@ class Memory_Handler:
 			if address >= self._global_ranges[3] and address <= (self._global_ranges[3]+self._global_counter[3]-1):
 				#add to memory with offset
 				return self._memory.get_from_global_boolean_memory(address-self._global_ranges[3])
+
+	#Resets the 
+	def reset_local_counter(self):
+		#counter for local variables memory
+		temp_local_counter = self._local_counter
+		self._local_counter = [0, 0, 0, 0]
+		return temp_local_counter	
 				
 	#Overrides print method
 	def __str__(self):

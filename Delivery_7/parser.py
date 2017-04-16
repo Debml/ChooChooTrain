@@ -365,7 +365,8 @@ def p_EC_SEEN_BLOCK_BODY_END(p):
 	if (global_scope.block_returns and block_return_type != constants.DataTypes.VOID) or (not global_scope.block_returns and block_return_type == constants.DataTypes.VOID):
 		global_scope.quad_list.append_quad(constants.Operators.OP_END_PROC, "-1", "-1", "-1")
 		#global_scope.function_directory.print_variable_list(global_scope.current_block_id)
-		global_scope.function_directory.clear_variable_list(global_scope.current_block_id)
+		#global_scope.function_directory.clear_variable_list(global_scope.current_block_id)
+		print(global_scope.function_directory.memory_handler.reset_local_counter())
 	else:
 		stop_exec("Block '%s' should return a '%s' value" % (global_scope.current_block_id, block_return_type))
 
