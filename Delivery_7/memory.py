@@ -224,9 +224,9 @@ class Memory_Section:
 
 		#constant memory arrays 13000-16999
 		self._constant_whole_memory = [None]*cc[0]
-		self._constant_decimal_memory = [None]*tc[1]
-		self._constant_words_memory = [None]*tc[2]
-		self._constant_boolean_memory = [None]*tc[3]
+		self._constant_decimal_memory = [None]*cc[1]
+		self._constant_words_memory = [None]*cc[2]
+		self._constant_boolean_memory = [None]*cc[3]
 
 		#global memory arrays 17000-18999
 		self._global_whole_memory = [None]*gc[0]
