@@ -143,7 +143,7 @@ def p_VAR_DECLARATION_AUX(p):
 
 def p_LIST_DECLARATION(p):
 	'''
-	LIST_DECLARATION : list id EC_SEEN_LIST_ID squarebracket_open cst_whole EC_SEEN_LIST_SIZE squarebracket_close of type TYPE EC_SEEN_LIST_TYPE semicolon EC_SEEN_LIST
+	LIST_DECLARATION : list id EC_SEEN_LIST_ID squarebracket_open cst_whole EC_SEEN_LIST_SIZE squarebracket_close of type TYPE EC_SEEN_LIST_TYPE EC_SEEN_LIST semicolon
 	'''
 
 def p_EXPRESSION(p):
@@ -344,10 +344,17 @@ def p_EC_SEEN_PARAM_ID(p):
 	"EC_SEEN_PARAM_ID : "
 	global_scope.current_var_id = p[-1]
 
-#BLOCK action 6 - Sets block's first quad in the FRT
+#BLOCK action 6 - Sets block's first quad in the FRT, validates parameter count for starting block
 def p_EC_SEEN_BLOCK_SIGNATURE(p):
 	"EC_SEEN_BLOCK_SIGNATURE : "
 	global_scope.function_directory.add_quad_position_block(global_scope.current_block_id, global_scope.quad_list.get_quad_count())
+
+	if global_scope.is_starting_block:
+		#Starting block should have no parameters to avoid memory reading issues
+		if global_scope.function_directory.get_parameter_count_for_block(global_scope.current_block_id) > 0:
+			stop_exec("Starting block should receive no parameters")
+		else:
+			global_scope.is_starting_block = False
 
 #BLOCK_BODY action 1 - Validates the return type with the one saved in the FRT for the current block
 def p_EC_SEEN_BLOCK_BODY_END(p):
@@ -382,7 +389,7 @@ def p_EC_SEEN_VAR_TYPE(p):
 			primitive_type = p[-1]
 			global_scope.function_directory.add_primitive(global_scope.current_block_id, var_name, primitive_type)
 		else:
-			stop_exec("Variable named '%s' is already defined" % var_name)
+			stop_exec("Name '%s' is already in use in block '%s'" % (var_name, global_scope.current_block_id))
 
 #LIST_DECLARATION action 1 - Sets the current list id being analyzed
 def p_EC_SEEN_LIST_ID(p):
@@ -410,7 +417,7 @@ def p_EC_SEEN_LIST(p):
 	if not global_scope.function_directory.id_exists(global_scope.current_list_id, global_scope.current_block_id):
 		global_scope.function_directory.add_list(global_scope.current_block_id, global_scope.current_list_id, global_scope.current_list_size, global_scope.current_list_type)
 	else:
-		stop_exec("List named '%s' is already defined" % global_scope.current_list_id)
+		stop_exec("Name '%s' is already in use in block '%s'" % (global_scope.current_list_id, global_scope.current_block_id))
 
 #FACTOR action 1 - Adds a false bottom mark to the operators stack
 def p_EC_SEEN_FACT_LP(p):	
@@ -480,7 +487,7 @@ def p_EC_SEEN_CONST_LIST_ID(p):
 		global_scope.pending_lists.push(list_id)
 		global_scope.pending_operators.push(constants.Misc.FALSE_BOTTOM)
 	else:
-		stop_exec("ID '%s' is not a list" % list_id)
+		stop_exec("List '%s' does not exist" % list_id)
 
 #CONSTANT action 10 - Generates quads to access list index
 def p_EC_SEEN_CONST_LIST(p):

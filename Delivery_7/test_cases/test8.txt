@@ -1,4 +1,4 @@
-starting block Block15
+block Block15
 receives :
 parameter1 of type decimal,
 parameter2 of type whole,
@@ -8,5 +8,14 @@ parameter3 of type words
 	list c[6] of type decimal;
 	variable d, e of type decimal;
 
+	c[1] = b + 1.3 * 1.5 + 1 + c[3];
+}
+
+starting block Block14
+{
+	variable a, b of type decimal;
+	list c[6] of type decimal;
+	variable d, e of type decimal;
+	a = 1+1;
 	c[1] = b + 1.3 * 1.5 + 1 + c[3];
 }
