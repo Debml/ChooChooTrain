@@ -493,21 +493,22 @@ class Memory_Handler:
 				return true
 
 	#get value from memory
-	def get_from_memory(self, address_param = None):
+	def get_from_memory(self, address = None):
 		#address must not be empty
-			if address_param is not None:
+			if address is not None:
 				#address is special character for memory location
-				if address_param[0] == '&':
-    				#return address
-					return address_param[1:]
+				if str(address)[0] == '&':
+					#return addres
+					num = int(address[1:])
+					return num
 
 				#address is special character for memory location
-				elif address_param[0] == '*':
-					return self.get_from_memory(str(self.get_from_memory(address_param[1:])))
+				elif str(address)[0] == '*':
+					num = int(address[1:])
+					return self.get_from_memory(self.get_from_memory(num))
 
 				#address is regular address
 				else:	
-					address = int(address_param)
 					#address is valid in range of writeable memory already assigned for locals
 					if address >= self._local_ranges[0] and address <= (self._local_ranges[3]+self._local_counter[3]-1):
 						#add memory to local
@@ -789,7 +790,7 @@ if __name__ == '__main__':
 	MemHand.add_to_memory(4, ad5)
 	MemHand.add_to_memory(9, ad6)
 
-	print MemHand.get_from_memory('5500')
+	print MemHand.get_from_memory(5500)
 	print MemHand.get_from_memory('&5500')
 	print MemHand.get_from_memory('*5502')
 
