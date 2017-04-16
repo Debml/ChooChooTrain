@@ -1,14 +1,12 @@
 """
 Collection of classes "structures" containing Stack, Queue, and Dictionary
-Author: Paulina Escalante Campbell
-January 19, 2016
 """
 #import deque for implementation of queue
 from collections import deque
 import constants
 
 """
-Fixed Semantic cube class defining a data structure behving like a semantic
+Fixed Semantic cube class defining a data structure behaving like a semantic
 cube where given two operand types and one operator, returns, if operation is valid,
 the resulting type of the operation. If not valid, returns None.
 """
@@ -159,6 +157,9 @@ class Quad_List:
 
 	def set_result(self, quad_index):
 		self._quads[quad_index].set_result(self._quad_count)
+	
+	def get_quad(self, quad_index):
+		return self._quads[quad_index]
 
 	def get_quad_count(self):
 		return self._quad_count
@@ -433,18 +434,19 @@ class Stack:
 
 #for testing purposes
 if __name__ == '__main__':
-    quad_1 = Quad(constants.Operators.OP_ASSIGN, '5', '-1', 'B')
-    quad_2 = Quad(constants.Operators.OP_ADDITION, '10', '20', 'A')
-    quad_3 = Quad(constants.Operators.OP_GO_TO, '-1', '20', 'C')
-    quad_4 = Quad(constants.Operators.OP_GO_TO_T, 'T1', '20', 'D')
+		
+	quad_1 = Quad(constants.Operators.OP_ASSIGN, '5', '-1', 'B')
+	quad_2 = Quad(constants.Operators.OP_ADDITION, '10', '20', 'A')
+	quad_3 = Quad(constants.Operators.OP_GO_TO, '-1', '20', 'C')
+	quad_4 = Quad(constants.Operators.OP_GO_TO_T, 'T1', '20', 'D')
 
-    cube = Semantic_Cube()
-    print cube.validate_operation(constants.Operators.OP_ADDITION, constants.DataTypes.WORDS, constants.DataTypes.WHOLE)
+	cube = Semantic_Cube()
+	print cube.validate_operation(constants.Operators.OP_ADDITION, constants.DataTypes.WORDS, constants.DataTypes.WHOLE)
 
-    quadli = QuadList()
-    quadli.append_quad(constants.Operators.OP_ASSIGN, '5', '-1', 'B')
-    quadli.append_quad(constants.Operators.OP_ADDITION, '10', '20', 'A')
-    quadli.append_quad(constants.Operators.OP_GO_TO, '-1', '20', "pending")
-    quadli.append_quad(constants.Operators.OP_GO_TO_T, 'T1', '20', 'D')
+	quadli = Quad_List()
+	quadli.append_quad(constants.Operators.OP_ASSIGN, '5', '-1', 'B')
+	quadli.append_quad(constants.Operators.OP_ADDITION, '10', '20', 'A')
+	quadli.append_quad(constants.Operators.OP_GO_TO, '-1', '20', "pending")
+	quadli.append_quad(constants.Operators.OP_GO_TO_T, 'T1', '20', 'D')
 
-    print quadli
+	print quadli
