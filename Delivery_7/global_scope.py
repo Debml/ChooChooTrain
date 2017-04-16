@@ -30,3 +30,6 @@ pending_lists = Stack()
 
 #Run-Time variables
 instruction_pointer = 0
+
+#timer helper variable
+timer_counter = 0

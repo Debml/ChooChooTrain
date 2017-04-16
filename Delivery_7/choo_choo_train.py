@@ -2,6 +2,10 @@ import sys
 import parser
 import virtual_machine
 import global_scope
+import time
+
+#counts execution time
+start_time = time.time()
 
 #If no argument was given, make the user input a file
 if(len(sys.argv) < 2):
@@ -12,3 +16,7 @@ else:
 
 parser.start_compilation(file_name)
 virtual_machine.start_execution()
+
+#finished execution
+execution_time = time.time() - global_scope.timer_counter - start_time
+print execution_time, "seconds"

@@ -1,6 +1,7 @@
 import sys
 import global_scope
 import constants
+import time
 from structures import Quad
 
 #Reads the current instruction (Quad) operation and executes it
@@ -208,7 +209,11 @@ def input_operation(current_instruction):
     input_address = current_instruction.get_result()
     input_type = current_instruction.get_left_operand()
 
+    #counts time for input
+    start_input_timer = time.time()
     input_value = raw_input()
+    global_scope.timer_counter = time.time() - start_input_timer
+
     validated_input = validate_input(input_value, input_type)
 
     if  validated_input is not None:
