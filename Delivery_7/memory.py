@@ -116,82 +116,82 @@ class Memory_Section:
 		self._global_boolean_memory[offset_address] = value
 
 	#get variable from local whole memory
-	def get_from_local_whole_memory(self, value = None, offset_address = None):
+	def get_from_local_whole_memory(self, offset_address = None):
 		#get from local whole memory
 		return self._local_whole_memory[offset_address]
 
 	#get variable from local decimal memory
-	def get_from_local_decimal_memory(self, value = None, offset_address = None):
+	def get_from_local_decimal_memory(self, offset_address = None):
 		#get from local decimal memory
 		return self._local_decimal_memory[offset_address]
 
 	#get variable from local words memory
-	def get_from_local_words_memory(self, value = None, offset_address = None):
+	def get_from_local_words_memory(self, offset_address = None):
 		#get from local words memory
 		return self._local_words_memory[offset_address]
 
 	#get variable from local boolean memory
-	def get_from_local_boolean_memory(self, value = None, offset_address = None):
+	def get_from_local_boolean_memory(self, offset_address = None):
 		#get from local boolean memory
 		return self._local_boolean_memory[offset_address]
 
 	#get variable from temporary whole memory
-	def get_from_temporary_whole_memory(self, value = None, offset_address = None):
+	def get_from_temporary_whole_memory(self, offset_address = None):
 		#get from temporary whole memory
 		return self._temporary_whole_memory[offset_address]
 
 	#get variable from temporary decimal memory
-	def get_from_temporary_decimal_memory(self, value = None, offset_address = None):
+	def get_from_temporary_decimal_memory(self, offset_address = None):
 		#get from temporary decimal memory
 		return self._temporary_decimal_memory[offset_address]
 
 	#get variable from temporary words memory
-	def get_from_temporary_words_memory(self, value = None, offset_address = None):
+	def get_from_temporary_words_memory(self, offset_address = None):
 		#get from temporary words memory
 		return self._temporary_words_memory[offset_address]
 
 	#get variable from temporary boolean memory
-	def get_from_temporary_boolean_memory(self, value = None, offset_address = None):
+	def get_from_temporary_boolean_memory(self, offset_address = None):
 		#get from temporary boolean memory
 		return self._temporary_boolean_memory[offset_address]
 
 	#get variable from constant whole memory
-	def get_from_constant_whole_memory(self, value = None, offset_address = None):
+	def get_from_constant_whole_memory(self, offset_address = None):
 		#get from constant whole memory
 		return self._constant_whole_memory[offset_address]
 
 	#get variable from constant decimal memory
-	def get_from_constant_decimal_memory(self, value = None, offset_address = None):
+	def get_from_constant_decimal_memory(self, offset_address = None):
 		#get from constant decimal memory
 		return self._constant_decimal_memory[offset_address]
 
 	#get variable from constant words memory
-	def get_from_constant_words_memory(self, value = None, offset_address = None):
+	def get_from_constant_words_memory(self, offset_address = None):
 		#get from constant words memory
 		return self._constant_words_memory[offset_address]
 
 	#get variable from constant boolean memory
-	def get_from_constant_boolean_memory(self, value = None, offset_address = None):
+	def get_from_constant_boolean_memory(self, offset_address = None):
 		#get from constant boolean memory
 		return self._constant_boolean_memory[offset_address]
 
 	#get variable from global whole memory
-	def get_from_global_whole_memory(self, value = None, offset_address = None):
+	def get_from_global_whole_memory(self, offset_address = None):
 		#get from global whole memory
 		return self._global_whole_memory[offset_address]
 
 	#get variable from global decimal memory
-	def get_from_global_decimal_memory(self, value = None, offset_address = None):
+	def get_from_global_decimal_memory(self, offset_address = None):
 		#get from global decimal memory
 		return self._global_decimal_memory[offset_address]
 
 	#get variable from global words memory
-	def get_from_global_words_memory(self, value = None, offset_address = None):
+	def get_from_global_words_memory(self, offset_address = None):
 		#get from global words memory
 		return self._global_words_memory[offset_address]
 
 	#get variable from global boolean memory
-	def get_from_global_boolean_memory(self, value = None, offset_address = None):
+	def get_from_global_boolean_memory(self, offset_address = None):
 		#get from global boolean memory
 		return self._global_boolean_memory[offset_address]
 			
@@ -493,29 +493,41 @@ class Memory_Handler:
 				return true
 
 	#get value from memory
-	def get_from_memory(self, address = None):
+	def get_from_memory(self, address_param = None):
 		#address must not be empty
-			if address is not None:
-				#address is valid in range of writeable memory already assigned for locals
-				if address >= self._local_ranges[0] and address <= (self._local_ranges[3]+self._local_counter[3]-1):
-					#add memory to local
-					return self._get_from_local_memory(address)
+			if address_param is not None:
+				#address is special character for memory location
+				if address_param[0] == '&':
+    				#return address
+					return address_param[1:]
 
-				elif address >= self._temporary_ranges[0] and address <= (self._temporary_ranges[3]+self._temporary_counter[3]-1):
-					#add memory to temporary
-					return self._get_from_temporary_memory(address)
+				#address is special character for memory location
+				elif address_param[0] == '*':
+					return self.get_from_memory(str(self.get_from_memory(address_param[1:])))
 
-				elif address >= self._constant_ranges[0] and address <= (self._constant_ranges[3]+self._constant_counter[3]-1):
-					#add memory to constant
-					return self._get_from_constant_memory(address)
+				#address is regular address
+				else:	
+					address = int(address_param)
+					#address is valid in range of writeable memory already assigned for locals
+					if address >= self._local_ranges[0] and address <= (self._local_ranges[3]+self._local_counter[3]-1):
+						#add memory to local
+						return self._get_from_local_memory(address)
 
-				elif address >= self._global_ranges[0] and address <= (self._global_ranges[3]+self._global_counter[3]-1):
-					#add memory to global
-					return self._get_from_global_memory(address)
+					elif address >= self._temporary_ranges[0] and address <= (self._temporary_ranges[3]+self._temporary_counter[3]-1):
+						#add memory to temporary
+						return self._get_from_temporary_memory(address)
 
-				else:
-					#error
-					return None
+					elif address >= self._constant_ranges[0] and address <= (self._constant_ranges[3]+self._constant_counter[3]-1):
+						#add memory to constant
+						return self._get_from_constant_memory(address)
+
+					elif address >= self._global_ranges[0] and address <= (self._global_ranges[3]+self._global_counter[3]-1):
+						#add memory to global
+						return self._get_from_global_memory(address)
+
+					else:
+						#error
+						return None
 
 	#add value for local memory, size is 500
 	def _add_to_local_memory(self, value = None, address = None):
@@ -672,81 +684,75 @@ class Memory_Handler:
 
 	#get value from temporary memory
 	def _get_from_temporary_memory(self, address = None):
-		#value is not empty
-		if value is not None:
-			#address not empty
-			if address is not None:
-				#address belongs to whole memory already assigned
-				if address >= self._temporary_ranges[0] and address <= (self._temporary_ranges[0]+self._temporary_counter[0]-1):
-					#add to memory with offset
-					return self._memory.get_from_temporary_whole_memory(address-self._temporary_ranges[0])
+		#address not empty
+		if address is not None:
+			#address belongs to whole memory already assigned
+			if address >= self._temporary_ranges[0] and address <= (self._temporary_ranges[0]+self._temporary_counter[0]-1):
+				#add to memory with offset
+				return self._memory.get_from_temporary_whole_memory(address-self._temporary_ranges[0])
 
-				#address belongs to decimal memory already assigned
-				if address >= self._temporary_ranges[1] and address <= (self._temporary_ranges[1]+self._temporary_counter[1]-1):
-					#add to memory with offset
-					return self._memory.get_from_temporary_decimal_memory(address-self._temporary_ranges[1])
+			#address belongs to decimal memory already assigned
+			if address >= self._temporary_ranges[1] and address <= (self._temporary_ranges[1]+self._temporary_counter[1]-1):
+				#add to memory with offset
+				return self._memory.get_from_temporary_decimal_memory(address-self._temporary_ranges[1])
 
-				#address belongs to words memory already assigned
-				if address >= self._temporary_ranges[2] and address <= (self._temporary_ranges[2]+self._temporary_counter[2]-1):
-					#add to memory with offset
-					return self._memory.get_from_temporary_words_memory(address-self._temporary_ranges[2])
+			#address belongs to words memory already assigned
+			if address >= self._temporary_ranges[2] and address <= (self._temporary_ranges[2]+self._temporary_counter[2]-1):
+				#add to memory with offset
+				return self._memory.get_from_temporary_words_memory(address-self._temporary_ranges[2])
 
-				#address belongs to boolean memory already assigned
-				if address >= self._temporary_ranges[3] and address <= (self._temporary_ranges[3]+self._temporary_counter[3]-1):
-					#add to memory with offset
-					return self._memory.get_from_temporary_boolean_memory(address-self._temporary_ranges[3])
+			#address belongs to boolean memory already assigned
+			if address >= self._temporary_ranges[3] and address <= (self._temporary_ranges[3]+self._temporary_counter[3]-1):
+				#add to memory with offset
+				return self._memory.get_from_temporary_boolean_memory(address-self._temporary_ranges[3])
 
 	#get value from constant memory
 	def _get_from_constant_memory(self, address = None):
-		#value is not empty
-		if value is not None:
-			#address not empty
-			if address is not None:
-				#address belongs to whole memory already assigned
-				if address >= self._constant_ranges[0] and address <= (self._constant_ranges[0]+self._constant_counter[0]-1):
-					#add to memory with offset
-					return self._memory.get_from_constant_whole_memory(address-self._constant_ranges[0])
+		#address not empty
+		if address is not None:
+			#address belongs to whole memory already assigned
+			if address >= self._constant_ranges[0] and address <= (self._constant_ranges[0]+self._constant_counter[0]-1):
+				#add to memory with offset
+				return self._memory.get_from_constant_whole_memory(address-self._constant_ranges[0])
 
-				#address belongs to decimal memory already assigned
-				if address >= self._constant_ranges[1] and address <= (self._constant_ranges[1]+self._constant_counter[1]-1):
-					#add to memory with offset
-					return self._memory.get_from_constant_decimal_memory(address-self._constant_ranges[1])
+			#address belongs to decimal memory already assigned
+			if address >= self._constant_ranges[1] and address <= (self._constant_ranges[1]+self._constant_counter[1]-1):
+				#add to memory with offset
+				return self._memory.get_from_constant_decimal_memory(address-self._constant_ranges[1])
 
-				#address belongs to words memory already assigned
-				if address >= self._constant_ranges[2] and address <= (self._constant_ranges[2]+self._constant_counter[2]-1):
-					#add to memory with offset
-					return self._memory.get_from_constant_words_memory(address-self._constant_ranges[2])
+			#address belongs to words memory already assigned
+			if address >= self._constant_ranges[2] and address <= (self._constant_ranges[2]+self._constant_counter[2]-1):
+				#add to memory with offset
+				return self._memory.get_from_constant_words_memory(address-self._constant_ranges[2])
 
-				#address belongs to boolean memory already assigned
-				if address >= self._constant_ranges[3] and address <= (self._constant_ranges[3]+self._constant_counter[3]-1):
-					#add to memory with offset
-					return self._memory.get_from_constant_boolean_memory(address-self._constant_ranges[3])
+			#address belongs to boolean memory already assigned
+			if address >= self._constant_ranges[3] and address <= (self._constant_ranges[3]+self._constant_counter[3]-1):
+				#add to memory with offset
+				return self._memory.get_from_constant_boolean_memory(address-self._constant_ranges[3])
 
 	#get value from global memory
 	def _get_from_global_memory(self, address = None):
-		#value is not empty
-		if value is not None:
-			#address not empty
-			if address is not None:
-				#address belongs to whole memory already assigned
-				if address >= self._global_ranges[0] and address <= (self._global_ranges[0]+self._global_counter[0]-1):
-					#add to memory with offset
-					return self._memory.get_from_global_whole_memory(address-self._global_ranges[0])
+		#address not empty
+		if address is not None:
+			#address belongs to whole memory already assigned
+			if address >= self._global_ranges[0] and address <= (self._global_ranges[0]+self._global_counter[0]-1):
+				#add to memory with offset
+				return self._memory.get_from_global_whole_memory(address-self._global_ranges[0])
 
-				#address belongs to decimal memory already assigned
-				if address >= self._global_ranges[1] and address <= (self._global_ranges[1]+self._global_counter[1]-1):
-					#add to memory with offset
-					return self._memory.get_from_global_decimal_memory(address-self._global_ranges[1])
+			#address belongs to decimal memory already assigned
+			if address >= self._global_ranges[1] and address <= (self._global_ranges[1]+self._global_counter[1]-1):
+				#add to memory with offset
+				return self._memory.get_from_global_decimal_memory(address-self._global_ranges[1])
 
-				#address belongs to words memory already assigned
-				if address >= self._global_ranges[2] and address <= (self._global_ranges[2]+self._global_counter[2]-1):
-					#add to memory with offset
-					return self._memory.get_from_global_words_memory(address-self._global_ranges[2])
+			#address belongs to words memory already assigned
+			if address >= self._global_ranges[2] and address <= (self._global_ranges[2]+self._global_counter[2]-1):
+				#add to memory with offset
+				return self._memory.get_from_global_words_memory(address-self._global_ranges[2])
 
-				#address belongs to boolean memory already assigned
-				if address >= self._global_ranges[3] and address <= (self._global_ranges[3]+self._global_counter[3]-1):
-					#add to memory with offset
-					return self._memory.get_from_global_boolean_memory(address-self._global_ranges[3])
+			#address belongs to boolean memory already assigned
+			if address >= self._global_ranges[3] and address <= (self._global_ranges[3]+self._global_counter[3]-1):
+				#add to memory with offset
+				return self._memory.get_from_global_boolean_memory(address-self._global_ranges[3])
 				
 	#Overrides print method
 	def __str__(self):
@@ -758,6 +764,7 @@ if __name__ == '__main__':
 
 	ad1 = MemHand.assign_memory_address_local_variable(constants.DataTypes.DECIMAL,1)
 	ad2 = MemHand.assign_memory_address_local_variable(constants.DataTypes.DECIMAL,1)
+	ad9 = MemHand.assign_memory_address_local_variable(constants.DataTypes.DECIMAL,1)		
 
 	ad3 = MemHand.assign_memory_address_temporary_variable(constants.DataTypes.WHOLE)
 	ad4 = MemHand.assign_memory_address_temporary_variable(constants.DataTypes.WHOLE)
@@ -775,12 +782,19 @@ if __name__ == '__main__':
 
 	MemHand.add_to_memory(1.2, ad1)
 	MemHand.add_to_memory(34.2, ad2)
+	MemHand.add_to_memory(5500, ad9)
 
 	MemHand.add_to_memory(1, ad3)
 	MemHand.add_to_memory(2, ad4)
 	MemHand.add_to_memory(4, ad5)
 	MemHand.add_to_memory(9, ad6)
 
-	print MemHand
+	print MemHand.get_from_memory('5500')
+	print MemHand.get_from_memory('&5500')
+	print MemHand.get_from_memory('*5502')
+
+	#print MemHand
+	s = 'hello'
+	print s[1:]
 
 	
