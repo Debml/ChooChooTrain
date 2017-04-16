@@ -364,7 +364,7 @@ def p_EC_SEEN_BLOCK_BODY_END(p):
 	#Block should be returning something if it stated it would do so (Return type validation is done EC_SEEN_RETURN)
 	if (global_scope.block_returns and block_return_type != constants.DataTypes.VOID) or (not global_scope.block_returns and block_return_type == constants.DataTypes.VOID):
 		global_scope.quad_list.append_quad(constants.Operators.OP_END_PROC, "-1", "-1", "-1")
-		global_scope.function_directory.print_variable_list(global_scope.current_block_id)
+		#global_scope.function_directory.print_variable_list(global_scope.current_block_id)
 		global_scope.function_directory.clear_variable_list(global_scope.current_block_id)
 	else:
 		stop_exec("Block '%s' should return a '%s' value" % (global_scope.current_block_id, block_return_type))
@@ -888,9 +888,10 @@ def stop_exec(message):
 #Prints results of compilation when successful
 def end_compilation():
 	print('Compilation Successful!')
-	global_scope.function_directory.print_table()
-	print(global_scope.quad_list)
+	#global_scope.function_directory.print_table()
+	#print(global_scope.quad_list)
 
+#Entry method to start the compilation process
 def start_compilation(file_name):
 	#Build the parser
 	parser = yacc.yacc()

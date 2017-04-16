@@ -5,11 +5,11 @@ from structures import Quad
 
 #Reads the current instruction (Quad) operation and executes it
 def execute_code():
-    global_scope.instruction_pointer = 1
+    global_scope.instruction_pointer = 0
 
     #Loops until break (end_proc is in charge of breaking)
     while True:
-        current_instruction = read_current_quad(global_scope.instruction_pointer)
+        current_instruction = global_scope.function_directory._memory_handler.get_quad_from_memory(global_scope.instruction_pointer)
         operator = current_instruction.get_operator()
 
         if operator == constants.Operators.OP_ADDITION:
@@ -89,11 +89,8 @@ def execute_code():
 
 #Initializes memory for Run-Time 
 def initialize_memory():
-    #create_code_segment()
-    #create_local_memory()
-    #create_temp_memory()
-    #store_constants()
-    #create_global_memory()
+    global_scope.function_directory._memory_handler.upload_quads_to_memory(global_scope.quad_list)
+    global_scope.function_directory._memory_handler.activate_memory()
 
 #Executes an arithmetic operation
 def binary_arithmetic_operation(operator, current_instruction):
@@ -101,25 +98,25 @@ def binary_arithmetic_operation(operator, current_instruction):
     right_operand_address = current_instruction.get_right_operand()
     result_address = current_instruction.get_result()
 
-    left_operand_value = get_value_by_address(left_operand_address)
-    right_operand_value = get_value_by_address(right_operand_address)
+    left_operand_value = global_scope.function_directory._memory_handler.get_from_memory(left_operand_address)
+    right_operand_value = global_scope.function_directory._memory_handler.get_from_memory(right_operand_address)
 
     #Does the corresponding operation based on the operator
     if operator == constants.Operators.OP_ADDITION:
-        result_value = left_operand_address + right_operand_address
+        result_value = left_operand_value + right_operand_value
     elif operator == constants.Operators.OP_SUBTRACTION:
-        result_value = left_operand_address - right_operand_address
+        result_value = left_operand_value - right_operand_value
     elif operator == constants.Operators.OP_MULTIPLICATION:
-        result_value = left_operand_address * right_operand_address
+        result_value = left_operand_value * right_operand_value
     elif operator == constants.Operators.OP_DIVISION:
-        if right_operand_address == 0:
+        if right_operand_value == 0:
             stop_exec("Cannot divide by 0")
         else:
-            result_value = left_operand_address / right_operand_address
+            result_value = left_operand_value / right_operand_value
     else:
         unknown_operation()
 
-    store_in_memory(result_value, result_address)
+    global_scope.function_directory._memory_handler.add_to_memory(result_value, result_address)
 
     global_scope.instruction_pointer += 1
 
@@ -128,8 +125,8 @@ def assign_operation(current_instruction):
     value_to_assign_address = current_instruction.get_left_operand()
     assignee_address = current_instruction.get_result()
 
-    value_to_assign = get_value_by_address(value_to_assign_address)
-    store_in_memory(value_to_assign, assignee_address)
+    value_to_assign = global_scope.function_directory._memory_handler.get_from_memory(value_to_assign_address)
+    global_scope.function_directory._memory_handler.add_to_memory(value_to_assign, assignee_address)
 
     global_scope.instruction_pointer += 1
 
@@ -139,30 +136,36 @@ def binary_boolean_operation(operator, current_instruction):
     right_operand_address = current_instruction.get_right_operand()
     result_address = current_instruction.get_result()
 
-    left_operand_value = get_value_by_address(left_operand_address)
-    right_operand_value = get_value_by_address(right_operand_address)
+    left_operand_value = global_scope.function_directory._memory_handler.get_from_memory(left_operand_address)
+    right_operand_value = global_scope.function_directory._memory_handler.get_from_memory(right_operand_address)
 
     #Does the corresponding operation based on the operator
     if operator == constants.Operators.OP_GREATER:
-        result_value = left_operand_address > right_operand_address
+        result_value = left_operand_value > right_operand_value
+
+        print (result_value)
+        print (left_operand_value)
+        print (right_operand_value)
+
+
     elif operator == constants.Operators.OP_GREATER_EQUAL:
-        result_value = left_operand_address >= right_operand_address
+        result_value = left_operand_value >= right_operand_value
     elif operator == constants.Operators.OP_LESS:
-        result_value = left_operand_address < right_operand_address
+        result_value = left_operand_value < right_operand_value
     elif operator == constants.Operators.OP_LESS_EQUAL:
-        result_value = left_operand_address <= right_operand_address
+        result_value = left_operand_value <= right_operand_value
     elif operator == constants.Operators.OP_EQUAL:
-        result_value = left_operand_address == right_operand_address
+        result_value = left_operand_value == right_operand_value
     elif operator == constants.Operators.OP_NOT_EQUAL:
-        result_value = not left_operand_address == right_operand_address
+        result_value = not left_operand_value == right_operand_value
     elif operator == constants.Operators.OP_AND:
-        result_value = left_operand_address and right_operand_address
+        result_value = left_operand_value and right_operand_value
     elif operator == constants.Operators.OP_OR:
-        result_value = left_operand_address or right_operand_address
+        result_value = left_operand_value or right_operand_value
     else:
         unknown_operation()
 
-    store_in_memory(result_value, result_address)
+    global_scope.function_directory._memory_handler.add_to_memory(result_value, result_address)
 
     global_scope.instruction_pointer += 1
 
@@ -171,10 +174,10 @@ def negation_operation(current_instruction):
     left_operand_address = current_instruction.get_left_operand()
     result_address = current_instruction.get_result()
 
-    left_operand_value = get_value_by_address(left_operand_address)
-    result_value = not left_operand_address
+    left_operand_value = global_scope.function_directory._memory_handler.get_from_memory(left_operand_address)
+    result_value = not left_operand_value
 
-    store_in_memory(result_value, result_address)
+    global_scope.function_directory._memory_handler.add_to_memory(result_value, result_address)
 
     global_scope.instruction_pointer += 1
 
@@ -183,7 +186,7 @@ def verify_index_operation(current_instruction):
     index_address = current_instruction.get_left_operand()
     array_size = current_instruction.get_right_operand()
 
-    index_value = get_value_by_address(index_address)
+    index_value = global_scope.function_directory._memory_handler.get_from_memory(index_address)
 
     if index_value >= 0 and index_value < array_size:
         global_scope.instruction_pointer += 1
@@ -193,7 +196,7 @@ def verify_index_operation(current_instruction):
 #Prints to console
 def print_operation(current_instruction):
     expression_to_print_address = current_instruction.get_left_operand()
-    expression_to_print_value = get_value_by_address(expression_to_print_address)
+    expression_to_print_value = global_scope.function_directory._memory_handler.get_from_memory(expression_to_print_address)
 
     print expression_to_print_value
 
@@ -204,7 +207,7 @@ def input_operation(current_instruction):
     input_address = current_instruction.get_result()
     input_value = input()
 
-    store_in_memory(input_value, input_address)
+    global_scope.function_directory._memory_handler.add_to_memory(input_value, input_address)
 
     global_scope.instruction_pointer += 1
 
@@ -225,7 +228,7 @@ def go_to_operation(operator, current_instruction):
             global_scope.instruction_pointer += 1
     elif operator == constants.Operators.OP_GO_TO_F:
         evaluation_result = current_instruction.get_left_operand()
-
+        evaluation_result = global_scope.function_directory._memory_handler.get_from_memory(evaluation_result)
         #If evaluation_result resolves to false, go to the given instruction
         if not evaluation_result:
             global_scope.instruction_pointer = new_instruction
@@ -243,3 +246,10 @@ def unknown_operation():
 #message is a string with an appropriate error message
 def stop_exec(message):
 	sys.exit("Run-Time error: " % message)
+
+#Entry method to start the intermediate code execution
+def start_execution():
+    initialize_memory()
+    #print global_scope.function_directory._memory_handler
+    execute_code()
+    #print global_scope.function_directory._memory_handler

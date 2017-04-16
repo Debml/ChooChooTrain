@@ -29,4 +29,4 @@ pending_blocks_argument_counter = Stack()
 pending_lists = Stack()
 
 #Run-Time variables
-instruction_pointer = 1
+instruction_pointer = 0

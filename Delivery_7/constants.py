@@ -1,5 +1,5 @@
 #"Enum" for QUADRUPLE operators
-'''class Operators:
+class Operators:
     OP_ADDITION = 1
     OP_SUBTRACTION = 2
     OP_MULTIPLICATION = 3
@@ -24,8 +24,8 @@
     OP_PARAM = 22
     OP_GO_SUB = 23
     OP_RETURN = 24
-    OP_END_PROC = 25'''
-
+    OP_END_PROC = 25
+'''
 #Uncomment this one for better readeability during testing and printing
 class Operators:
     OP_ADDITION = "op_addition"
@@ -53,7 +53,7 @@ class Operators:
     OP_GO_SUB = "op_go_sub"
     OP_RETURN = "op_return"
     OP_END_PROC = "op_end_proc"
-
+'''
 #"Enum" for data types
 class DataTypes:
     WHOLE = "whole"

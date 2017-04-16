@@ -1,6 +1,6 @@
 import sys
 import parser
-#import virtual_machine
+import virtual_machine
 import global_scope
 
 #If no argument was given, make the user input a file
@@ -11,3 +11,4 @@ else:
     file_name = sys.argv[1]
 
 parser.start_compilation(file_name)
+virtual_machine.start_execution()
