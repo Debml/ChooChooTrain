@@ -236,8 +236,45 @@ class Memory_Section:
 
 	#Overrides print method
 	def print_method(self):
-		print self._quad_memory
-		return ('\n'.join(str(e) for e in self._temporary_whole_memory))
+		printlist = []
+		printlist.append('Quad Memory:\n')
+		printlist.append(self._quad_memory.print_method())
+		printlist.append('\n\nLocal Whole Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._local_whole_memory))
+		printlist.append('\n\nLocal Decimal Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._local_decimal_memory))
+		printlist.append('\n\nLocal Words Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._local_words_memory))
+		printlist.append('\n\nLocal Boolean Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._local_boolean_memory))
+		printlist.append('\n\nTemporary Whole Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._temporary_whole_memory))
+		printlist.append('\n\nTemporary Decimal Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._temporary_decimal_memory))
+		printlist.append('\n\nTemporary Words Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._temporary_words_memory))
+		printlist.append('\n\nTemporary Boolean Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._temporary_boolean_memory))
+		printlist.append('\n\nConstant Whole Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._constant_whole_memory))
+		printlist.append('\n\nConstant Decimal Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._constant_decimal_memory))
+		printlist.append('\n\nConstant Words Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._constant_words_memory))
+		printlist.append('\n\nConstant Boolean Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._constant_boolean_memory))
+		printlist.append('\n\nGlobal Whole Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._global_whole_memory))
+		printlist.append('\n\nGlobal Decimal Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._global_decimal_memory))
+		printlist.append('\n\nGlobal Words Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._global_words_memory))
+		printlist.append('\n\nGlobal Boolean Memory:\n')
+		printlist.append('\n'.join(str(e) for e in self._global_boolean_memory))
+
+		s = ''.join(printlist)
+
+		return (s)
 		
 class Memory_Handler:
 	def __init__(self):

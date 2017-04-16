@@ -150,6 +150,9 @@ class Quad_List:
 	def __str__(self):
 		return ('\n'.join('{} \t {}'.format(index,quad) for index, quad in enumerate(self._quads,start = 0)))
 
+	def print_method(self):
+		return ('\n'.join('{} \t {}'.format(index,quad) for index, quad in enumerate(self._quads,start = 0)))
+
 	def append_quad(self,operator, left_operand, right_operand, result):
 		temp_quad = Quad(operator, left_operand, right_operand, result)
 		self._quads.append(temp_quad)
