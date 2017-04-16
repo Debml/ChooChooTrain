@@ -566,10 +566,10 @@ def p_EC_SEEN_RELOP(p):
 	elif operator == "!=":
 		global_scope.pending_operators.push(constants.Operators.OP_NOT_EQUAL)
 
-#EXP action 2 - Generates quad for equality operations
+#EXP action 2 - Generates quad for relational operations
 def p_EC_SEEN_RELOP_ITEM(p):
 	"EC_SEEN_RELOP_ITEM : "
-	#Checks that the next operator is a equality operator to respect order of operations
+	#Checks that the next operator is a relational operator to respect order of operations
 	if not global_scope.pending_operators.empty() and (global_scope.pending_operators.peek() == constants.Operators.OP_GREATER
 														or global_scope.pending_operators.peek() == constants.Operators.OP_GREATER_EQUAL
 														or global_scope.pending_operators.peek() == constants.Operators.OP_LESS
@@ -671,13 +671,15 @@ def p_EC_SEEN_WRITE_EXP(p):
 #READ action 1 - Generates quad for the read action
 def p_EC_SEEN_READ_ID(p):
 	"EC_SEEN_READ_ID : "
+	#This is an address, so it should've already passed through an existence verification process
 	id_to_read_into = global_scope.pending_operands.pop()
+	input_type = global_scope.pending_operand_types.pop()
 
 	#The ID that will store whatever is read should exist
-	if global_scope.function_directory.primitive_id_exists(id_to_read_into, global_scope.current_block_id):
-		global_scope.quad_list.append_quad(constants.Operators.OP_INPUT, "-1", "-1", id_to_read_into)
-	else:
-		stop_exec("ID '%s' is not declared" % id_to_read_into)
+	#if global_scope.function_directory.primitive_id_exists(id_to_read_into, global_scope.current_block_id):
+	global_scope.quad_list.append_quad(constants.Operators.OP_INPUT, input_type, "-1", id_to_read_into)
+	#else:
+		#stop_exec("ID '%s' is not declared" % id_to_read_into)
 
 #EXPRESSION action 1 - Pushes the negation operator into the operators stack
 def p_EC_SEEN_NOT(p):
@@ -694,16 +696,11 @@ def p_EC_SEEN_AND_OR(p):
 	elif operator == "or":
 		global_scope.pending_operators.push(constants.Operators.OP_OR)
 
-#EXPRESSION action 3 - Generates quad for logical operations
+#EXPRESSION action 3 - Generates quad for boolean operations
 def p_EC_SEEN_EXPRESSION(p):
 	"EC_SEEN_EXPRESSION : "
-	#Checks that the next operator is a relational operator to respect order of operations
-	if not global_scope.pending_operators.empty() and (global_scope.pending_operators.peek() == constants.Operators.OP_AND
-														or global_scope.pending_operators.peek() == constants.Operators.OP_OR):
-		create_binary_operation_quad()	
-
-	#Checks that the next operator is a negation operator to respect order of operations
-	elif not global_scope.pending_operators.empty() and global_scope.pending_operators.peek() == constants.Operators.OP_NEGATION:
+	#Checks that the next operator is a negation operator BEFORE checking and/or operators to respect order of operations
+	if not global_scope.pending_operators.empty() and global_scope.pending_operators.peek() == constants.Operators.OP_NEGATION:
 		left_operand = global_scope.pending_operands.pop()
 		left_type = global_scope.pending_operand_types.pop()
 
@@ -719,6 +716,11 @@ def p_EC_SEEN_EXPRESSION(p):
 			global_scope.pending_operand_types.push(constants.DataTypes.BOOLEAN)
 		else:
 			stop_exec("Negation operator can only be applied to 'boolean' expression, found '%s' expression" % left_type)
+
+	#Checks that the next operator is a relational operator to respect order of operations
+	if not global_scope.pending_operators.empty() and (global_scope.pending_operators.peek() == constants.Operators.OP_AND
+														or global_scope.pending_operators.peek() == constants.Operators.OP_OR):
+		create_binary_operation_quad()	
 	
 #PROGRAM action 1 - Generates jump to starting block and pushes to pending jumps stack
 def p_EC_SEEN_START_PROG(p):

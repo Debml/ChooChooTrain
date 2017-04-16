@@ -14,4 +14,12 @@ starting block Block14
 
 		print(c);
 	}
+
+	b = 5 + 0;
+
+	do{
+	print(a);
+	a = a + 1;
+
+	}until(a >= b + 1)
 }

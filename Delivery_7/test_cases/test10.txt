@@ -1,0 +1,22 @@
+starting block Block14
+{
+	variable a, b, c, d, e of type decimal;
+	variable g of type whole;
+	variable h, i of type words;
+	a = 1;
+	b = 2;
+	c = 5;
+	d = 0;
+	g = 1;
+	
+	if(not g != g and not g < g or a > b){
+		g = 5;
+		print(d);
+	}
+
+	input(h);
+	print(h);
+	input(i);
+	print(i);
+	print(h+i);
+}
