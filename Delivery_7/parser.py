@@ -891,17 +891,12 @@ def end_compilation():
 	global_scope.function_directory.print_table()
 	print(global_scope.quad_list)
 
-#Build the parser
-parser = yacc.yacc()
+def start_compilation(file_name):
+	#Build the parser
+	parser = yacc.yacc()
 
-#If no argument was given, make the user input a file
-if(len(sys.argv) < 2):
-    fileName = raw_input('Input the name of the file to parse: ')
-    fileToParse = open(fileName, "r")
-#If an argument was given, read that file
-else:
-    fileToParse = open(sys.argv[1], "r")
+	file_to_parse = open(file_name, "r")
 
-#Read the file sent as argument and parse it
-code = fileToParse.read()
-parser.parse(code)
+	#Read the file sent as argument and parse it
+	code = file_to_parse.read()
+	parser.parse(code)

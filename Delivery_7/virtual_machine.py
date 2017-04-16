@@ -56,7 +56,7 @@ def execute_code():
             negation_operation(current_instruction)
         elif operator == constants.Operators.OP_VERIFY_INDEX:
             print "verify index"
-            verify_index_operation(current_instruction):
+            verify_index_operation(current_instruction)
         elif operator == constants.Operators.OP_GO_TO:
             print "go to"
             go_to_operation(operator, current_instruction)
