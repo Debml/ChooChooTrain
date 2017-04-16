@@ -56,6 +56,7 @@ def execute_code():
             negation_operation(current_instruction)
         elif operator == constants.Operators.OP_VERIFY_INDEX:
             print "verify index"
+            verify_index_operation(current_instruction):
         elif operator == constants.Operators.OP_GO_TO:
             print "go to"
             go_to_operation(operator, current_instruction)
@@ -111,7 +112,10 @@ def binary_arithmetic_operation(operator, current_instruction):
     elif operator == constants.Operators.OP_MULTIPLICATION:
         result_value = left_operand_address * right_operand_address
     elif operator == constants.Operators.OP_DIVISION:
-        result_value = left_operand_address / right_operand_address
+        if right_operand_address == 0:
+            stop_exec("Cannot divide by 0")
+        else:
+            result_value = left_operand_address / right_operand_address
     else:
         unknown_operation()
 
@@ -130,7 +134,7 @@ def assign_operation(current_instruction):
     global_scope.instruction_pointer += 1
 
 #Executes a binary boolean operation
-def binary_boolean_operation(operator, current_instruction)
+def binary_boolean_operation(operator, current_instruction):
     left_operand_address = current_instruction.get_left_operand()
     right_operand_address = current_instruction.get_right_operand()
     result_address = current_instruction.get_result()
@@ -163,7 +167,7 @@ def binary_boolean_operation(operator, current_instruction)
     global_scope.instruction_pointer += 1
 
 #Executes a negation operation
-def negation_operation(current_instruction)
+def negation_operation(current_instruction):
     left_operand_address = current_instruction.get_left_operand()
     result_address = current_instruction.get_result()
 
@@ -173,6 +177,18 @@ def negation_operation(current_instruction)
     store_in_memory(result_value, result_address)
 
     global_scope.instruction_pointer += 1
+
+#Verifies that the given index is inside the bounds of the array
+def verify_index_operation(current_instruction):
+    index_address = current_instruction.get_left_operand()
+    array_size = current_instruction.get_right_operand()
+
+    index_value = get_value_by_address(index_address)
+
+    if index_value >= 0 and index_value < array_size:
+        global_scope.instruction_pointer += 1
+    else:
+        stop_exec("Array index out of bounds")
 
 #Prints to console
 def print_operation(current_instruction):
@@ -222,3 +238,8 @@ def go_to_operation(operator, current_instruction):
 #Shows an unknown operation error and stops program execution
 def unknown_operation():
     sys.exit("Run-Time error: Unknown operation")
+
+#Prints an error message and stops the program execution
+#message is a string with an appropriate error message
+def stop_exec(message):
+	sys.exit("Run-Time error: " % message)
