@@ -4,6 +4,7 @@ memory handling, and other functions
 as detailed in the class"""
 import constants
 from structures import Quad_List
+from structures import Dictionary
 
 """Contains actual memory arrays to manage"""
 class Memory_Section:
@@ -165,10 +166,10 @@ class Memory_Section:
 		#get from constant decimal memory
 		return self._constant_decimal_memory[offset_address]
 
-	#get variable from constant words memory
+	#get variable from constant words memory (removing the quotations)
 	def get_from_constant_words_memory(self, offset_address = None):
-		#get from constant words memory
-		return self._constant_words_memory[offset_address]
+		#get from constant words memory (removing the quotations)
+		return self._constant_words_memory[offset_address][1:-1]
 
 	#get variable from constant boolean memory
 	def get_from_constant_boolean_memory(self, offset_address = None):
@@ -450,10 +451,15 @@ class Memory_Handler:
 			self._memory.upload_quads_to_memory(quad_list_to_copy)
 
 	#activate memory arrays
-	def activate_memory(self):
-    	#activate memory
+	def activate_memory(self, constant_table = None):
+		#activate memory
 		self._memory.activate(self._local_counter, self._temporary_counter, self._constant_counter, self._global_counter)
-				
+
+		#transfer constants
+		if constant_table is not None:
+			for k,v in constant_table.get_instance().items():
+				self.add_to_memory(k, v[1])
+
 	#get quad from memory
 	def get_quad_from_memory(self, index = None):
 		#index must not be empty
@@ -469,6 +475,10 @@ class Memory_Handler:
 		if value is not None:
 			#address must not be empty
 			if address is not None:
+				#Normalize address if it is a pointer or an address as a constant
+				if str(address)[0] == '*' or str(address)[0] == '&':
+					address = int(address[1:])
+
 				#address is valid in range of writeable memory already assigned for locals
 				if address >= self._local_ranges[0] and address <= (self._local_ranges[3]+self._local_counter[3]-1):
 					#add memory to local
@@ -488,9 +498,7 @@ class Memory_Handler:
 
 				else:
 					#Error
-					return false
-
-				return true
+					return False
 
 	#get value from memory
 	def get_from_memory(self, address = None):
@@ -765,12 +773,15 @@ if __name__ == '__main__':
 
 	ad1 = MemHand.assign_memory_address_local_variable(constants.DataTypes.DECIMAL,1)
 	ad2 = MemHand.assign_memory_address_local_variable(constants.DataTypes.DECIMAL,1)
-	ad9 = MemHand.assign_memory_address_local_variable(constants.DataTypes.DECIMAL,1)		
+	ad9 = MemHand.assign_memory_address_local_variable(constants.DataTypes.WHOLE,1)		
 
 	ad3 = MemHand.assign_memory_address_temporary_variable(constants.DataTypes.WHOLE)
 	ad4 = MemHand.assign_memory_address_temporary_variable(constants.DataTypes.WHOLE)
 	ad5 = MemHand.assign_memory_address_temporary_variable(constants.DataTypes.WHOLE)
 	ad6 = MemHand.assign_memory_address_temporary_variable(constants.DataTypes.WHOLE)
+
+	a1 = MemHand.assign_memory_address_constant(constants.DataTypes.WHOLE)
+	a11 = MemHand.assign_memory_address_constant(constants.DataTypes.WHOLE)
 
 	quadli = Quad_List()
 	quadli.append_quad(constants.Operators.OP_ASSIGN, '5', '-1', 'B')
@@ -778,8 +789,12 @@ if __name__ == '__main__':
 	quadli.append_quad(constants.Operators.OP_GO_TO, '-1', '20', "pending")
 	quadli.append_quad(constants.Operators.OP_GO_TO_T, 'T1', '20', 'D')
 
+	cons = Dictionary()
+	cons.insert(33,[constants.DataTypes.WHOLE,a1])
+	cons.insert(66,[constants.DataTypes.WHOLE,a11])
+
 	MemHand.upload_quads_to_memory(quadli)
-	MemHand.activate_memory()
+	MemHand.activate_memory(cons)
 
 	MemHand.add_to_memory(1.2, ad1)
 	MemHand.add_to_memory(34.2, ad2)
@@ -792,9 +807,9 @@ if __name__ == '__main__':
 
 	print MemHand.get_from_memory(5500)
 	print MemHand.get_from_memory('&5500')
-	print MemHand.get_from_memory('*5502')
+	print MemHand.get_from_memory('*5000')
 
-	#print MemHand
+	print MemHand
 	s = 'hello'
 	print s[1:]
 

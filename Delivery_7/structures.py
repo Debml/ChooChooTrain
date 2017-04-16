@@ -303,7 +303,7 @@ class Dictionary:
 	#Returns instance of actual dictionary
 	#Params: -
 	#Returns: dictionary instance
-	def getInstance(self):
+	def get_instance(self):
 		return self._dictionary
 
 """
@@ -368,7 +368,7 @@ class Queue:
 	#Returns instance of actual queue
 	#Params: -
 	#Returns: queue instance
-	def getInstance(self):
+	def get_instance(self):
 		return self._queue
 
 """
@@ -432,7 +432,7 @@ class Stack:
 	#Returns instance of actual stack
 	#Params: -
 	#Returns: stack instance
-	def getInstance(self):
+	def get_instance(self):
 		return self._stack
 
 #for testing purposes

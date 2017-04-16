@@ -14,9 +14,9 @@ starting block Block14
 		print(d);
 	}
 
-	input(h);
+	h = ", como estas?";
 	print(h);
 	input(i);
 	print(i);
-	print(h+i);
+	print("custom greeting: " + i + h);
 }

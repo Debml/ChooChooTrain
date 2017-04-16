@@ -9,88 +9,92 @@ def execute_code():
 
     #Loops until break (end_proc is in charge of breaking)
     while True:
-        current_instruction = global_scope.function_directory._memory_handler.get_quad_from_memory(global_scope.instruction_pointer)
+        current_instruction = global_scope.function_directory.memory_handler.get_quad_from_memory(global_scope.instruction_pointer)
         operator = current_instruction.get_operator()
 
         if operator == constants.Operators.OP_ADDITION:
-            print "addition"
+            #print "addition"
             binary_arithmetic_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_SUBTRACTION:
-            print "subtraction"
+            #print "subtraction"
             binary_arithmetic_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_MULTIPLICATION:
-            print "multiplication"
+            #print "multiplication"
             binary_arithmetic_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_DIVISION:
-            print "division"
+            #print "division"
             binary_arithmetic_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_ASSIGN:
-            print "assign"
+            #print "assign"
             assign_operation(current_instruction)
         elif operator == constants.Operators.OP_GREATER:
-            print "greater"
+            #print "greater"
             binary_boolean_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_GREATER_EQUAL:
-            print "greater than or equal"
+            #print "greater than or equal"
             binary_boolean_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_LESS:
-            print "less than"
+            #print "less than"
             binary_boolean_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_LESS_EQUAL:
-            print "less than or equal"
+            #print "less than or equal"
             binary_boolean_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_EQUAL:
-            print "equal"
+            #print "equal"
             binary_boolean_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_NOT_EQUAL:
-            print "not equal"
+            #print "not equal"
             binary_boolean_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_AND:
-            print "and"
+            #print "and"
             binary_boolean_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_OR:
-            print "or"
+            #print "or"
             binary_boolean_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_NEGATION:
-            print "negation"
+            #print "negation"
             negation_operation(current_instruction)
         elif operator == constants.Operators.OP_VERIFY_INDEX:
-            print "verify index"
+            #print "verify index"
             verify_index_operation(current_instruction)
         elif operator == constants.Operators.OP_GO_TO:
-            print "go to"
+            #print "go to"
             go_to_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_GO_TO_T:
-            print "go to if true"
+            #print "go to if true"
             go_to_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_GO_TO_F:
-            print "go to if false"
+            #print "go to if false"
             go_to_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_PRINT:
-            print "print"
+            #print "print"
             print_operation(current_instruction)
         elif operator == constants.Operators.OP_INPUT:
-            print "input"
+            #print "input"
             input_operation(current_instruction)
         elif operator == constants.Operators.OP_ERA:
-            print "era"
+            #print "era"
+            pass
         elif operator == constants.Operators.OP_PARAM:
-            print "param"
+            #print "param"
+            pass
         elif operator == constants.Operators.OP_GO_SUB:
-            print "go to subroutine"
+            #print "go to subroutine"
+            pass
         elif operator == constants.Operators.OP_RETURN:
-            print "return value"
+            #print "return value"
+            pass
         elif operator == constants.Operators.OP_END_PROC:
-            print "end procedure"
+            #print "end procedure"
             break
         else:
-            print "unsupported"
-            unknown_operation()
+            #print "unsupported"
+            stop_exec()
 
 #Initializes memory for Run-Time 
 def initialize_memory():
-    global_scope.function_directory._memory_handler.upload_quads_to_memory(global_scope.quad_list)
-    global_scope.function_directory._memory_handler.activate_memory()
+    global_scope.function_directory.memory_handler.upload_quads_to_memory(global_scope.quad_list)
+    global_scope.function_directory.memory_handler.activate_memory(global_scope.function_directory.constant_table)
 
 #Executes an arithmetic operation
 def binary_arithmetic_operation(operator, current_instruction):
@@ -98,8 +102,8 @@ def binary_arithmetic_operation(operator, current_instruction):
     right_operand_address = current_instruction.get_right_operand()
     result_address = current_instruction.get_result()
 
-    left_operand_value = global_scope.function_directory._memory_handler.get_from_memory(left_operand_address)
-    right_operand_value = global_scope.function_directory._memory_handler.get_from_memory(right_operand_address)
+    left_operand_value = global_scope.function_directory.memory_handler.get_from_memory(left_operand_address)
+    right_operand_value = global_scope.function_directory.memory_handler.get_from_memory(right_operand_address)
 
     #Does the corresponding operation based on the operator
     if operator == constants.Operators.OP_ADDITION:
@@ -114,9 +118,9 @@ def binary_arithmetic_operation(operator, current_instruction):
         else:
             result_value = left_operand_value / right_operand_value
     else:
-        unknown_operation()
+        stop_exec()
 
-    global_scope.function_directory._memory_handler.add_to_memory(result_value, result_address)
+    global_scope.function_directory.memory_handler.add_to_memory(result_value, result_address)
 
     global_scope.instruction_pointer += 1
 
@@ -126,10 +130,10 @@ def assign_operation(current_instruction):
     assignee_address = current_instruction.get_result()
 
     if str(assignee_address)[0] == '*':
-        assignee_address = global_scope.function_directory._memory_handler.get_from_memory(int(assignee_address[1:]))
+        assignee_address = global_scope.function_directory.memory_handler.get_from_memory(int(assignee_address[1:]))
 
-    value_to_assign = global_scope.function_directory._memory_handler.get_from_memory(value_to_assign_address)
-    global_scope.function_directory._memory_handler.add_to_memory(value_to_assign, assignee_address)
+    value_to_assign = global_scope.function_directory.memory_handler.get_from_memory(value_to_assign_address)
+    global_scope.function_directory.memory_handler.add_to_memory(value_to_assign, assignee_address)
 
     global_scope.instruction_pointer += 1
 
@@ -139,8 +143,8 @@ def binary_boolean_operation(operator, current_instruction):
     right_operand_address = current_instruction.get_right_operand()
     result_address = current_instruction.get_result()
 
-    left_operand_value = global_scope.function_directory._memory_handler.get_from_memory(left_operand_address)
-    right_operand_value = global_scope.function_directory._memory_handler.get_from_memory(right_operand_address)
+    left_operand_value = global_scope.function_directory.memory_handler.get_from_memory(left_operand_address)
+    right_operand_value = global_scope.function_directory.memory_handler.get_from_memory(right_operand_address)
 
     #Does the corresponding operation based on the operator
     if operator == constants.Operators.OP_GREATER:
@@ -160,9 +164,9 @@ def binary_boolean_operation(operator, current_instruction):
     elif operator == constants.Operators.OP_OR:
         result_value = left_operand_value or right_operand_value
     else:
-        unknown_operation()
+        stop_exec()
 
-    global_scope.function_directory._memory_handler.add_to_memory(result_value, result_address)
+    global_scope.function_directory.memory_handler.add_to_memory(result_value, result_address)
 
     global_scope.instruction_pointer += 1
 
@@ -171,10 +175,10 @@ def negation_operation(current_instruction):
     left_operand_address = current_instruction.get_left_operand()
     result_address = current_instruction.get_result()
 
-    left_operand_value = global_scope.function_directory._memory_handler.get_from_memory(left_operand_address)
+    left_operand_value = global_scope.function_directory.memory_handler.get_from_memory(left_operand_address)
     result_value = not left_operand_value
 
-    global_scope.function_directory._memory_handler.add_to_memory(result_value, result_address)
+    global_scope.function_directory.memory_handler.add_to_memory(result_value, result_address)
 
     global_scope.instruction_pointer += 1
 
@@ -183,7 +187,7 @@ def verify_index_operation(current_instruction):
     index_address = current_instruction.get_left_operand()
     array_size = current_instruction.get_right_operand()
 
-    index_value = global_scope.function_directory._memory_handler.get_from_memory(index_address)
+    index_value = global_scope.function_directory.memory_handler.get_from_memory(index_address)
 
     if index_value >= 0 and index_value < array_size:
         global_scope.instruction_pointer += 1
@@ -193,7 +197,7 @@ def verify_index_operation(current_instruction):
 #Prints to console
 def print_operation(current_instruction):
     expression_to_print_address = current_instruction.get_left_operand()
-    expression_to_print_value = global_scope.function_directory._memory_handler.get_from_memory(expression_to_print_address)
+    expression_to_print_value = global_scope.function_directory.memory_handler.get_from_memory(expression_to_print_address)
 
     print expression_to_print_value
 
@@ -208,7 +212,7 @@ def input_operation(current_instruction):
     validated_input = validate_input(input_value, input_type)
 
     if  validated_input is not None:
-        global_scope.function_directory._memory_handler.add_to_memory(validated_input, input_address)
+        global_scope.function_directory.memory_handler.add_to_memory(validated_input, input_address)
         global_scope.instruction_pointer += 1
     else:
         stop_exec("Input value '%s' is not of type '%s'" % (input_value, input_type))
@@ -221,7 +225,7 @@ def go_to_operation(operator, current_instruction):
         global_scope.instruction_pointer = new_instruction
     elif operator == constants.Operators.OP_GO_TO_T:
         evaluation_address = current_instruction.get_left_operand()
-        evaluation_result = global_scope.function_directory._memory_handler.get_from_memory(evaluation_address)
+        evaluation_result = global_scope.function_directory.memory_handler.get_from_memory(evaluation_address)
 
         #If evaluation_result resolves to true, go to the given instruction
         if evaluation_result:
@@ -231,7 +235,7 @@ def go_to_operation(operator, current_instruction):
             global_scope.instruction_pointer += 1
     elif operator == constants.Operators.OP_GO_TO_F:
         evaluation_address = current_instruction.get_left_operand()
-        evaluation_result = global_scope.function_directory._memory_handler.get_from_memory(evaluation_address)
+        evaluation_result = global_scope.function_directory.memory_handler.get_from_memory(evaluation_address)
 
         #If evaluation_result resolves to false, go to the given instruction
         if not evaluation_result:
@@ -240,7 +244,7 @@ def go_to_operation(operator, current_instruction):
         else:
             global_scope.instruction_pointer += 1
     else:
-        unknown_operation()
+        stop_exec()
 
 #Validates that the user input can be cast to the type it should be
 def validate_input(input_value, input_type):
@@ -272,10 +276,6 @@ def validate_input(input_value, input_type):
     else:
         return None
 
-#Shows an unknown operation error and stops program execution
-def unknown_operation():
-    sys.exit("Run-Time error: Unknown operation")
-
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message
 def stop_exec(message = "Unknown operation"):
@@ -284,6 +284,6 @@ def stop_exec(message = "Unknown operation"):
 #Entry method to start the intermediate code execution
 def start_execution():
     initialize_memory()
-    #print global_scope.function_directory._memory_handler
+    #print global_scope.function_directory.memory_handler
     execute_code()
-    #print global_scope.function_directory._memory_handler
+    #print global_scope.function_directory.memory_handler

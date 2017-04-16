@@ -23,7 +23,7 @@ class Function_Directory:
         self.constant_table = Dictionary()
 
         #private variable for memory handler
-        self._memory_handler = Memory_Handler()
+        self.memory_handler = Memory_Handler()
 
     #add block information for new block
     def add_block_name(self, block_name = None):
@@ -87,7 +87,7 @@ class Function_Directory:
                 if variable_type is not None:
                     #Index 1 of list is for primitives and lists dictionaries
                     #Index 0 of such list is specifically for primitives
-                    memory_address = self._memory_handler.assign_memory_address_local_variable(variable_type, 1)
+                    memory_address = self.memory_handler.assign_memory_address_local_variable(variable_type, 1)
                     variable_data = [variable_type, memory_address]
                     self.function_reference_table[key][1][0].insert(variable_name, variable_data)
 
@@ -104,7 +104,7 @@ class Function_Directory:
                     if list_type is not None:
                         #Index 1 of list is for primitives and lists dictionaries
                         #Index 1 of such list is specifically for lists
-                        memory_address = self._memory_handler.assign_memory_address_local_variable(list_type, list_size)
+                        memory_address = self.memory_handler.assign_memory_address_local_variable(list_type, list_size)
                         list_data = [list_type, memory_address, list_size]
                         self.function_reference_table[key][1][1].insert(list_id, list_data)
 
@@ -115,7 +115,7 @@ class Function_Directory:
             if constant_type is not None:
                 #create list for entry
                 #value for dictionary entry
-                memory_address =  self._memory_handler.assign_memory_address_constant(constant_type)
+                memory_address =  self.memory_handler.assign_memory_address_constant(constant_type)
                 constant_data = [constant_type, memory_address]
                 
                 #insert to constant table
@@ -221,7 +221,7 @@ class Function_Directory:
     def get_temporary_address(self, variable_type = None):
         #variable_type should have value
         if variable_type is not None:
-            return self._memory_handler.assign_memory_address_temporary_variable(variable_type)
+            return self.memory_handler.assign_memory_address_temporary_variable(variable_type)
 
     #Gets the address of a list on a given block
     def get_list_address_for_block(self, list_id = None, block_id = None):
@@ -271,7 +271,7 @@ class Function_Directory:
             #block_id should have value
             if block_id is not None:
                 #If a pointer is given, assume it exists
-                if primitive_id[0] == "*":
+                if str(primitive_id)[0] == "*":
                     return True
 
                 #Check the function name
@@ -331,7 +331,7 @@ class Function_Directory:
         #print table formatted
         print("Function Reference Table\n")
         print("Starting Block: " + self.starting_block_key)
-        for key in self.function_reference_table.getInstance():
+        for key in self.function_reference_table.get_instance():
             print("*" + key + "* :")
             print("Return Type: " + self.function_reference_table[key][0])
             print("Primitives: ")
