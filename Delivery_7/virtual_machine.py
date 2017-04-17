@@ -12,6 +12,10 @@ def execute_code():
 
     #Loops until break (end_proc is in charge of breaking)
     while True:
+        #If all functions have finished executing (including starting), end program
+        if global_scope.program_memory.stack_segment_is_empty():
+            break
+
         current_instruction = global_scope.program_memory.get_quad_from_memory(global_scope.instruction_pointer)
         operator = current_instruction.get_operator()
 
@@ -80,20 +84,17 @@ def execute_code():
             era_operation(current_instruction)
         elif operator == constants.Operators.OP_PARAM:
             #print "param"
-            pass
+            param_operation(current_instruction)
         elif operator == constants.Operators.OP_GO_SUB:
             #print "go to subroutine"
             go_sub_operation(current_instruction)
         elif operator == constants.Operators.OP_RETURN:
             #print "return value"
+            global_scope.instruction_pointer += 1
             pass
         elif operator == constants.Operators.OP_END_PROC:
             #print "end procedure"
             end_proc_operation(current_instruction)
-
-            #If all functions have finished executing (including starting), end program
-            if global_scope.program_memory.stack_segment_is_empty():
-                break
         else:
             #print "unsupported"
             stop_exec()
@@ -273,6 +274,20 @@ def era_operation(current_instruction):
 
     #Leaving the return address pending for when the go_to_sub operation is called
     global_scope.temp_activation_record = Activation_Record(local_counter_for_block, temporary_counter_for_block, -1)
+
+    global_scope.instruction_pointer += 1
+
+#
+def param_operation(current_instruction):
+    #argument is the value to be sent
+    argument_address = current_instruction.get_left_operand()
+    #parameter is who will store the argument
+    parameter_address = current_instruction.get_result()
+
+    argument_value = global_scope.program_memory.read_from_memory(argument_address)
+
+    #write the argument value from the current activation record into the one that is being constructed
+    global_scope.temp_activation_record.get_block_memory().write_to_local_memory(argument_value, parameter_address)
 
     global_scope.instruction_pointer += 1
 

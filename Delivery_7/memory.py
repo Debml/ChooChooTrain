@@ -429,7 +429,7 @@ class Program_Memory:
 			#address belongs to words memory already assigned
 			if address >= self._constant_ranges[2] and address <= (self._constant_ranges[2]+self._constant_counter[2]-1):
 				#add to memory with offset
-				return self._constant_words_memory[address-self._constant_ranges[2]]
+				return self._constant_words_memory[address-self._constant_ranges[2]][1:-1]
 
 			#address belongs to boolean memory already assigned
 			if address >= self._constant_ranges[3] and address <= (self._constant_ranges[3]+self._constant_counter[3]-1):
