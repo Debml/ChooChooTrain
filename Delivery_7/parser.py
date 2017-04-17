@@ -366,7 +366,8 @@ def p_EC_SEEN_BLOCK_BODY_END(p):
 		global_scope.quad_list.append_quad(constants.Operators.OP_END_PROC, "-1", "-1", "-1")
 		#global_scope.function_directory.print_variable_list(global_scope.current_block_id)
 		#global_scope.function_directory.clear_variable_list(global_scope.current_block_id)
-		print(global_scope.function_directory.memory_handler.reset_local_counter())
+		temp_counter = global_scope.function_directory.memory_handler.reset_local_counter()
+		global_scope.function_directory.add_local_type_counter(global_scope.current_block_id, temp_counter)
 	else:
 		stop_exec("Block '%s' should return a '%s' value" % (global_scope.current_block_id, block_return_type))
 
@@ -768,7 +769,8 @@ def p_EC_SEEN_START_PARAM(p):
 	"EC_SEEN_START_PARAM : "
 	call_block_id = global_scope.pending_blocks.peek()
 	global_scope.quad_list.append_quad(constants.Operators.OP_ERA, call_block_id, "-1", "-1")
-	global_scope.pending_blocks_argument_counter.push(0)			
+	global_scope.pending_blocks_argument_counter.push(0)
+	global_scope.parameter_type_counter = [0,0,0,0]			
 
 #CALL action 3 - Validates argument counter with parameter number
 def p_EC_SEEN_PARAM(p):
@@ -790,8 +792,9 @@ def p_EC_SEEN_PARAM(p):
 	#Validates argument type with parameter type
 	if argument_type == parameter_type:
 		argument = global_scope.pending_operands.pop()
-		result = "param" + str(block_argument_counter)
-		global_scope.quad_list.append_quad(constants.Operators.OP_PARAM, argument, "-1", result)
+		param_address = get_parameter_address(argument_type)
+
+		global_scope.quad_list.append_quad(constants.Operators.OP_PARAM, argument, "-1", param_address)
 	else:
 		stop_exec("Argument #%d of block '%s' should be a '%s' value, found a '%s' value instead" % (block_argument_counter, call_block_id, parameter_type, argument_type))
 
@@ -883,6 +886,22 @@ def push_constant_address(constant_type):
 	global_scope.pending_operands.push(constant_address)
 	global_scope.pending_operand_types.push(constant_type)	
 
+def get_parameter_address(parameter_type):
+	local_ranges = global_scope.function_directory.memory_handler._local_ranges
+
+	if parameter_type == constants.DataTypes.WHOLE:
+		index = 0
+	elif parameter_type == constants.DataTypes.DECIMAL:		
+		index = 1
+	elif parameter_type == constants.DataTypes.WORDS:
+		index = 2
+	elif parameter_type == constants.DataTypes.BOOLEAN:
+		index = 3
+
+	address = local_ranges[index] + global_scope.parameter_type_counter[index]
+	global_scope.parameter_type_counter[index] += 1
+	return address
+
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message
 def stop_exec(message):
@@ -891,8 +910,8 @@ def stop_exec(message):
 #Prints results of compilation when successful
 def end_compilation():
 	print('Compilation Successful!')
-	#global_scope.function_directory.print_table()
-	#print(global_scope.quad_list)
+	global_scope.function_directory.print_table()
+	print(global_scope.quad_list)
 
 #Entry method to start the compilation process
 def start_compilation(file_name):

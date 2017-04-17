@@ -44,29 +44,22 @@ class Function_Directory:
             #public variable for quad position where block begins
             quad_position = -1
 
-            #public variable for return value of function
-            return_value = Stack()
+            #public variable for local variable type counter
+            local_type_counter = [0,0,0,0]
 
             #declare block_data
-            block_data = [return_type, [primitives, lists], parameters, quad_position, return_value]
+            block_data = [return_type, [primitives, lists], parameters, quad_position, local_type_counter]
 
             #add new block name as key
             self.function_reference_table.insert(block_name, block_data)
 
-    #adds a return value to a block
-    def push_block_return_value(self, key = None, block_return_value = None):
+    #adds a local_type_counter to a block
+    def add_local_type_counter(self, key = None, local_type_counter = None):
         #key should have value
         if key is not None:
-            #block_return_value should have some value
-            if block_return_value is not None:
-                self.function_reference_table[key][4].push(block_return_value)
-
-    #Removes a return value from a block
-    def pop_block_return_value(self,key = None):
-        #key should have value
-        if key is not None:
-            #pop from stack
-            return self.function_reference_table[key][4].pop()
+            #local_type_counter should have some value
+            if local_type_counter is not None:
+                self.function_reference_table[key][4] = local_type_counter
             
     #Key for current block, add block return type if any    
     def add_block_return_type(self, key = None, block_return_type = None):
@@ -342,6 +335,8 @@ class Function_Directory:
             print(self.function_reference_table[key][2])
             print("Function Starting Quad: ")
             print(self.function_reference_table[key][3])
+            print("\n")
+            print(self.function_reference_table[key][4])
             print("\n")
         print("Constants: ")
         print(self.constant_table)

@@ -20,6 +20,7 @@ current_list_id = ""
 current_list_size = ""
 current_list_type = ""
 primitive_names = []
+parameter_type_counter = [0,0,0,0]
 pending_operators = Stack()
 pending_operands = Stack()
 pending_operand_types = Stack()
