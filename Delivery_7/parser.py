@@ -366,8 +366,15 @@ def p_EC_SEEN_BLOCK_BODY_END(p):
 		global_scope.quad_list.append_quad(constants.Operators.OP_END_PROC, "-1", "-1", "-1")
 		#global_scope.function_directory.print_variable_list(global_scope.current_block_id)
 		#global_scope.function_directory.clear_variable_list(global_scope.current_block_id)
-		temp_counter = global_scope.function_directory.memory_handler.reset_local_counter()
-		global_scope.function_directory.add_local_type_counter(global_scope.current_block_id, temp_counter)
+
+		#Reset local variable type counter for new blocks to begin at 0 and add it to FRT (to create the execution context's memory)
+		local_counter = global_scope.function_directory.memory_handler.reset_local_counter()
+		global_scope.function_directory.add_local_type_counter(global_scope.current_block_id, local_counter)
+
+		#Reset temporary variable type counter for new blocks to begin at 0 and add it to FRT (to create the execution context's memory)
+		temporary_counter = global_scope.function_directory.memory_handler.reset_temporary_counter()
+		global_scope.function_directory.add_temporary_type_counter(global_scope.current_block_id, temporary_counter)
+
 	else:
 		stop_exec("Block '%s' should return a '%s' value" % (global_scope.current_block_id, block_return_type))
 

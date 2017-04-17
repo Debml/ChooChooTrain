@@ -3,6 +3,8 @@ from structures import Queue
 from structures import Stack
 from structures import Semantic_Cube
 from structures import Quad_List
+from structures import Activation_Record
+from memory import Program_Memory
 
 #Compilation variables
 #Variables for high level structures
@@ -31,6 +33,8 @@ pending_lists = Stack()
 
 #Run-Time variables
 instruction_pointer = 0
+program_memory = Program_Memory()
+temp_activation_record = Activation_Record()
 
 #timer helper variable
 timer_counter = 0

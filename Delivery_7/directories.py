@@ -47,8 +47,11 @@ class Function_Directory:
             #public variable for local variable type counter
             local_type_counter = [0,0,0,0]
 
+            #public variable for temporary variable type counter
+            temporary_type_counter = [0,0,0,0]
+
             #declare block_data
-            block_data = [return_type, [primitives, lists], parameters, quad_position, local_type_counter]
+            block_data = [return_type, [primitives, lists], parameters, quad_position, local_type_counter, temporary_type_counter]
 
             #add new block name as key
             self.function_reference_table.insert(block_name, block_data)
@@ -60,6 +63,26 @@ class Function_Directory:
             #local_type_counter should have some value
             if local_type_counter is not None:
                 self.function_reference_table[key][4] = local_type_counter
+
+    #adds a temporary_type_counter to a block
+    def add_temporary_type_counter(self, key = None, temporary_type_counter = None):
+        #key should have value
+        if key is not None:
+            #temporary_type_counter should have some value
+            if temporary_type_counter is not None:
+                self.function_reference_table[key][5] = temporary_type_counter
+
+    #returns the local_type_counter of a block
+    def get_local_type_counter(self, key = None):
+        #key should have value
+        if key is not None:
+            return self.function_reference_table[key][4]
+
+    #returns the temporary_type_counter of a block
+    def get_temporary_type_counter(self, key = None):
+        #key should have value
+        if key is not None:
+            return self.function_reference_table[key][5]
             
     #Key for current block, add block return type if any    
     def add_block_return_type(self, key = None, block_return_type = None):
@@ -337,6 +360,8 @@ class Function_Directory:
             print(self.function_reference_table[key][3])
             print("\n")
             print(self.function_reference_table[key][4])
+            print("\n")
+            print(self.function_reference_table[key][5])
             print("\n")
         print("Constants: ")
         print(self.constant_table)

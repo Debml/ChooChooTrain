@@ -4,6 +4,8 @@ Collection of classes "structures" containing Stack, Queue, and Dictionary
 #import deque for implementation of queue
 from collections import deque
 import constants
+#from memory import Block_Memory
+import memory
 
 """
 Fixed Semantic cube class defining a data structure behaving like a semantic
@@ -434,6 +436,45 @@ class Stack:
 	#Returns: stack instance
 	def get_instance(self):
 		return self._stack
+
+"""
+Activation Record class represents a stack frame that holds the execution context for each function called
+"""
+class Activation_Record:
+	def __init__(self, local_variable_counter = None, temporary_variable_counter = None, return_address = None):
+		if local_variable_counter is not None:
+			if temporary_variable_counter is not None:
+				if return_address is not None:
+					#Private variable that holds the memory needed for execution of given block
+					self._block_memory = memory.Block_Memory(local_variable_counter, temporary_variable_counter)
+
+					#Private variable that holds the value that the function returns
+					self._return_value = None
+
+					#Private variable for the instruction pointer where the program should go once the function ends
+					self._return_address = return_address
+
+	#Sets the return value for the block
+	def set_return_value(self, return_value = None):
+		if return_value is not None:
+			self._return_value = return_value
+
+	#Returns the return value for the block
+	def get_return_value(self):
+		return self._return_value
+
+	#Sets the return address for the block
+	def set_return_address(self, return_address = None):
+		if return_address is not None:
+			self._return_address = return_address
+
+	#Returns the return-to instruction pointer
+	def get_return_address(self):
+		return self._return_address
+
+	#Returns the block memory
+	def get_block_memory(self):
+		return self._block_memory
 
 #for testing purposes
 if __name__ == '__main__':

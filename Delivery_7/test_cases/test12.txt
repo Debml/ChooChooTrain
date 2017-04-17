@@ -10,6 +10,7 @@ hola2 of type boolean
 {
 	variable i, j, k of type whole;
     variable l, m, n of type words;
+    print(1 + 1);
 }
 
 block tres
@@ -24,6 +25,7 @@ hola2 of type boolean
 {
 	variable i, j, k of type whole;
     variable l, m, n of type words;
+    print(1+1);
 }
 
 starting block main

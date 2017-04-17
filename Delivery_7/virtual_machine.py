@@ -3,6 +3,8 @@ import global_scope
 import constants
 import time
 from structures import Quad
+from structures import Activation_Record
+from memory import Program_Memory
 
 #Reads the current instruction (Quad) operation and executes it
 def execute_code():
@@ -10,7 +12,7 @@ def execute_code():
 
     #Loops until break (end_proc is in charge of breaking)
     while True:
-        current_instruction = global_scope.function_directory.memory_handler.get_quad_from_memory(global_scope.instruction_pointer)
+        current_instruction = global_scope.program_memory.get_quad_from_memory(global_scope.instruction_pointer)
         operator = current_instruction.get_operator()
 
         if operator == constants.Operators.OP_ADDITION:
@@ -75,27 +77,37 @@ def execute_code():
             input_operation(current_instruction)
         elif operator == constants.Operators.OP_ERA:
             #print "era"
-            pass
+            era_operation(current_instruction)
         elif operator == constants.Operators.OP_PARAM:
             #print "param"
             pass
         elif operator == constants.Operators.OP_GO_SUB:
             #print "go to subroutine"
-            pass
+            go_sub_operation(current_instruction)
         elif operator == constants.Operators.OP_RETURN:
             #print "return value"
             pass
         elif operator == constants.Operators.OP_END_PROC:
             #print "end procedure"
-            break
+            end_proc_operation(current_instruction)
+
+            #If all functions have finished executing (including starting), end program
+            if global_scope.program_memory.stack_segment_is_empty():
+                break
         else:
             #print "unsupported"
             stop_exec()
 
 #Initializes memory for Run-Time 
 def initialize_memory():
-    global_scope.function_directory.memory_handler.upload_quads_to_memory(global_scope.quad_list)
-    global_scope.function_directory.memory_handler.activate_memory(global_scope.function_directory.constant_table)
+    starting_block = global_scope.function_directory.starting_block_key
+    starting_local_type_counter = global_scope.function_directory.get_local_type_counter(starting_block)
+    starting_temporary_type_counter = global_scope.function_directory.get_temporary_type_counter(starting_block)
+    starting_activation_record = Activation_Record(starting_local_type_counter, starting_temporary_type_counter, 0)
+    cc = global_scope.function_directory.memory_handler.get_constant_counter()
+
+    aux_program_memory = Program_Memory(global_scope.quad_list, starting_activation_record, cc, global_scope.function_directory.constant_table)
+    global_scope.program_memory = aux_program_memory
 
 #Executes an arithmetic operation
 def binary_arithmetic_operation(operator, current_instruction):
@@ -103,8 +115,8 @@ def binary_arithmetic_operation(operator, current_instruction):
     right_operand_address = current_instruction.get_right_operand()
     result_address = current_instruction.get_result()
 
-    left_operand_value = global_scope.function_directory.memory_handler.get_from_memory(left_operand_address)
-    right_operand_value = global_scope.function_directory.memory_handler.get_from_memory(right_operand_address)
+    left_operand_value = global_scope.program_memory.read_from_memory(left_operand_address)
+    right_operand_value = global_scope.program_memory.read_from_memory(right_operand_address)
 
     #Does the corresponding operation based on the operator
     if operator == constants.Operators.OP_ADDITION:
@@ -121,7 +133,7 @@ def binary_arithmetic_operation(operator, current_instruction):
     else:
         stop_exec()
 
-    global_scope.function_directory.memory_handler.add_to_memory(result_value, result_address)
+    global_scope.program_memory.write_to_memory(result_value, result_address)
 
     global_scope.instruction_pointer += 1
 
@@ -131,10 +143,10 @@ def assign_operation(current_instruction):
     assignee_address = current_instruction.get_result()
 
     if str(assignee_address)[0] == '*':
-        assignee_address = global_scope.function_directory.memory_handler.get_from_memory(int(assignee_address[1:]))
+        assignee_address = global_scope.program_memory.read_from_memory(int(assignee_address[1:]))
 
-    value_to_assign = global_scope.function_directory.memory_handler.get_from_memory(value_to_assign_address)
-    global_scope.function_directory.memory_handler.add_to_memory(value_to_assign, assignee_address)
+    value_to_assign = global_scope.program_memory.read_from_memory(value_to_assign_address)
+    global_scope.program_memory.write_to_memory(value_to_assign, assignee_address)
 
     global_scope.instruction_pointer += 1
 
@@ -144,8 +156,8 @@ def binary_boolean_operation(operator, current_instruction):
     right_operand_address = current_instruction.get_right_operand()
     result_address = current_instruction.get_result()
 
-    left_operand_value = global_scope.function_directory.memory_handler.get_from_memory(left_operand_address)
-    right_operand_value = global_scope.function_directory.memory_handler.get_from_memory(right_operand_address)
+    left_operand_value = global_scope.program_memory.read_from_memory(left_operand_address)
+    right_operand_value = global_scope.program_memory.read_from_memory(right_operand_address)
 
     #Does the corresponding operation based on the operator
     if operator == constants.Operators.OP_GREATER:
@@ -167,7 +179,7 @@ def binary_boolean_operation(operator, current_instruction):
     else:
         stop_exec()
 
-    global_scope.function_directory.memory_handler.add_to_memory(result_value, result_address)
+    global_scope.program_memory.write_to_memory(result_value, result_address)
 
     global_scope.instruction_pointer += 1
 
@@ -176,10 +188,11 @@ def negation_operation(current_instruction):
     left_operand_address = current_instruction.get_left_operand()
     result_address = current_instruction.get_result()
 
-    left_operand_value = global_scope.function_directory.memory_handler.get_from_memory(left_operand_address)
+    left_operand_value = global_scope.program_memory.read_from_memory(left_operand_address)
+
     result_value = not left_operand_value
 
-    global_scope.function_directory.memory_handler.add_to_memory(result_value, result_address)
+    global_scope.program_memory.write_to_memory(result_value, result_address)
 
     global_scope.instruction_pointer += 1
 
@@ -188,7 +201,7 @@ def verify_index_operation(current_instruction):
     index_address = current_instruction.get_left_operand()
     array_size = current_instruction.get_right_operand()
 
-    index_value = global_scope.function_directory.memory_handler.get_from_memory(index_address)
+    index_value = global_scope.program_memory.read_from_memory(index_address)
 
     if index_value >= 0 and index_value < array_size:
         global_scope.instruction_pointer += 1
@@ -198,7 +211,7 @@ def verify_index_operation(current_instruction):
 #Prints to console
 def print_operation(current_instruction):
     expression_to_print_address = current_instruction.get_left_operand()
-    expression_to_print_value = global_scope.function_directory.memory_handler.get_from_memory(expression_to_print_address)
+    expression_to_print_value = global_scope.program_memory.read_from_memory(expression_to_print_address)
 
     print expression_to_print_value
 
@@ -217,7 +230,7 @@ def input_operation(current_instruction):
     validated_input = validate_input(input_value, input_type)
 
     if  validated_input is not None:
-        global_scope.function_directory.memory_handler.add_to_memory(validated_input, input_address)
+        global_scope.program_memory.write_to_memory(validated_input, input_address)
         global_scope.instruction_pointer += 1
     else:
         stop_exec("Input value '%s' is not of type '%s'" % (input_value, input_type))
@@ -230,7 +243,8 @@ def go_to_operation(operator, current_instruction):
         global_scope.instruction_pointer = new_instruction
     elif operator == constants.Operators.OP_GO_TO_T:
         evaluation_address = current_instruction.get_left_operand()
-        evaluation_result = global_scope.function_directory.memory_handler.get_from_memory(evaluation_address)
+        evaluation_result = global_scope.program_memory.read_from_memory(evaluation_address)
+
 
         #If evaluation_result resolves to true, go to the given instruction
         if evaluation_result:
@@ -240,7 +254,7 @@ def go_to_operation(operator, current_instruction):
             global_scope.instruction_pointer += 1
     elif operator == constants.Operators.OP_GO_TO_F:
         evaluation_address = current_instruction.get_left_operand()
-        evaluation_result = global_scope.function_directory.memory_handler.get_from_memory(evaluation_address)
+        evaluation_result = global_scope.program_memory.read_from_memory(evaluation_address)
 
         #If evaluation_result resolves to false, go to the given instruction
         if not evaluation_result:
@@ -250,6 +264,35 @@ def go_to_operation(operator, current_instruction):
             global_scope.instruction_pointer += 1
     else:
         stop_exec()
+
+#Generates an activation record
+def era_operation(current_instruction):
+    block_name = current_instruction.get_left_operand()
+    local_counter_for_block = global_scope.function_directory.get_local_type_counter(block_name)
+    temporary_counter_for_block = global_scope.function_directory.get_temporary_type_counter(block_name)
+
+    #Leaving the return address pending for when the go_to_sub operation is called
+    global_scope.temp_activation_record = Activation_Record(local_counter_for_block, temporary_counter_for_block, -1)
+
+    global_scope.instruction_pointer += 1
+
+#
+def go_sub_operation(current_instruction):
+    #Program should go the current next line after executing the called block
+    return_address = global_scope.instruction_pointer + 1
+
+    global_scope.temp_activation_record.set_return_address(return_address)
+    global_scope.program_memory.add_activation_record(global_scope.temp_activation_record)
+
+    #sets the new instruction pointer to the first quad of the called block
+    block_initial_quad = current_instruction.get_result()
+    global_scope.instruction_pointer = block_initial_quad
+
+#
+def end_proc_operation(current_instruction):
+    removed_activation_record = global_scope.program_memory.remove_current_activation_record()
+    return_address = removed_activation_record.get_return_address()
+    global_scope.instruction_pointer = return_address
 
 #Validates that the user input can be cast to the type it should be
 def validate_input(input_value, input_type):
