@@ -22,7 +22,7 @@ current_list_id = ""
 current_list_size = ""
 current_list_type = ""
 primitive_names = []
-parameter_type_counter = [0,0,0,0]
+pending_parameter_type_counter = Stack()
 pending_operators = Stack()
 pending_operands = Stack()
 pending_operand_types = Stack()
@@ -35,6 +35,7 @@ pending_lists = Stack()
 instruction_pointer = 0
 program_memory = Program_Memory()
 temp_activation_record = Activation_Record()
+current_return_value = None
 
 #timer helper variable
 timer_counter = 0

@@ -90,8 +90,7 @@ def execute_code():
             go_sub_operation(current_instruction)
         elif operator == constants.Operators.OP_RETURN:
             #print "return value"
-            global_scope.instruction_pointer += 1
-            pass
+            return_operation(current_instruction)
         elif operator == constants.Operators.OP_END_PROC:
             #print "end procedure"
             end_proc_operation(current_instruction)
@@ -143,10 +142,22 @@ def assign_operation(current_instruction):
     value_to_assign_address = current_instruction.get_left_operand()
     assignee_address = current_instruction.get_result()
 
-    if str(assignee_address)[0] == '*':
-        assignee_address = global_scope.program_memory.read_from_memory(int(assignee_address[1:]))
+    #if the value is not an address, it is a function name and the value should be read from the return value
+    if not value_is_address(value_to_assign_address):
+        value_to_assign = global_scope.current_return_value
 
-    value_to_assign = global_scope.program_memory.read_from_memory(value_to_assign_address)
+        #if for some reason (logical error by programmer) the function did not return anything, stop execution
+        if value_to_assign is None:
+            stop_exec("Block '%s' did not return any value" % value_to_assign_address)
+
+        #reset value for next functions
+        global_scope.current_return_value = None
+    else:
+        if str(assignee_address)[0] == '*':
+            assignee_address = global_scope.program_memory.read_from_memory(int(assignee_address[1:]))
+
+        value_to_assign = global_scope.program_memory.read_from_memory(value_to_assign_address)
+
     global_scope.program_memory.write_to_memory(value_to_assign, assignee_address)
 
     global_scope.instruction_pointer += 1
@@ -277,7 +288,7 @@ def era_operation(current_instruction):
 
     global_scope.instruction_pointer += 1
 
-#
+#saves the argument value into the activation record of the function being called
 def param_operation(current_instruction):
     #argument is the value to be sent
     argument_address = current_instruction.get_left_operand()
@@ -291,7 +302,7 @@ def param_operation(current_instruction):
 
     global_scope.instruction_pointer += 1
 
-#
+#adds an activation record to the stack segment and goes to the function's initial quad
 def go_sub_operation(current_instruction):
     #Program should go the current next line after executing the called block
     return_address = global_scope.instruction_pointer + 1
@@ -303,10 +314,26 @@ def go_sub_operation(current_instruction):
     block_initial_quad = current_instruction.get_result()
     global_scope.instruction_pointer = block_initial_quad
 
-#
+#saves the return value and ends the function call
+def return_operation(current_instruction):
+    return_value_address = current_instruction.get_left_operand()
+    return_value = global_scope.program_memory.read_from_memory(return_value_address)
+
+    #save the return value in the current activation record
+    global_scope.program_memory.get_current_activation_record().set_return_value(return_value)
+
+    #end the function call
+    end_proc_operation(current_instruction)
+
+#removes the activation record from the stack segment
 def end_proc_operation(current_instruction):
     removed_activation_record = global_scope.program_memory.remove_current_activation_record()
     return_address = removed_activation_record.get_return_address()
+
+    #gets the return value (value is 'None' if it never returned anything)
+    global_scope.current_return_value = removed_activation_record.get_return_value()
+
+    #goes to the quad that was next in the previous function
     global_scope.instruction_pointer = return_address
 
 #Validates that the user input can be cast to the type it should be
@@ -338,6 +365,15 @@ def validate_input(input_value, input_type):
             return None
     else:
         return None
+
+#Verifies if a value is an address (an int value)
+def value_is_address(value):
+    try:
+        address = int(value)
+        return True
+    #if value can't be casted to int, then it is a function
+    except ValueError:
+        return False
 
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message

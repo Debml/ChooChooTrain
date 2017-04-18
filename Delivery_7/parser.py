@@ -777,7 +777,7 @@ def p_EC_SEEN_START_PARAM(p):
 	call_block_id = global_scope.pending_blocks.peek()
 	global_scope.quad_list.append_quad(constants.Operators.OP_ERA, call_block_id, "-1", "-1")
 	global_scope.pending_blocks_argument_counter.push(0)
-	global_scope.parameter_type_counter = [0,0,0,0]			
+	global_scope.pending_parameter_type_counter.push([0,0,0,0])
 
 #CALL action 3 - Validates argument counter with parameter number
 def p_EC_SEEN_PARAM(p):
@@ -837,6 +837,8 @@ def abstract_seen_block_call(p, returns_value):
 			global_scope.pending_operands.push(result)
 			global_scope.pending_operand_types.push(return_type)
 
+			#remove this instance of the parameter type counter since there are no more parameters
+			global_scope.pending_parameter_type_counter.pop()
 	else:
 		stop_exec("Block '%s' receives %d parameter(s), found %d argument(s) instead" % (call_block_id, block_parameter_counter, block_argument_counter))
 
@@ -905,8 +907,12 @@ def get_parameter_address(parameter_type):
 	elif parameter_type == constants.DataTypes.BOOLEAN:
 		index = 3
 
-	address = local_ranges[index] + global_scope.parameter_type_counter[index]
-	global_scope.parameter_type_counter[index] += 1
+	param_counter = global_scope.pending_parameter_type_counter.pop()
+	address = local_ranges[index] + param_counter[index]
+	
+	param_counter[index] += 1
+	global_scope.pending_parameter_type_counter.push(param_counter)
+
 	return address
 
 #Prints an error message and stops the program execution
@@ -917,8 +923,8 @@ def stop_exec(message):
 #Prints results of compilation when successful
 def end_compilation():
 	print('Compilation Successful!')
-	global_scope.function_directory.print_table()
-	print(global_scope.quad_list)
+	#global_scope.function_directory.print_table()
+	#print(global_scope.quad_list)
 
 #Entry method to start the compilation process
 def start_compilation(file_name):
