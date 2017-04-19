@@ -1,10 +1,8 @@
 """
 Collection of classes "structures" containing Stack, Queue, and Dictionary
 """
-#import deque for implementation of queue
 from collections import deque
 import constants
-#from memory import Block_Memory
 import memory
 
 """

@@ -3,9 +3,6 @@ contains memory implementations,
 memory handling, and other functions 
 as detailed in the class"""
 import constants
-#from structures import Dictionary
-#from structures import Activation_Record
-#from structures import Stack
 import structures
 
 """Contains actual memory arrays to manage"""
@@ -299,17 +296,18 @@ class Memory_Handler:
 			else:
 				return -1
 
+	#Returns the constant counter for each data type
 	def get_constant_counter(self):
 		return self._constant_counter	
 
-	#Resets the local variable counter for each type
+	#Resets the local variable counter for each data type
 	def reset_local_counter(self):
 		#counter for local variables memory
 		temp_local_counter = self._local_counter
 		self._local_counter = [0, 0, 0, 0]
 		return temp_local_counter	
 
-	#Resets the temporary variable counter for each type
+	#Resets the temporary variable counter for each data type
 	def reset_temporary_counter(self):
 		#counter for temporary variables memory
 		temp_temporary_counter = self._temporary_counter
@@ -517,6 +515,3 @@ class Program_Memory:
 		else:
 			return False
 
-#for testing purposes
-if __name__ == '__main__':	
-	pass
