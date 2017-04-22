@@ -329,7 +329,10 @@ def p_EC_SEEN_TYPE(p):
 	if not global_scope.function_directory.id_exists(global_scope.current_var_id, global_scope.current_block_id):
 		parameter_type = p[-1]
 		global_scope.function_directory.add_parameter_type(global_scope.current_block_id, parameter_type)
-		global_scope.function_directory.add_primitive(global_scope.current_block_id, global_scope.current_var_id, parameter_type)
+		could_add = global_scope.function_directory.add_primitive(global_scope.current_block_id, global_scope.current_var_id, parameter_type)
+
+		if not could_add:
+			stop_exec("Memory is full for Data Type '%s'" % parameter_type)
 	else:
 		stop_exec("Parameter named '%s' is already defined" % global_scope.current_var_id)
 
@@ -396,7 +399,10 @@ def p_EC_SEEN_VAR_TYPE(p):
 		#Primitive id should not be a duplicate
 		if not global_scope.function_directory.id_exists(var_name, global_scope.current_block_id):
 			primitive_type = p[-1]
-			global_scope.function_directory.add_primitive(global_scope.current_block_id, var_name, primitive_type)
+			could_add = global_scope.function_directory.add_primitive(global_scope.current_block_id, var_name, primitive_type)
+
+			if not could_add:
+				stop_exec("Memory is full for Data Type '%s'" % primitive_type)
 		else:
 			stop_exec("Name '%s' is already in use in block '%s'" % (var_name, global_scope.current_block_id))
 
@@ -424,7 +430,10 @@ def p_EC_SEEN_LIST(p):
 	"EC_SEEN_LIST : "
 	#List id should not be a duplicate
 	if not global_scope.function_directory.id_exists(global_scope.current_list_id, global_scope.current_block_id):
-		global_scope.function_directory.add_list(global_scope.current_block_id, global_scope.current_list_id, global_scope.current_list_size, global_scope.current_list_type)
+		could_add = global_scope.function_directory.add_list(global_scope.current_block_id, global_scope.current_list_id, global_scope.current_list_size, global_scope.current_list_type)
+
+		if not could_add:
+			stop_exec("Memory is full for Data Type '%s'" % global_scope.current_list_type)
 	else:
 		stop_exec("Name '%s' is already in use in block '%s'" % (global_scope.current_list_id, global_scope.current_block_id))
 
@@ -513,8 +522,15 @@ def p_EC_SEEN_CONST_LIST(p):
 
 		global_scope.quad_list.append_quad(constants.Operators.OP_VERIFY_INDEX, list_index, list_size, "-1")
 
+		result = global_scope.function_directory.get_temporary_address(constants.Data_Types.WHOLE)
+
+			#Stop execution if there is no space for temporary variables
+			if result == -1:
+				stop_exec("Temporary memory is full for Data Type '%s'" % constants.Data_Types.WHOLE)
+
 		#Value in result is an address
-		result = constants.Misc.POINTER + str(global_scope.function_directory.get_temporary_address(constants.Data_Types.WHOLE))
+		result = constants.Misc.POINTER + str(result)
+
 		global_scope.quad_list.append_quad(constants.Operators.OP_ADDITION, list_index, list_address, result)
 		
 		global_scope.pending_operands.push(result)
@@ -719,6 +735,11 @@ def p_EC_SEEN_EXPRESSION(p):
 		if left_type == constants.Data_Types.BOOLEAN:
 			result = global_scope.function_directory.get_temporary_address(constants.Data_Types.BOOLEAN)
 
+			#Stop execution if there is no space for temporary variables
+			if result == -1:
+				stop_exec("Temporary memory is full for Data Type '%s'" % constants.Data_Types.BOOLEAN)
+
+
 			global_scope.quad_list.append_quad(operator, left_operand, "-1", result)
 
 			global_scope.pending_operands.push(result)
@@ -831,6 +852,10 @@ def abstract_seen_block_call(p, returns_value):
 		if returns_value:
 			return_type = global_scope.function_directory.get_return_type_for_block(call_block_id)
 			result = global_scope.function_directory.get_temporary_address(return_type)
+
+			#Stop execution if there is no space for temporary variables
+			if result == -1:
+				stop_exec("Temporary memory is full for Data Type '%s'" % return_type)
 			
 			global_scope.quad_list.append_quad(constants.Operators.OP_ASSIGN, call_block_id, "-1", result)
 
@@ -879,6 +904,10 @@ def create_binary_operation_quad():
 	if result_type != -1:
 		result = global_scope.function_directory.get_temporary_address(result_type)
 
+			#Stop execution if there is no space for temporary variables
+			if result == -1:
+				stop_exec("Temporary memory is full for Data Type '%s'" % result_type)
+
 		global_scope.quad_list.append_quad(operator, left_operand, right_operand, result)
 
 		global_scope.pending_operands.push(result)
@@ -891,12 +920,17 @@ def create_binary_operation_quad():
 def push_constant_address(constant_type):
 	constant_value = global_scope.pending_operands.pop()
 	constant_address = global_scope.function_directory.get_constant_address(constant_value, constant_type)
+
+	if constant_address == -1:
+		stop_exec("Constant memory is full for Data Type '%s'" % constant_type)
 	
 	global_scope.pending_operands.push(constant_address)
 	global_scope.pending_operand_types.push(constant_type)	
 
 def get_parameter_address(parameter_type):
-	local_ranges = global_scope.function_directory.memory_handler._local_ranges
+	param_counter = global_scope.pending_parameter_type_counter.pop()
+
+	address = global_scope.function_directory.memory_handler.get_parameter_address(parameter_type, param_counter)
 
 	if parameter_type == constants.Data_Types.WHOLE:
 		index = 0
@@ -906,9 +940,6 @@ def get_parameter_address(parameter_type):
 		index = 2
 	elif parameter_type == constants.Data_Types.BOOLEAN:
 		index = 3
-
-	param_counter = global_scope.pending_parameter_type_counter.pop()
-	address = local_ranges[index] + param_counter[index]
 	
 	param_counter[index] += 1
 	global_scope.pending_parameter_type_counter.push(param_counter)

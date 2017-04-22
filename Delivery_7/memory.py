@@ -205,62 +205,60 @@ class Memory_Handler:
 			#blocks_to_assign should have value
 			if blocks_to_assign is not None:
 				#memory address for whole
-				if(variable_type == constants.Data_Types.WHOLE):
-					address = (self._local_ranges[0] + self._local_counter[0])
-					self._local_counter[0] = self._local_counter[0] + blocks_to_assign
-					return address
+				if variable_type == constants.Data_Types.WHOLE:
+					index = 0
 
 				#memory address for decimal
-				elif(variable_type == constants.Data_Types.DECIMAL):
-					address = (self._local_ranges[1] + self._local_counter[1])
-					self._local_counter[1] = self._local_counter[1] + blocks_to_assign
-					return address
+				elif variable_type == constants.Data_Types.DECIMAL:
+					index = 1
 
 				#memory address for words
-				elif(variable_type == constants.Data_Types.WORDS):
-					address = (self._local_ranges[2] + self._local_counter[2])
-					self._local_counter[2] = self._local_counter[2] + blocks_to_assign
-					return address
+				elif variable_type == constants.Data_Types.WORDS:
+					index = 2
 
 				#memory address for boolean
-				elif(variable_type == constants.Data_Types.BOOLEAN):
-					address = (self._local_ranges[3] + self._local_counter[3])
-					self._local_counter[3] = self._local_counter[3] + blocks_to_assign
-					return address
+				elif variable_type == constants.Data_Types.BOOLEAN:
+					index = 3
 
 				#does not recognize variable type
 				else:
-					return -1
+					return -2
+
+				if not self.local_memory_is_full_for_data_type(variable_type, blocks_to_assign):
+					address = (self._local_ranges[index] + self._local_counter[index])
+					self._local_counter[index] = self._local_counter[index] + blocks_to_assign
+					return address
+				else:
+					return -1	
 
 	#Assign memory address of temporary variable and return it
 	def assign_memory_address_temporary_variable(self, variable_type = None):
 		#variable_type should have value
 		if variable_type is not None:
 			#memory address for whole
-			if(variable_type == constants.Data_Types.WHOLE):
-				address = (self._temporary_ranges[0] + self._temporary_counter[0])
-				self._temporary_counter[0] = self._temporary_counter[0] + 1
-				return address
+			if variable_type == constants.Data_Types.WHOLE:
+				index = 0
 
 			#memory address for decimal
-			elif(variable_type == constants.Data_Types.DECIMAL):
-				address = (self._temporary_ranges[1] + self._temporary_counter[1])
-				self._temporary_counter[1] = self._temporary_counter[1] + 1
-				return address
+			elif variable_type == constants.Data_Types.DECIMAL:
+				index = 1
 
 			#memory address for words
-			elif(variable_type == constants.Data_Types.WORDS):
-				address = (self._temporary_ranges[2] + self._temporary_counter[2])
-				self._temporary_counter[2] = self._temporary_counter[2] + 1
-				return address
+			elif variable_type == constants.Data_Types.WORDS:
+				index = 2
 
 			#memory address for boolean
-			elif(variable_type == constants.Data_Types.BOOLEAN):
-				address = (self._temporary_ranges[3] + self._temporary_counter[3])
-				self._temporary_counter[3] = self._temporary_counter[3] + 1
-				return address
+			elif variable_type == constants.Data_Types.BOOLEAN:
+				index = 3
 
 			#does not recognize variable type
+			else:
+				return -2
+
+			if not self.temporary_memory_is_full_for_data_type(variable_type):
+				address = (self._temporary_ranges[index] + self._temporary_counter[index])
+				self._temporary_counter[index] = self._temporary_counter[index] + 1
+				return address
 			else:
 				return -1
 
@@ -269,32 +267,31 @@ class Memory_Handler:
 		#constant_type should have value
 		if constant_type is not None:
 			#memory address for constant whole
-			if(constant_type == constants.Data_Types.WHOLE):
-				address = (self._constant_ranges[0] + self._constant_counter[0])
-				self._constant_counter[0] = self._constant_counter[0] + 1
-				return address
+			if constant_type == constants.Data_Types.WHOLE:
+				index = 0
 
 			#memory address for constant decimal
-			elif(constant_type == constants.Data_Types.DECIMAL):
-				address = (self._constant_ranges[1] + self._constant_counter[1])
-				self._constant_counter[1] = self._constant_counter[1] + 1
-				return address
+			elif constant_type == constants.Data_Types.DECIMAL:
+				index = 1
 
 			#memory address for constant words
-			elif(constant_type == constants.Data_Types.WORDS):
-				address = (self._constant_ranges[2] + self._constant_counter[2])
-				self._constant_counter[2] = self._constant_counter[2] + 1
-				return address
+			elif constant_type == constants.Data_Types.WORDS:
+				index = 2
 
 			#memory address for constant boolean
-			elif(constant_type == constants.Data_Types.BOOLEAN):
-				address = (self._constant_ranges[3] + self._constant_counter[3])
-				self._constant_counter[3] = self._constant_counter[3] + 1
-				return address
+			elif constant_type == constants.Data_Types.BOOLEAN:
+				index = 3
 
 			#does not recognize constant type
 			else:
 				return -1
+
+			if not self.constant_memory_is_full_for_data_type(constant_type):
+				address = (self._constant_ranges[index] + self._constant_counter[index])
+				self._constant_counter[index] = self._constant_counter[index] + 1
+				return address
+			else:
+				return -1	
 
 	#Returns the constant counter for each data type
 	def get_constant_counter(self):
@@ -313,6 +310,75 @@ class Memory_Handler:
 		temp_temporary_counter = self._temporary_counter
 		self._temporary_counter = [0, 0, 0, 0]
 		return temp_temporary_counter
+
+	#Returns true if the counter for the given data type exceeds the size allocated for local variables
+	def local_memory_is_full_for_data_type(self, data_type, blocks):
+		if data_type == constants.Data_Types.WHOLE:
+			index = 0
+		if data_type == constants.Data_Types.DECIMAL:
+			index = 1
+		if data_type == constants.Data_Types.WORDS:
+			index = 2
+		if data_type == constants.Data_Types.BOOLEAN:
+			index = 3
+		else:
+			return None
+
+		if self._local_counter[index] + blocks > self._local_size:
+			return True
+		else:
+			return False
+
+	#Returns true if the counter for the given data type exceeds the size allocated for temporary variables
+	def temporary_memory_is_full_for_data_type(self, data_type):
+		if data_type == constants.Data_Types.WHOLE:
+			index = 0
+		if data_type == constants.Data_Types.DECIMAL:
+			index = 1
+		if data_type == constants.Data_Types.WORDS:
+			index = 2
+		if data_type == constants.Data_Types.BOOLEAN:
+			index = 3
+		else:
+			return None
+
+		if self._temporary_counter[index] + 1 > self._temporary_size:
+			return True
+		else:
+			return False
+
+	#Returns true if the counter for the given data type exceeds the size allocated for constants
+	def constant_memory_is_full_for_data_type(self, data_type):
+		if data_type == constants.Data_Types.WHOLE:
+			index = 0
+		if data_type == constants.Data_Types.DECIMAL:
+			index = 1
+		if data_type == constants.Data_Types.WORDS:
+			index = 2
+		if data_type == constants.Data_Types.BOOLEAN:
+			index = 3
+		else:
+			return None
+
+		if self._constant_counter[index] + 1 > self._constant_size:
+			return True
+		else:
+			return False
+
+	#Returns the address of a parameter given its type and the counter of read parameters
+	def get_parameter_address(self, parameter_type, param_counter):
+		if parameter_type == constants.Data_Types.WHOLE:
+			index = 0
+		elif parameter_type == constants.Data_Types.DECIMAL:		
+			index = 1
+		elif parameter_type == constants.Data_Types.WORDS:
+			index = 2
+		elif parameter_type == constants.Data_Types.BOOLEAN:
+			index = 3
+
+		address = self._local_ranges[index] + param_counter[index]
+		return address
+
 	
 class Program_Memory:
 	def __init__(self, quad_list = None, starting_activation_record = None, cc = None, constant_table = None):

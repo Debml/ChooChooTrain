@@ -101,11 +101,17 @@ class Function_Directory:
             if variable_name is not None:
                 #variable_type should have value
                 if variable_type is not None:
+                    memory_address = self.memory_handler.assign_memory_address_local_variable(variable_type, 1)
+
+                    #If there was no space for adding variables left, send an error to the parser
+                    if memory_address == -1:
+                        return False
+
                     #Index 1 of list is for primitives and lists dictionaries
                     #Index 0 of such list is specifically for primitives
-                    memory_address = self.memory_handler.assign_memory_address_local_variable(variable_type, 1)
                     variable_data = [variable_type, memory_address]
                     self.function_reference_table[key][1][0].insert(variable_name, variable_data)
+                    return True
 
     #Key for current block, add list to list dictionary 
     def add_list(self, key = None, list_id = None, list_size = None, list_type = None):
@@ -118,11 +124,18 @@ class Function_Directory:
 
                     #list_type should have value
                     if list_type is not None:
+
+                        memory_address = self.memory_handler.assign_memory_address_local_variable(list_type, list_size)
+
+                        #If there was no space for adding variables left, send an error to the parser
+                        if memory_address == -1:
+                            return False
+
                         #Index 1 of list is for primitives and lists dictionaries
                         #Index 1 of such list is specifically for lists
-                        memory_address = self.memory_handler.assign_memory_address_local_variable(list_type, list_size)
                         list_data = [list_type, memory_address, list_size]
                         self.function_reference_table[key][1][1].insert(list_id, list_data)
+                        return True
 
     #Constant value and constant type to identify constant
     def add_constant(self, constant_value = None, constant_type = None):
@@ -132,6 +145,11 @@ class Function_Directory:
                 #create list for entry
                 #value for dictionary entry
                 memory_address =  self.memory_handler.assign_memory_address_constant(constant_type)
+
+                #If there was no space for adding constants left, send an error to the parser
+                if memory_address == -1:
+                    return -1
+
                 constant_data = [constant_type, memory_address]
                 
                 #insert to constant table
