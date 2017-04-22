@@ -154,9 +154,13 @@ class Quad_List:
 		return ('\n'.join('{} \t {}'.format(index,quad) for index, quad in enumerate(self._quads,start = 0)))
 
 	def append_quad(self,operator, left_operand, right_operand, result):
-		temp_quad = Quad(operator, left_operand, right_operand, result)
-		self._quads.append(temp_quad)
-		self._quad_count = self._quad_count + 1
+		if not self.quad_limit_exceeded():
+			temp_quad = Quad(operator, left_operand, right_operand, result)
+			self._quads.append(temp_quad)
+			self._quad_count = self._quad_count + 1
+			return True
+		else:
+			return False
 
 	def set_result(self, quad_index):
 		self._quads[quad_index].set_result(self._quad_count)
@@ -166,6 +170,13 @@ class Quad_List:
 
 	def get_quad_count(self):
 		return self._quad_count
+
+	def quad_limit_exceeded(self):
+		#Takes into account the quad about to be inserted
+		if self.get_quad_count() + 1 > constants.Memory_Limits.QUAD_SIZE:
+			return True
+		else:
+			return False
 
 """
 Quadruple class represents quadruple for intermediate code representation

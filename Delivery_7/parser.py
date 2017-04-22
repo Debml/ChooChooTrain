@@ -366,7 +366,8 @@ def p_EC_SEEN_BLOCK_BODY_END(p):
 
 	#Block should be returning something if it stated it would do so (Return type validation is done EC_SEEN_RETURN)
 	if (global_scope.block_returns and block_return_type != constants.Data_Types.VOID) or (not global_scope.block_returns and block_return_type == constants.Data_Types.VOID):
-		global_scope.quad_list.append_quad(constants.Operators.OP_END_PROC, "-1", "-1", "-1")
+		if not global_scope.quad_list.append_quad(constants.Operators.OP_END_PROC, "-1", "-1", "-1"):
+			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 		#global_scope.function_directory.print_variable_list(global_scope.current_block_id)
 		#global_scope.function_directory.clear_variable_list(global_scope.current_block_id)
 
@@ -520,7 +521,8 @@ def p_EC_SEEN_CONST_LIST(p):
 		list_size = global_scope.function_directory.get_list_size_for_block(list_id, global_scope.current_block_id)
 		list_type = global_scope.function_directory.get_list_type_for_block(list_id, global_scope.current_block_id)	
 
-		global_scope.quad_list.append_quad(constants.Operators.OP_VERIFY_INDEX, list_index, list_size, "-1")
+		if not global_scope.quad_list.append_quad(constants.Operators.OP_VERIFY_INDEX, list_index, list_size, "-1"):
+			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
 		result = global_scope.function_directory.get_temporary_address(constants.Data_Types.WHOLE)
 
@@ -531,7 +533,8 @@ def p_EC_SEEN_CONST_LIST(p):
 		#Value in result is an address
 		result = constants.Misc.POINTER + str(result)
 
-		global_scope.quad_list.append_quad(constants.Operators.OP_ADDITION, list_index, list_address, result)
+		if not global_scope.quad_list.append_quad(constants.Operators.OP_ADDITION, list_index, list_address, result):
+			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 		
 		global_scope.pending_operands.push(result)
 		global_scope.pending_operand_types.push(list_type)
@@ -628,7 +631,8 @@ def p_EC_SEEN_ASSIGN_VALUE(p):
 
 			#Assignment should be valid
 			if result_type != -1:
-				global_scope.quad_list.append_quad(operator, right_operand, "-1", left_operand)
+				if not global_scope.quad_list.append_quad(operator, right_operand, "-1", left_operand):
+					stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 			else:
 				stop_exec("Expression of type '%s' cannot be assigned to ID of type '%s'" % (right_type, left_type))
 
@@ -641,7 +645,8 @@ def p_EC_SEEN_IF_EXP(p):
 	if exp_type == constants.Data_Types.BOOLEAN:
 		result = global_scope.pending_operands.pop()
 
-		global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO_F, result, "-1", "pending")
+		if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO_F, result, "-1", "pending"):
+			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
 		global_scope.pending_jumps.push(global_scope.quad_list.get_quad_count() - 1)
 	else:
@@ -651,7 +656,8 @@ def p_EC_SEEN_IF_EXP(p):
 def p_EC_SEEN_ELSE(p):
 	"EC_SEEN_ELSE : "
 	#Quad for the true case
-	global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "pending")
+	if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "pending"):
+		stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
 	#Fills the 'if' pending jump
 	if_false = global_scope.pending_jumps.pop()
@@ -681,7 +687,8 @@ def p_EC_SEEN_UNTIL(p):
 		evaluation_result = global_scope.pending_operands.pop()
 		loop_start = global_scope.pending_jumps.pop()
 
-		global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO_T, evaluation_result, "-1", loop_start)
+		if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO_T, evaluation_result, "-1", loop_start):
+			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 	else:
 		stop_exec("Expected a boolean expression, found a '%s' expression instead" % exp_type)
 
@@ -691,7 +698,8 @@ def p_EC_SEEN_WRITE_EXP(p):
 	"EC_SEEN_WRITE_EXP : "
 	expression_to_print = global_scope.pending_operands.pop()
 
-	global_scope.quad_list.append_quad(constants.Operators.OP_PRINT, expression_to_print, "-1", "-1")
+	if not global_scope.quad_list.append_quad(constants.Operators.OP_PRINT, expression_to_print, "-1", "-1"):
+		stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
 #READ action 1 - Generates quad for the read action
 def p_EC_SEEN_READ_ID(p):
@@ -702,7 +710,8 @@ def p_EC_SEEN_READ_ID(p):
 
 	#The ID that will store whatever is read should exist
 	#if global_scope.function_directory.primitive_id_exists(id_to_read_into, global_scope.current_block_id):
-	global_scope.quad_list.append_quad(constants.Operators.OP_INPUT, input_type, "-1", id_to_read_into)
+	if not global_scope.quad_list.append_quad(constants.Operators.OP_INPUT, input_type, "-1", id_to_read_into):
+			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 	#else:
 		#stop_exec("ID '%s' is not declared" % id_to_read_into)
 
@@ -740,7 +749,8 @@ def p_EC_SEEN_EXPRESSION(p):
 				stop_exec("Temporary memory is full for Data Type '%s'" % constants.Data_Types.BOOLEAN)
 
 
-			global_scope.quad_list.append_quad(operator, left_operand, "-1", result)
+			if not global_scope.quad_list.append_quad(operator, left_operand, "-1", result):
+				stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
 			global_scope.pending_operands.push(result)
 			global_scope.pending_operand_types.push(constants.Data_Types.BOOLEAN)
@@ -755,7 +765,8 @@ def p_EC_SEEN_EXPRESSION(p):
 #PROGRAM action 1 - Generates jump to starting block and pushes to pending jumps stack
 def p_EC_SEEN_START_PROG(p):
 	"EC_SEEN_START_PROG : "
-	global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "pending")
+	if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "pending"):
+		stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
 	global_scope.pending_jumps.push(global_scope.quad_list.get_quad_count() - 1)
 
@@ -779,7 +790,10 @@ def p_EC_SEEN_RETURN(p):
 		#Validates return value with the block definition
 		if return_type == block_return_type:
 			return_value = global_scope.pending_operands.pop()
-			global_scope.quad_list.append_quad(constants.Operators.OP_RETURN, return_value, "-1", "-1")
+
+			if not global_scope.quad_list.append_quad(constants.Operators.OP_RETURN, return_value, "-1", "-1"):
+				stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+
 			global_scope.block_returns = True
 		else:
 			stop_exec("Block '%s' should return a '%s' value, found a '%s' value instead" % (global_scope.current_block_id, block_return_type, return_type))
@@ -796,7 +810,10 @@ def p_EC_SEEN_CALL_VOID_BLOCK_ID(p):
 def p_EC_SEEN_START_PARAM(p):
 	"EC_SEEN_START_PARAM : "
 	call_block_id = global_scope.pending_blocks.peek()
-	global_scope.quad_list.append_quad(constants.Operators.OP_ERA, call_block_id, "-1", "-1")
+
+	if not global_scope.quad_list.append_quad(constants.Operators.OP_ERA, call_block_id, "-1", "-1"):
+		stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+
 	global_scope.pending_blocks_argument_counter.push(0)
 	global_scope.pending_parameter_type_counter.push([0,0,0,0])
 
@@ -822,7 +839,9 @@ def p_EC_SEEN_PARAM(p):
 		argument = global_scope.pending_operands.pop()
 		param_address = get_parameter_address(argument_type)
 
-		global_scope.quad_list.append_quad(constants.Operators.OP_PARAM, argument, "-1", param_address)
+		if not global_scope.quad_list.append_quad(constants.Operators.OP_PARAM, argument, "-1", param_address):
+			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+
 	else:
 		stop_exec("Argument #%d of block '%s' should be a '%s' value, found a '%s' value instead" % (block_argument_counter, call_block_id, parameter_type, argument_type))
 
@@ -846,7 +865,9 @@ def abstract_seen_block_call(p, returns_value):
 	#Arguments number should match block's parameters number
 	if  block_parameter_counter == block_argument_counter:
 		call_block_initial_quad = global_scope.function_directory.get_quad_position_block(call_block_id)
-		global_scope.quad_list.append_quad(constants.Operators.OP_GO_SUB, call_block_id, "-1", call_block_initial_quad)
+
+		if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_SUB, call_block_id, "-1", call_block_initial_quad):
+			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
 		#If the block will resolve to a value
 		if returns_value:
@@ -857,7 +878,8 @@ def abstract_seen_block_call(p, returns_value):
 			if result == -1:
 				stop_exec("Temporary memory is full for Data Type '%s'" % return_type)
 			
-			global_scope.quad_list.append_quad(constants.Operators.OP_ASSIGN, call_block_id, "-1", result)
+			if not global_scope.quad_list.append_quad(constants.Operators.OP_ASSIGN, call_block_id, "-1", result):
+				stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
 			global_scope.pending_operands.push(result)
 			global_scope.pending_operand_types.push(return_type)
@@ -908,7 +930,8 @@ def create_binary_operation_quad():
 			if result == -1:
 				stop_exec("Temporary memory is full for Data Type '%s'" % result_type)
 
-		global_scope.quad_list.append_quad(operator, left_operand, right_operand, result)
+		if not global_scope.quad_list.append_quad(operator, left_operand, right_operand, result):
+			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
 		global_scope.pending_operands.push(result)
 		global_scope.pending_operand_types.push(result_type)
