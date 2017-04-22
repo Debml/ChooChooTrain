@@ -55,7 +55,7 @@ class Operators:
     OP_END_PROC = "op_end_proc"
 '''
 #"Enum" for data types
-class DataTypes:
+class Data_Types:
     WHOLE = "whole"
     DECIMAL = "decimal"
     WORDS = "words"
@@ -67,3 +67,14 @@ class Misc:
     FALSE_BOTTOM = "("
     POINTER = "*"
     ADDRESS = "&"
+
+#"Enum" for data type memory limits and ranges
+class Memory_Limits:
+    QUAD_SIZE = 500
+    LOCAL_RANGES = [5000, 5500, 6000, 6500]
+    LOCAL_SIZE = 500
+    TEMPORARY_RANGES = [7000, 8500, 10000, 11500]
+    TEMPORARY_SIZE = 1500
+    CONSTANT_RANGES = [13000, 14000, 15000, 16000]
+    CONSTANT_SIZE = 1000
+    STACK_SEGMENT_SIZE = 500

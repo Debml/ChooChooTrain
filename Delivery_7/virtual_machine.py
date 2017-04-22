@@ -308,11 +308,14 @@ def go_sub_operation(current_instruction):
     return_address = global_scope.instruction_pointer + 1
 
     global_scope.temp_activation_record.set_return_address(return_address)
-    global_scope.program_memory.add_activation_record(global_scope.temp_activation_record)
 
-    #sets the new instruction pointer to the first quad of the called block
-    block_initial_quad = current_instruction.get_result()
-    global_scope.instruction_pointer = block_initial_quad
+    #Verify that the stack segment can still hold activation records
+    if global_scope.program_memory.add_activation_record(global_scope.temp_activation_record):
+        #sets the new instruction pointer to the first quad of the called block
+        block_initial_quad = current_instruction.get_result()
+        global_scope.instruction_pointer = block_initial_quad
+    else:
+        stop_exec("Number of pending function calls exceeded the limit")
 
 #saves the return value and ends the function call
 def return_operation(current_instruction):
@@ -338,25 +341,25 @@ def end_proc_operation(current_instruction):
 
 #Validates that the user input can be cast to the type it should be
 def validate_input(input_value, input_type):
-    if input_type == constants.DataTypes.WHOLE:
+    if input_type == constants.Data_Types.WHOLE:
         try:
             whole_value = int(input_value)
             return whole_value
         except ValueError:
             return None
-    elif input_type == constants.DataTypes.DECIMAL:
+    elif input_type == constants.Data_Types.DECIMAL:
         try:
             decimal_value = float(input_value)
             return decimal_value
         except ValueError:
             return None
-    elif input_type == constants.DataTypes.WORDS:
+    elif input_type == constants.Data_Types.WORDS:
         try:
             str_value = str(input_value)
             return str_value
         except ValueError:
             return None
-    elif input_type == constants.DataTypes.BOOLEAN:
+    elif input_type == constants.Data_Types.BOOLEAN:
         if input_value == 'true' or input_value == 'True':
             return True
         elif input_value == 'false' or input_value == 'False':

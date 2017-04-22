@@ -24,87 +24,87 @@ class Semantic_Cube:
 		#create operator depth for each type
 		#whole-whole
 		whole_whole_valid_operators = Dictionary()
-		whole_whole_valid_operators.insert(constants.Operators.OP_ADDITION, constants.DataTypes.WHOLE)
-		whole_whole_valid_operators.insert(constants.Operators.OP_SUBTRACTION, constants.DataTypes.WHOLE)
-		whole_whole_valid_operators.insert(constants.Operators.OP_MULTIPLICATION, constants.DataTypes.WHOLE)
-		whole_whole_valid_operators.insert(constants.Operators.OP_DIVISION, constants.DataTypes.DECIMAL)
+		whole_whole_valid_operators.insert(constants.Operators.OP_ADDITION, constants.Data_Types.WHOLE)
+		whole_whole_valid_operators.insert(constants.Operators.OP_SUBTRACTION, constants.Data_Types.WHOLE)
+		whole_whole_valid_operators.insert(constants.Operators.OP_MULTIPLICATION, constants.Data_Types.WHOLE)
+		whole_whole_valid_operators.insert(constants.Operators.OP_DIVISION, constants.Data_Types.DECIMAL)
 
-		whole_whole_valid_operators.insert(constants.Operators.OP_LESS, constants.DataTypes.BOOLEAN)
-		whole_whole_valid_operators.insert(constants.Operators.OP_LESS_EQUAL, constants.DataTypes.BOOLEAN)
-		whole_whole_valid_operators.insert(constants.Operators.OP_GREATER, constants.DataTypes.BOOLEAN)
-		whole_whole_valid_operators.insert(constants.Operators.OP_GREATER_EQUAL, constants.DataTypes.BOOLEAN)
-		whole_whole_valid_operators.insert(constants.Operators.OP_EQUAL, constants.DataTypes.BOOLEAN)
-		whole_whole_valid_operators.insert(constants.Operators.OP_NOT_EQUAL, constants.DataTypes.BOOLEAN)
-		whole_whole_valid_operators.insert(constants.Operators.OP_ASSIGN, constants.DataTypes.WHOLE)
+		whole_whole_valid_operators.insert(constants.Operators.OP_LESS, constants.Data_Types.BOOLEAN)
+		whole_whole_valid_operators.insert(constants.Operators.OP_LESS_EQUAL, constants.Data_Types.BOOLEAN)
+		whole_whole_valid_operators.insert(constants.Operators.OP_GREATER, constants.Data_Types.BOOLEAN)
+		whole_whole_valid_operators.insert(constants.Operators.OP_GREATER_EQUAL, constants.Data_Types.BOOLEAN)
+		whole_whole_valid_operators.insert(constants.Operators.OP_EQUAL, constants.Data_Types.BOOLEAN)
+		whole_whole_valid_operators.insert(constants.Operators.OP_NOT_EQUAL, constants.Data_Types.BOOLEAN)
+		whole_whole_valid_operators.insert(constants.Operators.OP_ASSIGN, constants.Data_Types.WHOLE)
 
 		#whole-decimal
 		whole_decimal_valid_operators = Dictionary()
-		whole_decimal_valid_operators.insert(constants.Operators.OP_ADDITION, constants.DataTypes.DECIMAL)
-		whole_decimal_valid_operators.insert(constants.Operators.OP_SUBTRACTION, constants.DataTypes.DECIMAL)
-		whole_decimal_valid_operators.insert(constants.Operators.OP_MULTIPLICATION, constants.DataTypes.DECIMAL)
-		whole_decimal_valid_operators.insert(constants.Operators.OP_DIVISION, constants.DataTypes.DECIMAL)
+		whole_decimal_valid_operators.insert(constants.Operators.OP_ADDITION, constants.Data_Types.DECIMAL)
+		whole_decimal_valid_operators.insert(constants.Operators.OP_SUBTRACTION, constants.Data_Types.DECIMAL)
+		whole_decimal_valid_operators.insert(constants.Operators.OP_MULTIPLICATION, constants.Data_Types.DECIMAL)
+		whole_decimal_valid_operators.insert(constants.Operators.OP_DIVISION, constants.Data_Types.DECIMAL)
 
-		whole_decimal_valid_operators.insert(constants.Operators.OP_LESS, constants.DataTypes.BOOLEAN)
-		whole_decimal_valid_operators.insert(constants.Operators.OP_LESS_EQUAL, constants.DataTypes.BOOLEAN)
-		whole_decimal_valid_operators.insert(constants.Operators.OP_GREATER, constants.DataTypes.BOOLEAN)
-		whole_decimal_valid_operators.insert(constants.Operators.OP_GREATER_EQUAL, constants.DataTypes.BOOLEAN)
-		whole_decimal_valid_operators.insert(constants.Operators.OP_EQUAL, constants.DataTypes.BOOLEAN)
-		whole_decimal_valid_operators.insert(constants.Operators.OP_NOT_EQUAL, constants.DataTypes.BOOLEAN)
+		whole_decimal_valid_operators.insert(constants.Operators.OP_LESS, constants.Data_Types.BOOLEAN)
+		whole_decimal_valid_operators.insert(constants.Operators.OP_LESS_EQUAL, constants.Data_Types.BOOLEAN)
+		whole_decimal_valid_operators.insert(constants.Operators.OP_GREATER, constants.Data_Types.BOOLEAN)
+		whole_decimal_valid_operators.insert(constants.Operators.OP_GREATER_EQUAL, constants.Data_Types.BOOLEAN)
+		whole_decimal_valid_operators.insert(constants.Operators.OP_EQUAL, constants.Data_Types.BOOLEAN)
+		whole_decimal_valid_operators.insert(constants.Operators.OP_NOT_EQUAL, constants.Data_Types.BOOLEAN)
 
 		#decimal-whole, decimal-decimal
 		decimal_valid_operators = Dictionary()
-		decimal_valid_operators.insert(constants.Operators.OP_ADDITION, constants.DataTypes.DECIMAL)
-		decimal_valid_operators.insert(constants.Operators.OP_SUBTRACTION, constants.DataTypes.DECIMAL)
-		decimal_valid_operators.insert(constants.Operators.OP_MULTIPLICATION, constants.DataTypes.DECIMAL)
-		decimal_valid_operators.insert(constants.Operators.OP_DIVISION, constants.DataTypes.DECIMAL)
+		decimal_valid_operators.insert(constants.Operators.OP_ADDITION, constants.Data_Types.DECIMAL)
+		decimal_valid_operators.insert(constants.Operators.OP_SUBTRACTION, constants.Data_Types.DECIMAL)
+		decimal_valid_operators.insert(constants.Operators.OP_MULTIPLICATION, constants.Data_Types.DECIMAL)
+		decimal_valid_operators.insert(constants.Operators.OP_DIVISION, constants.Data_Types.DECIMAL)
 
-		decimal_valid_operators.insert(constants.Operators.OP_LESS, constants.DataTypes.BOOLEAN)
-		decimal_valid_operators.insert(constants.Operators.OP_LESS_EQUAL, constants.DataTypes.BOOLEAN)
-		decimal_valid_operators.insert(constants.Operators.OP_GREATER, constants.DataTypes.BOOLEAN)
-		decimal_valid_operators.insert(constants.Operators.OP_GREATER_EQUAL, constants.DataTypes.BOOLEAN)
-		decimal_valid_operators.insert(constants.Operators.OP_EQUAL, constants.DataTypes.BOOLEAN)
-		decimal_valid_operators.insert(constants.Operators.OP_NOT_EQUAL, constants.DataTypes.BOOLEAN)
-		decimal_valid_operators.insert(constants.Operators.OP_ASSIGN, constants.DataTypes.DECIMAL)
+		decimal_valid_operators.insert(constants.Operators.OP_LESS, constants.Data_Types.BOOLEAN)
+		decimal_valid_operators.insert(constants.Operators.OP_LESS_EQUAL, constants.Data_Types.BOOLEAN)
+		decimal_valid_operators.insert(constants.Operators.OP_GREATER, constants.Data_Types.BOOLEAN)
+		decimal_valid_operators.insert(constants.Operators.OP_GREATER_EQUAL, constants.Data_Types.BOOLEAN)
+		decimal_valid_operators.insert(constants.Operators.OP_EQUAL, constants.Data_Types.BOOLEAN)
+		decimal_valid_operators.insert(constants.Operators.OP_NOT_EQUAL, constants.Data_Types.BOOLEAN)
+		decimal_valid_operators.insert(constants.Operators.OP_ASSIGN, constants.Data_Types.DECIMAL)
 
 		#words-words
 		words_valid_operators = Dictionary()
-		words_valid_operators.insert(constants.Operators.OP_ADDITION, constants.DataTypes.WORDS)
-		words_valid_operators.insert(constants.Operators.OP_EQUAL, constants.DataTypes.BOOLEAN)
-		words_valid_operators.insert(constants.Operators.OP_NOT_EQUAL, constants.DataTypes.BOOLEAN)
-		words_valid_operators.insert(constants.Operators.OP_ASSIGN, constants.DataTypes.WORDS)
+		words_valid_operators.insert(constants.Operators.OP_ADDITION, constants.Data_Types.WORDS)
+		words_valid_operators.insert(constants.Operators.OP_EQUAL, constants.Data_Types.BOOLEAN)
+		words_valid_operators.insert(constants.Operators.OP_NOT_EQUAL, constants.Data_Types.BOOLEAN)
+		words_valid_operators.insert(constants.Operators.OP_ASSIGN, constants.Data_Types.WORDS)
 
 		#bool-bool
 		bool_valid_operators = Dictionary()
-		bool_valid_operators.insert(constants.Operators.OP_AND, constants.DataTypes.BOOLEAN)
-		bool_valid_operators.insert(constants.Operators.OP_OR, constants.DataTypes.BOOLEAN)		
-		bool_valid_operators.insert(constants.Operators.OP_NEGATION, constants.DataTypes.BOOLEAN)	
-		bool_valid_operators.insert(constants.Operators.OP_ASSIGN, constants.DataTypes.BOOLEAN)	
+		bool_valid_operators.insert(constants.Operators.OP_AND, constants.Data_Types.BOOLEAN)
+		bool_valid_operators.insert(constants.Operators.OP_OR, constants.Data_Types.BOOLEAN)		
+		bool_valid_operators.insert(constants.Operators.OP_NEGATION, constants.Data_Types.BOOLEAN)	
+		bool_valid_operators.insert(constants.Operators.OP_ASSIGN, constants.Data_Types.BOOLEAN)	
 
 		#insert operator depth
-		dictionary_whole.insert(constants.DataTypes.WHOLE, whole_whole_valid_operators)
-		dictionary_whole.insert(constants.DataTypes.DECIMAL, whole_decimal_valid_operators)
+		dictionary_whole.insert(constants.Data_Types.WHOLE, whole_whole_valid_operators)
+		dictionary_whole.insert(constants.Data_Types.DECIMAL, whole_decimal_valid_operators)
 
-		dictionary_decimal.insert(constants.DataTypes.WHOLE, decimal_valid_operators)
-		dictionary_decimal.insert(constants.DataTypes.DECIMAL, decimal_valid_operators)
+		dictionary_decimal.insert(constants.Data_Types.WHOLE, decimal_valid_operators)
+		dictionary_decimal.insert(constants.Data_Types.DECIMAL, decimal_valid_operators)
 
-		dictionary_words.insert(constants.DataTypes.WORDS, words_valid_operators)
+		dictionary_words.insert(constants.Data_Types.WORDS, words_valid_operators)
 
-		dictionary_bool.insert(constants.DataTypes.BOOLEAN, bool_valid_operators)
+		dictionary_bool.insert(constants.Data_Types.BOOLEAN, bool_valid_operators)
 
 		self.cube = [dictionary_whole, dictionary_decimal, dictionary_words, dictionary_bool]
 
 	#gets operand type code
 	def get_operand_type_code(self, operand = None):
-		if (operand == constants.DataTypes.WHOLE):
+		if (operand == constants.Data_Types.WHOLE):
 			return 0
 
-		elif (operand == constants.DataTypes.DECIMAL):
+		elif (operand == constants.Data_Types.DECIMAL):
 			return 1
 
-		elif (operand == constants.DataTypes.WORDS):
+		elif (operand == constants.Data_Types.WORDS):
 			return 2
 
-		elif (operand == constants.DataTypes.BOOLEAN):
+		elif (operand == constants.Data_Types.BOOLEAN):
 			return 3
 
 		else:
@@ -117,7 +117,7 @@ class Semantic_Cube:
 			if operand_one_type is not None:
 				#if operator is negation, then operand_two is boolean by default for cube look-up
 				if (operator == constants.Operators.OP_NEGATION):
-					operand_two_type = constants.DataTypes.BOOLEAN
+					operand_two_type = constants.Data_Types.BOOLEAN
 
 				#all operands now have data
 				if operand_two_type is not None:
@@ -483,7 +483,7 @@ if __name__ == '__main__':
 	quad_4 = Quad(constants.Operators.OP_GO_TO_T, 'T1', '20', 'D')
 
 	cube = Semantic_Cube()
-	print cube.validate_operation(constants.Operators.OP_ADDITION, constants.DataTypes.WORDS, constants.DataTypes.WHOLE)
+	print cube.validate_operation(constants.Operators.OP_ADDITION, constants.Data_Types.WORDS, constants.Data_Types.WHOLE)
 
 	quadli = Quad_List()
 	quadli.append_quad(constants.Operators.OP_ASSIGN, '5', '-1', 'B')

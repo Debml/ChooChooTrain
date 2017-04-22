@@ -362,7 +362,7 @@ def p_EC_SEEN_BLOCK_BODY_END(p):
 	block_return_type = global_scope.function_directory.get_return_type_for_block(global_scope.current_block_id)
 
 	#Block should be returning something if it stated it would do so (Return type validation is done EC_SEEN_RETURN)
-	if (global_scope.block_returns and block_return_type != constants.DataTypes.VOID) or (not global_scope.block_returns and block_return_type == constants.DataTypes.VOID):
+	if (global_scope.block_returns and block_return_type != constants.Data_Types.VOID) or (not global_scope.block_returns and block_return_type == constants.Data_Types.VOID):
 		global_scope.quad_list.append_quad(constants.Operators.OP_END_PROC, "-1", "-1", "-1")
 		#global_scope.function_directory.print_variable_list(global_scope.current_block_id)
 		#global_scope.function_directory.clear_variable_list(global_scope.current_block_id)
@@ -459,22 +459,22 @@ def p_EC_SEEN_CONST_ID(p):
 #CONSTANT action 3 - Adds the type whole to the operand types stack
 def p_EC_SEEN_CONST_WHOLE(p):
 	"EC_SEEN_CONST_WHOLE : "
-	push_constant_address(constants.DataTypes.WHOLE)
+	push_constant_address(constants.Data_Types.WHOLE)
 
 #CONSTANT action 4 - Adds the type decimal to the operand types stack
 def p_EC_SEEN_CONST_DECIMAL(p):
 	"EC_SEEN_CONST_DECIMAL : "
-	push_constant_address(constants.DataTypes.DECIMAL)
+	push_constant_address(constants.Data_Types.DECIMAL)
 
 #CONSTANT action 5 - Adds the type words to the operand types stack
 def p_EC_SEEN_CONST_WORDS(p):
 	"EC_SEEN_CONST_WORDS : "
-	push_constant_address(constants.DataTypes.WORDS)
+	push_constant_address(constants.Data_Types.WORDS)
 
 #CONSTANT action 6 - Adds the type boolean to the operand types stack
 def p_EC_SEEN_CONST_BOOLEAN(p):
 	"EC_SEEN_CONST_BOOLEAN : "
-	push_constant_address(constants.DataTypes.BOOLEAN)
+	push_constant_address(constants.Data_Types.BOOLEAN)
 
 #CONSTANT action 7 - Validates block return type with a return value
 def p_EC_SEEN_CALL_VAL_BLOCK_ID(p):
@@ -504,7 +504,7 @@ def p_EC_SEEN_CONST_LIST(p):
 	list_index_type = global_scope.pending_operand_types.pop()
 
 	#List index type should resolve to whole
-	if list_index_type == constants.DataTypes.WHOLE:
+	if list_index_type == constants.Data_Types.WHOLE:
 		list_id = global_scope.pending_lists.pop()
 		list_address = constants.Misc.ADDRESS + str(global_scope.function_directory.get_list_address_for_block(list_id, global_scope.current_block_id))
 		list_index = global_scope.pending_operands.pop()
@@ -514,7 +514,7 @@ def p_EC_SEEN_CONST_LIST(p):
 		global_scope.quad_list.append_quad(constants.Operators.OP_VERIFY_INDEX, list_index, list_size, "-1")
 
 		#Value in result is an address
-		result = constants.Misc.POINTER + str(global_scope.function_directory.get_temporary_address(constants.DataTypes.WHOLE))
+		result = constants.Misc.POINTER + str(global_scope.function_directory.get_temporary_address(constants.Data_Types.WHOLE))
 		global_scope.quad_list.append_quad(constants.Operators.OP_ADDITION, list_index, list_address, result)
 		
 		global_scope.pending_operands.push(result)
@@ -622,7 +622,7 @@ def p_EC_SEEN_IF_EXP(p):
 	exp_type = global_scope.pending_operand_types.pop()
 
 	#The expression should resolve to a boolean value
-	if exp_type == constants.DataTypes.BOOLEAN:
+	if exp_type == constants.Data_Types.BOOLEAN:
 		result = global_scope.pending_operands.pop()
 
 		global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO_F, result, "-1", "pending")
@@ -661,7 +661,7 @@ def p_EC_SEEN_UNTIL(p):
 	exp_type = global_scope.pending_operand_types.pop()
 
 	#The expression should resolve to a boolean value
-	if exp_type == constants.DataTypes.BOOLEAN:
+	if exp_type == constants.Data_Types.BOOLEAN:
 		evaluation_result = global_scope.pending_operands.pop()
 		loop_start = global_scope.pending_jumps.pop()
 
@@ -716,13 +716,13 @@ def p_EC_SEEN_EXPRESSION(p):
 		operator = global_scope.pending_operators.pop()
 
 		#Negation only applies to boolean type
-		if left_type == constants.DataTypes.BOOLEAN:
-			result = global_scope.function_directory.get_temporary_address(constants.DataTypes.BOOLEAN)
+		if left_type == constants.Data_Types.BOOLEAN:
+			result = global_scope.function_directory.get_temporary_address(constants.Data_Types.BOOLEAN)
 
 			global_scope.quad_list.append_quad(operator, left_operand, "-1", result)
 
 			global_scope.pending_operands.push(result)
-			global_scope.pending_operand_types.push(constants.DataTypes.BOOLEAN)
+			global_scope.pending_operand_types.push(constants.Data_Types.BOOLEAN)
 		else:
 			stop_exec("Negation operator can only be applied to 'boolean' expression, found '%s' expression" % left_type)
 
@@ -752,7 +752,7 @@ def p_EC_SEEN_RETURN(p):
 	block_return_type = global_scope.function_directory.get_return_type_for_block(global_scope.current_block_id)
 
 	#blocks should only return when stated in the definition
-	if block_return_type != constants.DataTypes.VOID:
+	if block_return_type != constants.Data_Types.VOID:
 		return_type = global_scope.pending_operand_types.pop()
 
 		#Validates return value with the block definition
@@ -854,10 +854,10 @@ def abstract_seen_block_id(p, returns_value):
 
 		#Validate the return type with usage
 		if not returns_value:
-			if call_block_return_type != constants.DataTypes.VOID:
+			if call_block_return_type != constants.Data_Types.VOID:
 				stop_exec("Block '%s' returns a '%s' value, but is not being assigned to anything" % (call_block_id, call_block_return_type))
 		else:
-			if call_block_return_type == constants.DataTypes.VOID:
+			if call_block_return_type == constants.Data_Types.VOID:
 				stop_exec("Block '%s' does not return a value" % call_block_id)
 	else:
 		stop_exec("Block '%s' does not exist or is declared below block '%s'" % (call_block_id, global_scope.current_block_id))
@@ -898,13 +898,13 @@ def push_constant_address(constant_type):
 def get_parameter_address(parameter_type):
 	local_ranges = global_scope.function_directory.memory_handler._local_ranges
 
-	if parameter_type == constants.DataTypes.WHOLE:
+	if parameter_type == constants.Data_Types.WHOLE:
 		index = 0
-	elif parameter_type == constants.DataTypes.DECIMAL:		
+	elif parameter_type == constants.Data_Types.DECIMAL:		
 		index = 1
-	elif parameter_type == constants.DataTypes.WORDS:
+	elif parameter_type == constants.Data_Types.WORDS:
 		index = 2
-	elif parameter_type == constants.DataTypes.BOOLEAN:
+	elif parameter_type == constants.Data_Types.BOOLEAN:
 		index = 3
 
 	param_counter = global_scope.pending_parameter_type_counter.pop()

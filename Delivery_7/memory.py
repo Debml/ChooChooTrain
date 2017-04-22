@@ -13,16 +13,16 @@ class Block_Memory:
 				#counter for local variables memory
 				self._local_counter = lc
 				#starting position for [whole, decimal, words, boolean] variables
-				self._local_ranges = [5000, 5500, 6000, 6500]
+				self._local_ranges = constants.Memory_Limits.LOCAL_RANGES
 				#size of each local variable partition
-				self._local_size = 500
+				self._local_size = constants.Memory_Limits.LOCAL_SIZE
 
 				#counter for temporary variable memory
 				self._temporary_counter = tc
 				#starting position for [whole, decimal, words, boolean] temporary variables
-				self._temporary_ranges = [7000, 8500, 10000, 11500]
+				self._temporary_ranges = constants.Memory_Limits.TEMPORARY_RANGES
 				#size of each temporary variable partition
-				self._temporary_size = 1500
+				self._temporary_size = constants.Memory_Limits.TEMPORARY_SIZE
 
 				#local memory array
 				self._local_whole_memory = [None]*lc[0]
@@ -180,23 +180,23 @@ class Memory_Handler:
 		#counter for local variables memory per block
 		self._local_counter = [0, 0, 0, 0]
 		#starting position for [whole, decimal, words, boolean] variables
-		self._local_ranges = [5000, 5500, 6000, 6500]
+		self._local_ranges = constants.Memory_Limits.LOCAL_RANGES
 		#size of each local variable partition
-		self._local_size = 500
+		self._local_size = constants.Memory_Limits.LOCAL_SIZE
 
 		#counter for temporary variable memory per block
 		self._temporary_counter = [0, 0, 0, 0]
 		#starting position for [whole, decimal, words, boolean] temporary variables
-		self._temporary_ranges = [7000, 8500, 10000, 11500]
+		self._temporary_ranges = constants.Memory_Limits.TEMPORARY_RANGES
 		#size of each temporary variable partition
-		self._temporary_size = 1500
+		self._temporary_size = constants.Memory_Limits.TEMPORARY_SIZE
 
 		#counter for constant memory
 		self._constant_counter = [0, 0, 0, 0]
 		#starting position for [whole, decimal, words, boolean] constants
-		self._constant_ranges = [13000, 14000, 15000, 16000]
+		self._constant_ranges = constants.Memory_Limits.CONSTANT_RANGES
 		#size of each constant partition
-		self._constant_size = 1000
+		self._constant_size = constants.Memory_Limits.CONSTANT_SIZE
 		
 	#Assign memory address of local variable/list and return it, blocks to assign is 1 for variable, list_size of lists
 	def assign_memory_address_local_variable(self, variable_type = None, blocks_to_assign = None):
@@ -205,25 +205,25 @@ class Memory_Handler:
 			#blocks_to_assign should have value
 			if blocks_to_assign is not None:
 				#memory address for whole
-				if(variable_type == constants.DataTypes.WHOLE):
+				if(variable_type == constants.Data_Types.WHOLE):
 					address = (self._local_ranges[0] + self._local_counter[0])
 					self._local_counter[0] = self._local_counter[0] + blocks_to_assign
 					return address
 
 				#memory address for decimal
-				elif(variable_type == constants.DataTypes.DECIMAL):
+				elif(variable_type == constants.Data_Types.DECIMAL):
 					address = (self._local_ranges[1] + self._local_counter[1])
 					self._local_counter[1] = self._local_counter[1] + blocks_to_assign
 					return address
 
 				#memory address for words
-				elif(variable_type == constants.DataTypes.WORDS):
+				elif(variable_type == constants.Data_Types.WORDS):
 					address = (self._local_ranges[2] + self._local_counter[2])
 					self._local_counter[2] = self._local_counter[2] + blocks_to_assign
 					return address
 
 				#memory address for boolean
-				elif(variable_type == constants.DataTypes.BOOLEAN):
+				elif(variable_type == constants.Data_Types.BOOLEAN):
 					address = (self._local_ranges[3] + self._local_counter[3])
 					self._local_counter[3] = self._local_counter[3] + blocks_to_assign
 					return address
@@ -237,25 +237,25 @@ class Memory_Handler:
 		#variable_type should have value
 		if variable_type is not None:
 			#memory address for whole
-			if(variable_type == constants.DataTypes.WHOLE):
+			if(variable_type == constants.Data_Types.WHOLE):
 				address = (self._temporary_ranges[0] + self._temporary_counter[0])
 				self._temporary_counter[0] = self._temporary_counter[0] + 1
 				return address
 
 			#memory address for decimal
-			elif(variable_type == constants.DataTypes.DECIMAL):
+			elif(variable_type == constants.Data_Types.DECIMAL):
 				address = (self._temporary_ranges[1] + self._temporary_counter[1])
 				self._temporary_counter[1] = self._temporary_counter[1] + 1
 				return address
 
 			#memory address for words
-			elif(variable_type == constants.DataTypes.WORDS):
+			elif(variable_type == constants.Data_Types.WORDS):
 				address = (self._temporary_ranges[2] + self._temporary_counter[2])
 				self._temporary_counter[2] = self._temporary_counter[2] + 1
 				return address
 
 			#memory address for boolean
-			elif(variable_type == constants.DataTypes.BOOLEAN):
+			elif(variable_type == constants.Data_Types.BOOLEAN):
 				address = (self._temporary_ranges[3] + self._temporary_counter[3])
 				self._temporary_counter[3] = self._temporary_counter[3] + 1
 				return address
@@ -269,25 +269,25 @@ class Memory_Handler:
 		#constant_type should have value
 		if constant_type is not None:
 			#memory address for constant whole
-			if(constant_type == constants.DataTypes.WHOLE):
+			if(constant_type == constants.Data_Types.WHOLE):
 				address = (self._constant_ranges[0] + self._constant_counter[0])
 				self._constant_counter[0] = self._constant_counter[0] + 1
 				return address
 
 			#memory address for constant decimal
-			elif(constant_type == constants.DataTypes.DECIMAL):
+			elif(constant_type == constants.Data_Types.DECIMAL):
 				address = (self._constant_ranges[1] + self._constant_counter[1])
 				self._constant_counter[1] = self._constant_counter[1] + 1
 				return address
 
 			#memory address for constant words
-			elif(constant_type == constants.DataTypes.WORDS):
+			elif(constant_type == constants.Data_Types.WORDS):
 				address = (self._constant_ranges[2] + self._constant_counter[2])
 				self._constant_counter[2] = self._constant_counter[2] + 1
 				return address
 
 			#memory address for constant boolean
-			elif(constant_type == constants.DataTypes.BOOLEAN):
+			elif(constant_type == constants.Data_Types.BOOLEAN):
 				address = (self._constant_ranges[3] + self._constant_counter[3])
 				self._constant_counter[3] = self._constant_counter[3] + 1
 				return address
@@ -326,28 +326,30 @@ class Program_Memory:
 						#counter for local variables memory per block
 						self._local_counter = [0, 0, 0, 0]
 						#starting position for [whole, decimal, words, boolean] variables
-						self._local_ranges = [5000, 5500, 6000, 6500]
+						self._local_ranges = constants.Memory_Limits.LOCAL_RANGES
 						#size of each local variable partition
-						self._local_size = 500
+						self._local_size = constants.Memory_Limits.LOCAL_SIZE
 
 						#counter for temporary variable memory per block
 						self._temporary_counter = [0, 0, 0, 0]
 						#starting position for [whole, decimal, words, boolean] temporary variables
-						self._temporary_ranges = [7000, 8500, 10000, 11500]
+						self._temporary_ranges = constants.Memory_Limits.TEMPORARY_RANGES
 						#size of each temporary variable partition
-						self._temporary_size = 1500
+						self._temporary_size = constants.Memory_Limits.TEMPORARY_SIZE
 
 						#stack of activation records, top of the stack holds the memory for 5000-6999 (local variables)
 						#and 7000-12999 (temporary variables) for the current block
+						#The stack is only allowed to hold 500 activations record (1 active + 499 pending)
 						self._stack_segment = structures.Stack()
 						self._stack_segment.push(starting_activation_record)
+						self._stack_segment_limit = constants.Memory_Limits.STACK_SEGMENT_SIZE
 
 						#counter for constant memory
 						self._constant_counter = cc
 						#starting position for [whole, decimal, words, boolean] constants
-						self._constant_ranges = [13000, 14000, 15000, 16000]
+						self._constant_ranges = constants.Memory_Limits.CONSTANT_RANGES
 						#size of each constant partition
-						self._constant_size = 1000
+						self._constant_size = constants.Memory_Limits.CONSTANT_SIZE
 						
 						#constant memory arrays 13000-16999
 						self._constant_whole_memory = [None]*cc[0]
@@ -360,8 +362,8 @@ class Program_Memory:
 	def get_quad_from_memory(self, index = None):
 		#index must not be empty
 		if index is not None:
-			#check if index is  valid
-			if index < 5000 and index >= 0:
+			#check if index is valid for a quad
+			if index >= 0 and index < constants.Memory_Limits.QUAD_SIZE:
 				#return quad
 				return self._quad_memory.get_quad(index)
 
@@ -506,7 +508,18 @@ class Program_Memory:
 	#adds a new activation record to the stack
 	def add_activation_record(self, activation_record = None):
 		if activation_record is not None:
-			self._stack_segment.push(activation_record)
+			if not self.stack_segment_is_full():
+				self._stack_segment.push(activation_record)
+				return True
+			else:
+				return False
+
+	#verifies that the number of activation records in the stack is not bigger than the limit
+	def stack_segment_is_full(self):
+		if self._stack_segment.size() >= self._stack_segment_limit:
+			return True
+		else:
+			return False
 
 	#Returns true if there are no more activation records on the stack
 	def stack_segment_is_empty(self):
