@@ -687,7 +687,7 @@ def p_EC_SEEN_UNTIL(p):
 		evaluation_result = global_scope.pending_operands.pop()
 		loop_start = global_scope.pending_jumps.pop()
 
-		if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO_T, evaluation_result, "-1", loop_start):
+		if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO_F, evaluation_result, "-1", loop_start):
 			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 	else:
 		stop_exec("Expected a boolean expression, found a '%s' expression instead" % exp_type)
