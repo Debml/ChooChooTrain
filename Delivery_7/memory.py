@@ -5,7 +5,7 @@ as detailed in the class"""
 import constants
 import structures
 
-"""Contains actual memory arrays to manage"""
+"""Contains the blocks of memory for local and temporary variables"""
 class Block_Memory:
 	def __init__(self, lc = None, tc = None):
 		if lc is not None:
@@ -175,6 +175,7 @@ class Block_Memory:
 
 		return (s)
 		
+'''Verifies the memory limits and assigns an address to a variable/temporary/constant'''
 class Memory_Handler:
 	def __init__(self):
 		#counter for local variables memory per block
@@ -315,15 +316,16 @@ class Memory_Handler:
 	def local_memory_is_full_for_data_type(self, data_type, blocks):
 		if data_type == constants.Data_Types.WHOLE:
 			index = 0
-		if data_type == constants.Data_Types.DECIMAL:
+		elif data_type == constants.Data_Types.DECIMAL:
 			index = 1
-		if data_type == constants.Data_Types.WORDS:
+		elif data_type == constants.Data_Types.WORDS:
 			index = 2
-		if data_type == constants.Data_Types.BOOLEAN:
+		elif data_type == constants.Data_Types.BOOLEAN:
 			index = 3
 		else:
 			return None
-
+		
+		#Takes into account the variable (or list) about to be added
 		if self._local_counter[index] + blocks > self._local_size:
 			return True
 		else:
@@ -333,15 +335,16 @@ class Memory_Handler:
 	def temporary_memory_is_full_for_data_type(self, data_type):
 		if data_type == constants.Data_Types.WHOLE:
 			index = 0
-		if data_type == constants.Data_Types.DECIMAL:
+		elif data_type == constants.Data_Types.DECIMAL:
 			index = 1
-		if data_type == constants.Data_Types.WORDS:
+		elif data_type == constants.Data_Types.WORDS:
 			index = 2
-		if data_type == constants.Data_Types.BOOLEAN:
+		elif data_type == constants.Data_Types.BOOLEAN:
 			index = 3
 		else:
 			return None
 
+		#Takes into account the temporary variable about to be added
 		if self._temporary_counter[index] + 1 > self._temporary_size:
 			return True
 		else:
@@ -351,15 +354,16 @@ class Memory_Handler:
 	def constant_memory_is_full_for_data_type(self, data_type):
 		if data_type == constants.Data_Types.WHOLE:
 			index = 0
-		if data_type == constants.Data_Types.DECIMAL:
+		elif data_type == constants.Data_Types.DECIMAL:
 			index = 1
-		if data_type == constants.Data_Types.WORDS:
+		elif data_type == constants.Data_Types.WORDS:
 			index = 2
-		if data_type == constants.Data_Types.BOOLEAN:
+		elif data_type == constants.Data_Types.BOOLEAN:
 			index = 3
 		else:
 			return None
 
+		#Takes into account the constant about to be added
 		if self._constant_counter[index] + 1 > self._constant_size:
 			return True
 		else:
@@ -378,8 +382,7 @@ class Memory_Handler:
 
 		address = self._local_ranges[index] + param_counter[index]
 		return address
-
-	
+'''Contains the quad list, the activation records, and the constant table'''
 class Program_Memory:
 	def __init__(self, quad_list = None, starting_activation_record = None, cc = None, constant_table = None):
 		if quad_list is not None:
@@ -389,15 +392,11 @@ class Program_Memory:
 						#program memory 0-4999, read only
 						self._quad_memory = quad_list	
 
-						#counter for local variables memory per block
-						self._local_counter = [0, 0, 0, 0]
 						#starting position for [whole, decimal, words, boolean] variables
 						self._local_ranges = constants.Memory_Limits.LOCAL_RANGES
 						#size of each local variable partition
 						self._local_size = constants.Memory_Limits.LOCAL_SIZE
 
-						#counter for temporary variable memory per block
-						self._temporary_counter = [0, 0, 0, 0]
 						#starting position for [whole, decimal, words, boolean] temporary variables
 						self._temporary_ranges = constants.Memory_Limits.TEMPORARY_RANGES
 						#size of each temporary variable partition

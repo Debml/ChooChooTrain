@@ -526,9 +526,9 @@ def p_EC_SEEN_CONST_LIST(p):
 
 		result = global_scope.function_directory.get_temporary_address(constants.Data_Types.WHOLE)
 
-			#Stop execution if there is no space for temporary variables
-			if result == -1:
-				stop_exec("Temporary memory is full for Data Type '%s'" % constants.Data_Types.WHOLE)
+		#Stop execution if there is no space for temporary variables
+		if result == -1:
+			stop_exec("Temporary memory is full for Data Type '%s'" % constants.Data_Types.WHOLE)
 
 		#Value in result is an address
 		result = constants.Misc.POINTER + str(result)
@@ -712,8 +712,6 @@ def p_EC_SEEN_READ_ID(p):
 	#if global_scope.function_directory.primitive_id_exists(id_to_read_into, global_scope.current_block_id):
 	if not global_scope.quad_list.append_quad(constants.Operators.OP_INPUT, input_type, "-1", id_to_read_into):
 			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
-	#else:
-		#stop_exec("ID '%s' is not declared" % id_to_read_into)
 
 #EXPRESSION action 1 - Pushes the negation operator into the operators stack
 def p_EC_SEEN_NOT(p):
@@ -926,9 +924,9 @@ def create_binary_operation_quad():
 	if result_type != -1:
 		result = global_scope.function_directory.get_temporary_address(result_type)
 
-			#Stop execution if there is no space for temporary variables
-			if result == -1:
-				stop_exec("Temporary memory is full for Data Type '%s'" % result_type)
+		#Stop execution if there is no space for temporary variables
+		if result == -1:
+			stop_exec("Temporary memory is full for Data Type '%s'" % result_type)
 
 		if not global_scope.quad_list.append_quad(operator, left_operand, right_operand, result):
 			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
