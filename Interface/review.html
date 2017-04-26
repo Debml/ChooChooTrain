@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Choo Choo Train</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js_review.js"></script>
+  <script src="js/Chart.bundle.js"></script>
+  <script src="js/utils.js"></script>
+  <style>
+    canvas {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+    }
+    </style>
+</head>
+<body onload="load_code()">
+
+<div class="jumbotron1 text-center">
+  <h1>Choo Choo Train</h1>
+  <p>Write and review code like an expert!</p> 
+</div>
+
+   <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+          <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+          <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+          <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+          <li data-target="#carousel-example-generic" data-slide-to="3"></li>
+          <li data-target="#carousel-example-generic" data-slide-to="4"></li>
+          <li data-target="#carousel-example-generic" data-slide-to="5"></li>
+        </ol>
+        <div class="carousel-inner" role="listbox" style="padding-bottom: 15px;">
+
+         <div class="item active" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
+            <div class="panel panel-default" style="max-width:700px; max-height:600;margin-left:auto; margin-right:auto;">
+              <div class="panel-heading text-center" >
+                <h3>Train Runtime</h3>
+              </div>
+                <div class="panel-body">
+                  <div class="container" >
+                      <p>
+                        <p>
+                            <h1> 32 milliseconds <span class="label label-info">total</span></h1>
+                            <img src="media/train_footer.png" style="max-width: 100%;"alt="Train">
+                        </p>
+                      </p>
+                  </div>
+                </div>
+                <div class="panel-footer text-center">Total time of program running</div>
+            </div>
+          </div>
+
+          <div class="item" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
+            <div class="panel panel-default" style="max-width:460px;margin-left:auto; margin-right:auto;">
+              <div class="panel-heading text-center" >
+                <h3>Line</h3>
+              </div>
+                <div class="panel-body" style="width: 50px;">
+                  <div class="container" >
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myLineChart" width="200" height="200"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+          </div>
+
+          <div class="item" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
+            <div class="panel panel-default" style="max-width:460px;margin-left:auto; margin-right:auto;">
+              <div class="panel-heading text-center" >
+                <h3>Doughnut</h3>
+              </div>
+                <div class="panel-body" style="width: 50px;">
+                  <div class="container" >
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myDoughnutChart" width="200" height="200"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+          </div>
+
+          <div class="item" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
+            <div class="panel panel-default" style="max-width:460px;margin-left:auto; margin-right:auto;">
+              <div class="panel-heading text-center" >
+                <h3>Stacked Area</h3>
+              </div>
+                <div class="panel-body" style="width: 50px;">
+                  <div class="container" >
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myStackedChart" width="200" height="200"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+          </div>
+
+          <div class="item" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
+            <div class="panel panel-default" style="max-width:460px;margin-left:auto; margin-right:auto;">
+              <div class="panel-heading text-center" >
+                <h3>Polar Area</h3>
+              </div>
+                <div class="panel-body" style="width: 50px;">
+                  <div class="container" >
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myPolarChart"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+          </div>
+
+          <div class="item" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
+            <div class="panel panel-default" style="max-width:460px;margin-left:auto; margin-right:auto;">
+              <div class="panel-heading text-center" >
+                <h3>Bubble Chart</h3>
+              </div>
+                <div class="panel-body" style="width: 50px;">
+                  <div class="container" >
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myBubbleChart" width="200" height="200"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+          </div>
+
+
+          </div>
+        <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev" style="
+  margin-bottom: 15px;" >
+          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next" style="
+  margin-bottom: 15px;" >
+          <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+
+</body>
+</html>

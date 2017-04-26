@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Choo Choo Train</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js_runtime.js"></script>
+</head>
+<body onload="load_code()">
+
+<div class="jumbotron text-center">
+  <h1>Choo Choo Train</h1>
+  <p>Write and review code like an expert!</p> 
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-7" id="code-column">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2>Blocks Running...</h2>
+        </div>
+        <div class="panel-body" id="code-running" style="white-space: pre-wrap">
+          <p>Code here</p> 
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-5">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2>Input</h2>
+        </div>
+        <div class="panel-body">
+          <textarea class="form-control" rows="3" id="input-text" placeholder="Input goes here" disabled></textarea> 
+          <p>
+            <div class="row">
+              <div class="col-sm-9">
+              </div>
+              <div class="col-sm-3">
+                  <button class="btn btn-primary btn-md" id="send-input-button" href="#" role="button" onclick="send_input()">Send</button>
+              </div>
+            </div>
+          </p>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2>Output</h2>
+        </div>
+        <div class="panel-body">
+          <textarea class="form-control" rows="3" id="output-text" placeholder="Output goes here" readonly></textarea> 
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+</body>
+</html>
