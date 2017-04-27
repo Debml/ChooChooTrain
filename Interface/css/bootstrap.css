@@ -1089,6 +1089,17 @@ body {
   color: #333;
   background-color: #fff;
 }
+.footer {
+  position: absolute;
+  text-align: center;
+  padding-top: 5px;
+  padding-bottom: 5 px;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 30px;
+  background-color: #f5f5f5;
+}
 input,
 button,
 select,
@@ -1594,13 +1605,13 @@ pre code {
 }
 
 .chart-demo {
-  width: 334px;
+  width: 280px;
 }
 
 .chart-demo1 {
-  width: 288px;
+  width: 234px;
   text-align: center;
-  margin-left: 50px;
+  margin-left: 45px;
 }
 
 @media (min-width: 768px) {

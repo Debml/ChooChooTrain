@@ -1,7 +1,6 @@
 var DEFAULT_DATASET_SIZE = 7;
 var myLineChart, myDoughnutChart, myStackedChart, myPolarChart, myBubbleChart;
 
-
 var randomScalingFactor = function() {
         return Math.round(Math.random() * 100);
     };

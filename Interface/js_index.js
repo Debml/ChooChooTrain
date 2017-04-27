@@ -121,14 +121,21 @@ function compile_code() {
 
     //user wrote code (blocks were created)
     if(finished_code != "-1") {
-        //build json from code
-        var data_js = JSON.stringify({"code":finished_code});
+        var clean_string = finished_code.replace(/[^a-zA-Z ]/g, "");
+        if( clean_string.replace(/\s/g,'') == ""){
+            create_bootstrap_alert("Write code to compile! ","You can add a block or upload a file.");
+        }
 
-        //send ajax post request
-        post_request_ajax(compilerURI,data_js);
+        else{
+            //build json from code
+            var data_js = JSON.stringify({"code":finished_code});
+
+            //send ajax post request
+            post_request_ajax(compilerURI,data_js);
+        }
     }
   }
-
+  
   //get code from file
   else {
     if(file_text != "-1"){
@@ -150,7 +157,7 @@ function get_code(){
     var finished_code = "";
     //blocks must exist
     if(block_counter > 0){
-        var name_id, code_id, name_block, code_block, name, block;
+        var name_id, code_id, name_block, code_block, name, block, temp;
 
         //iterate through blocks
         for(var i = 1; i <= block_counter;i++){
@@ -164,16 +171,21 @@ function get_code(){
             code = code_block.value;
 
             name = name + "\n";
-            finished_code = finished_code + name + code + "\n\n";
-        }
+            temp = name + code;
 
+            //only grabs blocks with code
+            var clean_string = temp.replace(/[^a-zA-Z ]/g, "");
+            if( clean_string.replace(/\s/g,'') != ""){
+                finished_code = finished_code + temp +  "\n\n";
+            }
+        }
         return finished_code;
     }
 
     else {
         //call alert function
         if(!file_upload) {
-            create_bootstrap_alert("ERROR",": File contents not read");
+            create_bootstrap_alert("Write code to compile! ","You can add a block or upload a file.");
             return "-1";
         }
     }
