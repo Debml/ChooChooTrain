@@ -247,7 +247,6 @@ function create_bubble_chart(currentIndex){
             tooltips: {
                 mode: 'point'
             }
-            
         }
     });
     destroy_chart(currentIndex);
@@ -437,17 +436,9 @@ function create_stacked_chart(currentIndex){
         },
         scales: {
         xAxes: [{
-            scaleLabel: {
-            display: true,
-            labelString: 'Month'
-            }
         }],
         yAxes: [{
             stacked: true,
-            scaleLabel: {
-            display: true,
-            labelString: 'Value'
-            }
         }]
         }
     }

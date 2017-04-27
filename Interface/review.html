@@ -37,7 +37,7 @@
         <div class="carousel-inner" role="listbox" style="padding-bottom: 15px;">
 
          <div class="item active" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
-            <div class="panel panel-default" style="max-width:700px; max-height:600;margin-left:auto; margin-right:auto;">
+            <div class="panel panel-default" style="max-width:460px; max-height:600;margin-left:auto; margin-right:auto;">
               <div class="panel-heading text-center" >
                 <h3>Train Runtime</h3>
               </div>
@@ -45,8 +45,46 @@
                   <div class="container" >
                       <p>
                         <p>
-                            <h1> 32 milliseconds <span class="label label-info">total</span></h1>
-                            <img src="media/train_footer.png" style="max-width: 100%;"alt="Train">
+                          
+                            <div class="chart-demo1">
+                            <h3>32 milliseconds</h3>
+                            <canvas id="timeChart" width="200" height="200"></canvas>
+                            <script>
+                              var ctx = document.getElementById("timeChart").getContext("2d");
+                              ctx.canvas.width = 20;
+                              ctx.canvas.height = 20;
+                              timeChart = new Chart(ctx, {
+                              type: 'doughnut',
+                              data: {
+                                  datasets: [{
+                                      data: [
+                                          32,
+                                      ],
+                                      backgroundColor: [
+                                          window.chartColors.red,
+                                      ],
+                                  }],
+                                  labels: [
+                                      "Total Runtime",
+                                  ]
+                              },
+                              options: {
+                                  responsive: true,
+                                  legend:{
+                                    display: false
+                                  },
+                                  layout: {
+                                    padding: 23
+                                  },
+                                  
+                                  animation: {
+                                      animateScale: true,
+                                      animateRotate: true
+                                  }
+                              }
+                            });
+                          </script>
+                          </div>
                         </p>
                       </p>
                   </div>
@@ -61,7 +99,7 @@
                 <h3>Line</h3>
               </div>
                 <div class="panel-body" style="width: 50px;">
-                  <div class="container" >
+                  <div class="container" style="padding-left: 45px;">
                       <p>
                         <p>
                         <div class="chart-demo">
@@ -71,6 +109,7 @@
                       </p>
                   </div>
                 </div>
+               <div class="panel-footer text-center">Field description here</div>
             </div>
           </div>
 
@@ -80,7 +119,7 @@
                 <h3>Doughnut</h3>
               </div>
                 <div class="panel-body" style="width: 50px;">
-                  <div class="container" >
+                  <div class="container" style="padding-left: 45px;">
                       <p>
                         <p>
                         <div class="chart-demo">
@@ -90,6 +129,7 @@
                       </p>
                   </div>
                 </div>
+                <div class="panel-footer text-center">Field description here</div>
             </div>
           </div>
 
@@ -99,7 +139,7 @@
                 <h3>Stacked Area</h3>
               </div>
                 <div class="panel-body" style="width: 50px;">
-                  <div class="container" >
+                  <div class="container" style="padding-left: 45px;">
                       <p>
                         <p>
                         <div class="chart-demo">
@@ -109,6 +149,7 @@
                       </p>
                   </div>
                 </div>
+                <div class="panel-footer text-center">Field description here</div>
             </div>
           </div>
 
@@ -118,7 +159,7 @@
                 <h3>Polar Area</h3>
               </div>
                 <div class="panel-body" style="width: 50px;">
-                  <div class="container" >
+                  <div class="container" style="padding-left: 45px;">
                       <p>
                         <p>
                         <div class="chart-demo">
@@ -128,6 +169,7 @@
                       </p>
                   </div>
                 </div>
+                <div class="panel-footer text-center">Field description here</div>
             </div>
           </div>
 
@@ -137,7 +179,7 @@
                 <h3>Bubble Chart</h3>
               </div>
                 <div class="panel-body" style="width: 50px;">
-                  <div class="container" >
+                  <div class="container" style="padding-left: 45px;">
                       <p>
                         <p>
                         <div class="chart-demo">
@@ -147,6 +189,7 @@
                       </p>
                   </div>
                 </div>
+              <div class="panel-footer text-center">Field description here</div>
             </div>
           </div>
 

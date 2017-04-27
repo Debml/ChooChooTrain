@@ -1594,7 +1594,13 @@ pre code {
 }
 
 .chart-demo {
-  width: 375px;
+  width: 334px;
+}
+
+.chart-demo1 {
+  width: 288px;
+  text-align: center;
+  margin-left: 50px;
 }
 
 @media (min-width: 768px) {
