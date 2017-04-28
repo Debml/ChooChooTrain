@@ -14,9 +14,12 @@ if(len(sys.argv) < 2):
 else:
     file_name = sys.argv[1]
 
+compilation_time = time.time() - start_time
+
 parser.start_compilation(file_name)
 virtual_machine.start_execution()
 
 #finished execution
 execution_time = time.time() - global_scope.timer_counter - start_time
+print compilation_time, "seconds"
 print execution_time, "seconds"

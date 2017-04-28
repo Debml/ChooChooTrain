@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" style="position: relative; min-height: 100%;">
+<head>
+  <title>Choo Choo Train Compiler</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link href="css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+  <script src="js/jquery.min.js"></script>
+  <script src="js/fileinput.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js_index.js"></script>
+</head>
+<body style="margin-bottom: 30px;">
+
+<div class="jumbotron text-center">
+  <h1>Choo Choo Train Compiler</h1>
+  <p>Write and review code like an expert!</p> 
+</div>
+  
+<div class="container">
+  <div class="row">
+    <div class="col-sm-7" id="code-column">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2>Code with blocks</h2>
+        </div>
+        <div class="panel-body">
+          <ul class="list-group" id="block-list">
+          </ul>
+          <div class="container">
+                <p><button class="btn btn-primary btn-lg" id="add-block-button" href="#" role="button" onclick="add_block()">Add Block</button></p>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4>Or upload a file with code</h4>
+            <input id="input-4" name="input4[]" type="file" multiple class="file-loading">
+            <script>
+            $(document).on('ready', function() {
+                $("#input-4").fileinput({
+                  showUpload: false,
+                  showCaption: false,
+                  maxFileCount: 1
+                });
+            });
+            </script>
+        </div>
+        </div>
+    </div>
+    <div class="col-sm-5">
+      <div class="jumbotron" style="margin-bottom:5px;">
+        <h1>When ready...</h1>
+        <p class="lead">It is time to compile and run the code.</p>
+        <p>
+          <a class="btn btn-lg btn-success" href="#" role="button" onclick="compile_code()">Compile code</a>
+          </p>
+      </div>
+        <button class="btn btn-link btn-med pull-right" id="add-block-button" role="button" data-toggle="modal" data-target="#myModal">User manual</button>
+    </div>
+  </div>
+
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Choo Choo Train User Manual</h4>
+        </div>
+        <div class="modal-body">
+          <p>Code help and documentation.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

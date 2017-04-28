@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" style="position: relative; min-height: 100%;">
+<head>
+  <title>Choo Choo Train</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.viewportchecker.min.js"></script>
+  <script type="text/javascript" src="js_runtime.js"></script>
+  <script src="js/Chart.bundle.js"></script>
+  <style>
+    canvas {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+    }
+    </style>
+</head>
+<body onload="load_code()" style="margin-bottom: 30px;">
+<div class="jumbotron text-center" style="margin-bottom: 0px; padding-bottom:17px;">
+  <h1>Choo Choo Train</h1>
+  <p style="margin-bottom:12px;">Write and review code like an expert!</p> 
+  <button class="btn btn-med" id="restart-button" href="#" role="button" onclick="restart()">Start again</button>
+</div>
+
+<ul class="nav nav-tabs nav-justified" id="pills-tab">
+  <li class="active"><a data-toggle="tab" href="#code" style="margin-bottom: 10px; margin-top: 10px;">Code</a></li>
+  <li><a id="review-tab" href="#review"style="margin-bottom: 10px; margin-top:0px;" data-toggle="tooltip" title="Code must finish running first">Review</a></li>
+</ul>
+
+<div class="tab-content" style="margin-bottom:15px;">
+  <div id="code" class="tab-pane fade in active">
+    <div class="container" id="code-container" style="margin-top:10px;">
+      <div class="row">
+        <div class="col-sm-7" id="code-column">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>Code</h2>
+            </div>
+            <div class="panel-body" id="code-running" style="white-space: pre-wrap">
+              <p>Code here</p> 
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-5">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h2>Input</h2>
+            </div>
+            <div class="panel-body">
+              <textarea class="form-control" rows="3" id="input-text" placeholder="Input goes here" disabled></textarea> 
+              <p>
+                <div class="row">
+                  <div class="col-sm-9">
+                  </div>
+                  <div class="col-sm-3">
+                      <button class="btn btn-primary btn-md" id="send-input-button" href="#" role="button" onclick="send_input()">Send</button>
+                  </div>
+                </div>
+              </p>
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h2>Output</h2>
+            </div>
+            <div class="panel-body">
+              <textarea class="form-control" rows="3" id="output-text" placeholder="Output goes here" readonly></textarea> 
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+
+  </div>
+
+  <div id="review" class="tab-pane fade">
+    <div class="container marketing text-center" style="margin-top:30px;">
+      <!-- Three columns of text below the carousel -->
+      <div class="row">
+        <div class="col-lg-4 text-center" style="margin-bottom:15px;">
+          <img class="img-circle" src="media/graph1.png" alt="Graph1" width="140" height="140">
+          <p><h2>Total Runtime</h2></p>
+          <p style="margin-left:20px; margin-right:20px;">Check how long it took your code to compile and run from start to finish. The faster your code finishes, the more efficient it is. Getting to your destination fast is important.
+            </p>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 text-center" style="margin-bottom:15px;">
+          <img class="img-circle" src="media/graph2.png" alt="Graph2" width="140" height="140">
+          <p><h2>Code Behavior</h2></p>
+          <p style="margin-left:20px; margin-right:20px;">Check how your code is behaving. Are all variables being used? Which ones are used the most? From how many steps your code generates, to how many loops were made, knowing how code behaves is important.</p>
+         </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 text-center" style="margin-bottom:15px;">
+          <img class="img-circle" src="media/graph3.png" alt="Graph3" width="140" height="140">
+          <p><h2>Memory Usage</h2></p>
+          <p style="margin-left:20px; margin-right:20px;">How much memory you use ends up taking a toll on code performance. Check how 
+            many variables each block uses, sometimes the blocks with the most memory usage are the ones we least expect.</p>
+          </div><!-- /.col-lg-4 -->
+      </div><!-- /.row -->
+      <div class="container">
+        <p><a class="btn btn-default" href="#row1" role="button" style="margin-top:20px;">Review Code &raquo;</a></p>
+      </div>
+
+      <!-- START THE FEATURETTES -->
+
+      <hr class="featurette-divider" id="row1">
+
+      <div class="row featurette">
+        <div class="col-md-5">
+          <h2 class="featurette-heading">Runtime</h2>
+          <p class="lead" id="runtime-info">Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.</p>
+        </div>
+        <div class="col-md-7">
+          <div class="panel panel-default" style="max-width:500px; max-height:600;margin-left:auto; margin-right:auto;">
+                <div class="panel-body">
+                  <div class="container" >
+                      <p>
+                        <p>
+                          <div class="chart-demo1">
+                            <h3 id="label-seconds">32 seconds</h3>
+                            <canvas id="timeChart" width="500" height="500"></canvas>
+                          </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5 col-md-push-7">
+          <h2 class="featurette-heading">Line Chart</h2>
+          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna.</p>
+        </div>
+        <div class="col-md-7 col-md-pull-5">
+          <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px; height:430px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myLineChart" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5">
+          <h2 class="featurette-heading">Doughnut Chart</h2>
+          <p class="lead">Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.</p>
+        </div>
+        <div class="col-md-7">
+          <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px; height:430px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myDoughnutChart" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5 col-md-push-7">
+          <h2 class="featurette-heading">Stacked Area Chart</h2>
+          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna.</p>
+        </div>
+        <div class="col-md-7 col-md-pull-5">
+            <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px; height:430px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myStackedChart" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5">
+          <h2 class="featurette-heading">Polar Chart</h2>
+          <p class="lead">Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.</p>
+        </div>
+        <div class="col-md-7">
+            <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px; height:430px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myPolarChart" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5 col-md-push-7">
+          <h2 class="featurette-heading">Bubble Area Chart</h2>
+          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna.</p>
+        </div>
+        <div class="col-md-7 col-md-pull-5">
+            <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px; height:430px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myBubbleChart" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
