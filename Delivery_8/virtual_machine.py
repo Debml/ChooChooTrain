@@ -118,6 +118,9 @@ def binary_arithmetic_operation(operator, current_instruction):
     left_operand_value = global_scope.program_memory.read_from_memory(left_operand_address)
     right_operand_value = global_scope.program_memory.read_from_memory(right_operand_address)
 
+    if left_operand_value == None or right_operand_value == None:
+        stop_exec("Variable does not have a value")
+
     #Does the corresponding operation based on the operator
     if operator == constants.Operators.OP_ADDITION:
         result_value = left_operand_value + right_operand_value
@@ -158,6 +161,9 @@ def assign_operation(current_instruction):
 
         value_to_assign = global_scope.program_memory.read_from_memory(value_to_assign_address)
 
+        if value_to_assign == None:
+            stop_exec("Variable does not have a value")
+
     global_scope.program_memory.write_to_memory(value_to_assign, assignee_address)
 
     global_scope.instruction_pointer += 1
@@ -170,6 +176,9 @@ def binary_boolean_operation(operator, current_instruction):
 
     left_operand_value = global_scope.program_memory.read_from_memory(left_operand_address)
     right_operand_value = global_scope.program_memory.read_from_memory(right_operand_address)
+
+    if left_operand_value == None or right_operand_value == None:
+        stop_exec("Variable does not have a value")
 
     #Does the corresponding operation based on the operator
     if operator == constants.Operators.OP_GREATER:
@@ -202,6 +211,9 @@ def negation_operation(current_instruction):
 
     left_operand_value = global_scope.program_memory.read_from_memory(left_operand_address)
 
+    if left_operand_value == None:
+        stop_exec("Variable does not have a value")
+
     result_value = not left_operand_value
 
     global_scope.program_memory.write_to_memory(result_value, result_address)
@@ -215,6 +227,9 @@ def verify_index_operation(current_instruction):
 
     index_value = global_scope.program_memory.read_from_memory(index_address)
 
+    if index_value == None:
+        stop_exec("Variable does not have a value")
+
     if index_value >= 0 and index_value < array_size:
         global_scope.instruction_pointer += 1
     else:
@@ -224,6 +239,9 @@ def verify_index_operation(current_instruction):
 def print_operation(current_instruction):
     expression_to_print_address = current_instruction.get_left_operand()
     expression_to_print_value = global_scope.program_memory.read_from_memory(expression_to_print_address)
+
+    if expression_to_print_value == None:
+        stop_exec("Variable does not have a value")
 
     print expression_to_print_value
 
@@ -257,6 +275,8 @@ def go_to_operation(operator, current_instruction):
         evaluation_address = current_instruction.get_left_operand()
         evaluation_result = global_scope.program_memory.read_from_memory(evaluation_address)
 
+        if evaluation_result == None:
+            stop_exec("Variable does not have a value")
 
         #If evaluation_result resolves to true, go to the given instruction
         if evaluation_result:
@@ -267,6 +287,9 @@ def go_to_operation(operator, current_instruction):
     elif operator == constants.Operators.OP_GO_TO_F:
         evaluation_address = current_instruction.get_left_operand()
         evaluation_result = global_scope.program_memory.read_from_memory(evaluation_address)
+
+        if evaluation_result == None:
+            stop_exec("Variable does not have a value")
 
         #If evaluation_result resolves to false, go to the given instruction
         if not evaluation_result:
@@ -296,6 +319,9 @@ def param_operation(current_instruction):
     parameter_address = current_instruction.get_result()
 
     argument_value = global_scope.program_memory.read_from_memory(argument_address)
+
+    if argument_value == None:
+        stop_exec("Variable does not have a value")
 
     #write the argument value from the current activation record into the one that is being constructed
     global_scope.temp_activation_record.get_block_memory().write_to_local_memory(argument_value, parameter_address)
