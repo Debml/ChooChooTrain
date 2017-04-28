@@ -233,7 +233,7 @@ def verify_index_operation(current_instruction):
     if index_value >= 0 and index_value < array_size:
         global_scope.instruction_pointer += 1
     else:
-        stop_exec("Array index out of bounds")
+        stop_exec("Array index '%i' is out of bounds" % index_value)
 
 #Prints to console
 def print_operation(current_instruction):
@@ -402,7 +402,10 @@ def value_is_address(value):
         return True
     #if value can't be casted to int, then it is a function
     except ValueError:
-        return False
+        if str(value)[0] == "*" or str(value)[0] == "&":
+            return True
+        else:
+            return False
 
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message

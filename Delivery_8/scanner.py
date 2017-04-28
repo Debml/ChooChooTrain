@@ -73,7 +73,7 @@ def t_cst_words(t):
     t.type = reserved.get(t.value, 'cst_words')
     return t
 def t_cst_boolean(t):
-    r'true|false'
+    r'True|False'
     t.type = reserved.get(t.value, 'cst_boolean')
     return t     
 def t_id(t): 

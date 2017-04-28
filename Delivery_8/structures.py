@@ -27,7 +27,7 @@ class Semantic_Cube:
 		whole_whole_valid_operators.insert(constants.Operators.OP_ADDITION, constants.Data_Types.WHOLE)
 		whole_whole_valid_operators.insert(constants.Operators.OP_SUBTRACTION, constants.Data_Types.WHOLE)
 		whole_whole_valid_operators.insert(constants.Operators.OP_MULTIPLICATION, constants.Data_Types.WHOLE)
-		whole_whole_valid_operators.insert(constants.Operators.OP_DIVISION, constants.Data_Types.DECIMAL)
+		whole_whole_valid_operators.insert(constants.Operators.OP_DIVISION, constants.Data_Types.WHOLE)
 
 		whole_whole_valid_operators.insert(constants.Operators.OP_LESS, constants.Data_Types.BOOLEAN)
 		whole_whole_valid_operators.insert(constants.Operators.OP_LESS_EQUAL, constants.Data_Types.BOOLEAN)
@@ -76,9 +76,12 @@ class Semantic_Cube:
 		#bool-bool
 		bool_valid_operators = Dictionary()
 		bool_valid_operators.insert(constants.Operators.OP_AND, constants.Data_Types.BOOLEAN)
-		bool_valid_operators.insert(constants.Operators.OP_OR, constants.Data_Types.BOOLEAN)		
-		bool_valid_operators.insert(constants.Operators.OP_NEGATION, constants.Data_Types.BOOLEAN)	
-		bool_valid_operators.insert(constants.Operators.OP_ASSIGN, constants.Data_Types.BOOLEAN)	
+		bool_valid_operators.insert(constants.Operators.OP_OR, constants.Data_Types.BOOLEAN)
+		bool_valid_operators.insert(constants.Operators.OP_NEGATION, constants.Data_Types.BOOLEAN)
+		bool_valid_operators.insert(constants.Operators.OP_ASSIGN, constants.Data_Types.BOOLEAN)
+		bool_valid_operators.insert(constants.Operators.OP_EQUAL, constants.Data_Types.BOOLEAN)	
+		bool_valid_operators.insert(constants.Operators.OP_NOT_EQUAL, constants.Data_Types.BOOLEAN)	
+
 
 		#insert operator depth
 		dictionary_whole.insert(constants.Data_Types.WHOLE, whole_whole_valid_operators)

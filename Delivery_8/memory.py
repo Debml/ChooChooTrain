@@ -468,7 +468,7 @@ class Program_Memory:
 					return value
 
 				#read from constant table
-				elif address >= self._constant_ranges[0] and address < (self._constant_ranges[3] + self._constant_counter[3] - 1):
+				elif address >= self._constant_ranges[0] and address < (self._constant_ranges[3] + self._constant_size):
 					#add memory to constant
 					value = self._read_from_constant_memory(address)
 					return value
