@@ -1,0 +1,17 @@
+starting block main
+{
+    variable n, result of type whole;
+
+    n = 10;
+
+    result = 1;
+
+    if(n > 0){
+        do {
+            result = n * result;
+            n = n - 1;
+        } until(n < 1)
+    }
+
+    print(result);
+}

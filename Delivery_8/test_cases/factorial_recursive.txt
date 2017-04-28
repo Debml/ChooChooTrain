@@ -1,0 +1,16 @@
+block recursiveFactorial
+receives : n of type whole
+returns whole
+{
+    if(n == 0){
+        return 1;
+    }
+    else{
+        return n * recursiveFactorial(n-1);
+    }
+}
+
+starting block main
+{
+    print(recursiveFactorial(10));
+}

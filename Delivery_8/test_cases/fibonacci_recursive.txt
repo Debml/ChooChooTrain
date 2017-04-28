@@ -14,9 +14,7 @@ returns whole
 starting block main
 {
 	variable n of type whole;
-
-	print("Calculate Nth fibonacci number:");
-	input(n);
+	n = 30;
 
 	print(recursiveFibonacci(n));
 }
