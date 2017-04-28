@@ -1,31 +1,482 @@
 // counts number of blocks written
 var block_counter = 0;
+var addedCount = 0;
 var code = "Code not loaded";
 var DEFAULT_DATASET_SIZE = 7;
-var myLineChart, myDoughnutChart, myStackedChart, myPolarChart, myBubbleChart;
 var finished_running = false;
+var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var view_code = -1;
 
 var randomScalingFactor = function() {
         return Math.round(Math.random() * 100);
     };
 
-$(document).ready(function(){    
+chartColors = {
+	red: 'rgb(255, 99, 132)',
+    red_alpha: "rgba(255, 99, 132, 0.5)",
+    red_alpha_high: "rgba(255, 99, 132, 0.7)",
+	orange: 'rgb(255, 159, 64)',
+    orange_alpha: "rgba(255, 159, 64,0.5)",
+    orange_alpha_high: "rgba(255, 159, 64,0.7)",
+	yellow: 'rgb(255, 205, 86)',
+    yellow_alpha: "rgba(255, 205, 86,0.5)",
+    yellow_alpha_high: "rgba(255, 205, 86,0.7)",
+	green: 'rgb(75, 192, 192)',
+    green_alpha: "rgba(75, 192, 192,0.5)",
+    green_alpha_high: "rgba(75, 192, 192,0.7)",
+	blue: 'rgb(54, 162, 235)',
+    blue_alpha:"rgba(54, 162, 235,0.5)",
+    blue_alpha_high:"rgba(54, 162, 235,0.7)",
+	purple: 'rgb(153, 102, 255)',
+    purple_alpha: "rgba(153, 102, 255,0.5)",
+    purple_alpha_high: "rgba(153, 102, 255,0.7)",
+	grey: 'rgb(231,233,237)',
+    grey_alpha: "rgba(231,233,237,0.5)",
+    grey_alpha_high: "rgba(231,233,237,0.7)",
+};
+
+//config for time chart
+var time_config = { type: 'doughnut',
+                    data: {
+                        datasets: [{
+                            data: [
+                                32,
+                            ],
+                            backgroundColor: [
+                                chartColors.red,
+                            ],
+                        }],
+                        labels: [
+                            "Total Runtime",
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        legend:{
+                        display: false
+                        },
+                        layout: {
+                        padding: 23
+                        },
+                        
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true
+                        }
+                    }
+                };
+
+var line_config =  {
+        type: 'line',
+        data: {
+            labels: ["January", "February", "March", "April", "May", "June", "July"],
+            datasets: [
+                {
+                    label: "Time",
+                    fill: false,
+                    lineTension: 0.2,
+                    backgroundColor: "rgba(255,99,132,0.4)",
+                    borderColor: window.chartColors.red,
+                    borderCapStyle: 'butt',
+                    borderDash: [5, 5],
+                    borderDashOffset: 0.0,
+                    borderJoinStyle: 'miter',
+                    pointBorderColor: "rgba(255,99,132,0.4)",
+                    pointBackgroundColor: "#fff",
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: window.chartColors.red,
+                    pointHoverBorderColor: window.chartColors.red,
+                    pointHoverBorderWidth: 2,
+                    pointRadius: 1,
+                    pointHitRadius: 10,
+                    data: [5, 19, 30, 31, 23, 25, 15],
+                    spanGaps: false,
+                }
+            ]
+        },
+        options: {
+                responsive: true,
+                legend: {
+                    position: 'right',
+                    fullWidth: false,
+                    labels: {
+                        boxWidth: 15
+                    }
+                },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+    };
+
+var bubbleChartData = {
+    animation: {
+        duration: 10000
+    },
+    datasets: [{
+        label: "Block1",
+        backgroundColor: window.chartColors.red_alpha,
+        borderColor: window.chartColors.red,
+        borderWidth: 2,
+        data: [{
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }]
+    }, {
+        label: "Block2",
+        backgroundColor: window.chartColors.blue_alpha,
+        borderColor: window.chartColors.blue,
+        borderWidth: 2,
+        data: [{
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }]
+    }, {
+        label: "Block3",
+        backgroundColor: window.chartColors.green_alpha,
+        borderColor: window.chartColors.green,
+        borderWidth: 2,
+        data: [{
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }, {
+            x: randomScalingFactor(),
+            y: randomScalingFactor(),
+            r: Math.abs(randomScalingFactor()) / 5,
+        }]
+    }]
+};
+
+var bubble_config = { type: 'bubble',
+                    data: bubbleChartData,
+                    options: {
+                        layout: {
+                        padding: 10,
+                        },
+                        responsive: true,
+                        legend: {
+                        position: 'right',
+                        fullWidth: false,
+                        labels: {
+                            boxWidth: 15
+                        }
+                        },
+                        tooltips: {
+                            mode: 'point'
+                        }
+                    }
+                };
+var polar_config = {
+        data: {
+            datasets: [{
+                data: [
+                    60,
+                    22,
+                    56,
+                    70,
+                    30,
+                    50,
+                    12,
+                    63,
+                    45,
+                    50,
+                ],
+                backgroundColor: [
+                    window.chartColors.red_alpha_high,
+                    window.chartColors.orange_alpha_high,
+                    window.chartColors.yellow_alpha_high,
+                    window.chartColors.green_alpha_high,
+                    window.chartColors.blue_alpha_high,
+                    window.chartColors.red_alpha_high,
+                    window.chartColors.orange_alpha_high,
+                    window.chartColors.yellow_alpha_high,
+                    window.chartColors.green_alpha_high,
+                    window.chartColors.blue_alpha_high
+                ],
+            }],
+            labels: [
+                "var1",
+                "var2",
+                "var3",
+                "var4",
+                "var5",
+                "list1",
+                "list2",
+                "list3",
+                "list4",
+                "list5"
+            ]
+        },
+        options: {
+            responsive: true,
+            legend: {
+                position: 'right',
+                fullWidth: false,
+                labels: {
+                    boxWidth: 15
+                }
+            },
+            scale: {
+            ticks: {
+                beginAtZero: true
+            },
+            reverse: false
+            },
+            animation: {
+                animateRotate: false,
+                animateScale: true
+            }
+        }
+    };
+
+var stacked_config = {
+    type: 'line',
+    data: {
+        labels: ["January", "February", "March", "April", "May", "June", "July"],
+        datasets: [{
+        label: "Block1",
+        borderColor: window.chartColors.red,
+        backgroundColor: window.chartColors.red,
+        data: [
+                        20, 
+                        120, 
+                        0, 
+                        -30, 
+                        -90, 
+                        33, 
+                        149
+                    ],
+        }, {
+        label: "Block2",
+        borderColor: window.chartColors.blue,
+        backgroundColor: window.chartColors.blue,
+        data: [
+                        -20, 
+                        20, 
+                        10, 
+                        0, 
+                        90, 
+                        133, 
+                        9
+                    ],
+        }, {
+        label: "Block3",
+        borderColor: window.chartColors.green,
+        backgroundColor: window.chartColors.green,
+        data: [
+                        -110, 
+                        -66, 
+                        -122, 
+                        100, 
+                        0, 
+                        11, 
+                        39
+                    ],
+        }]
+    },
+    options: {
+        responsive: true,
+        title:{
+        display:false,
+        text:"Chart.js Line Chart - Stacked Area"
+        },
+        legend: {
+            position: 'right',
+            fullWidth: false,
+            labels: {
+                boxWidth: 15
+            }
+        },
+        tooltips: {
+        mode: 'index',
+        },
+        hover: {
+        mode: 'index'
+        },
+        scales: {
+        xAxes: [{
+        }],
+        yAxes: [{
+            stacked: true,
+        }]
+        }
+    }
+};
+
+var doughnut_config = {
+    type: 'doughnut',
+    data: {
+        datasets: [{
+            data: [
+                10,
+                20,
+                70,
+            ],
+            backgroundColor: [
+                window.chartColors.red,
+                window.chartColors.orange,
+                window.chartColors.yellow,
+            ],
+            label: 'Dataset 1'
+        }],
+        labels: [
+            "Block1",
+            "Block2",
+            "Block3",
+        ]
+    },
+    options: {
+        responsive: true,
+        legend: {
+            position: 'right',
+            fullWidth: false,
+            labels: {
+                        boxWidth: 15
+                    }
+        },
+        animation: {
+            animateScale: true,
+            animateRotate: true
+        }
+    }
+};
+
+$(document).ready(function(){   
     $('#carousel-example-generic').on('slide.bs.carousel', function (e) {
-        var currentIndex = $('div.active').index();
+        var currentIndex = $(this).find('.active').index();
         var slideTo = $(e.relatedTarget).index();
         updateChart(currentIndex, slideTo);
     })
+
+    $('#timeChart').viewportChecker({
+        offset: 100,                 
+        callbackFunction: function(elem){
+           create_time_chart(0);
+        }
+    });
+
+    $('#myLineChart').viewportChecker({
+        offset: 100,                 
+        callbackFunction: function(elem){
+           create_line_chart(0);
+        }
+    });
+
+    $('#myDoughnutChart').viewportChecker({
+        offset: 100,                 
+        callbackFunction: function(elem){
+           create_doughnut_chart(0);
+        }
+    });
+
+    $('#myStackedChart').viewportChecker({
+        offset: 100,                 
+        callbackFunction: function(elem){
+           create_stacked_chart(0);
+        }
+    });
+
+    $('#myPolarChart').viewportChecker({
+        offset: 100,                 
+        callbackFunction: function(elem){
+           create_polar_chart(0);
+        }
+    });
+
+    $('#myBubbleChart').viewportChecker({
+        offset: 100,                 
+        callbackFunction: function(elem){
+           create_bubble_chart(0);
+        }
+    });
 
     $('#pills-tab a').hover(function (e) {
           e.preventDefault()
           if(finished_running){
             $(this).tab('show')
           }
-          else{
-
-          }
        });
 });
+
+function restart(){
+    window.location.href = "index.html";
+}
 
 // resize block code
 function resizeTextarea (id) {
@@ -145,7 +596,7 @@ function post_request_ajax(uri,data_js){
                 result_code = jsonResponse.result;
                 if(result_code == 1) {
                     alert("Code sent");
-                    location.replace("runtime.html");
+                    location.href("runtime.html");
                 }
                 else {
                     alert("ERROR: Code not sent");
@@ -166,6 +617,7 @@ function create_bootstrap_success_alert(strong_t, normal_t){
   
   //has two children: dismiss and text
   node_alert.setAttribute("class","alert alert-success alert-dismissable fade in");
+  node_alert.setAttribute("style","margin-bottom:10px");
 
   node_dismiss_alert.setAttribute("href","#");
   node_dismiss_alert.setAttribute("class","close");
@@ -187,7 +639,7 @@ function create_bootstrap_success_alert(strong_t, normal_t){
   node_alert.appendChild(node_strong_text);
   node_alert.appendChild(other_text);
 
-  document.getElementById("code-column").prepend(node_alert);
+  document.getElementById("code-container").prepend(node_alert);
 }
 
 
@@ -196,434 +648,107 @@ function updateChart(currentIndex, slideTo){
 }
 
 function create_chart(slideTo, currentIndex){
+    //destroy_chart(currentIndex);
+    if(slideTo == 0){
+        create_time_chart();
+    }
     if(slideTo == 1){
-        create_line_chart(currentIndex);
+        create_line_chart();
     }
     else if (slideTo == 2){
-        create_doughnut_chart(currentIndex);
+        create_doughnut_chart();
     }
     else if (slideTo == 3){
-        create_stacked_chart(currentIndex);
+        create_stacked_chart();
     }
     else if (slideTo == 4){
-        create_polar_chart(currentIndex);
+        create_polar_chart();
     }
     else if (slideTo == 5){
-        create_bubble_chart(currentIndex);
+        create_bubble_chart();
     }
     else{
         
     }
 }
 
+
 function destroy_chart(currentIndex){
-    if(currentIndex == 1){
+    if(currentIndex == 0){
         //destroy line chart
-        myLineChart.clear();
+        window.timeChart.clear();
+    }
+    else if(currentIndex == 1){
+        //destroy line chart
+        window.myLineChart.clear();
     }
     else if (currentIndex == 2){
         //destroy chart
-        myDoughnutChart.clear();
+        window.myDoughnutChart.clear();
     }
     else if (currentIndex == 3){
-        myStackedChart.clear();
+        window.myStackedChart.clear();
     }
     else if (currentIndex == 4){
-        myPolarChart.clear();
+        window.myPolarChart.clear();
     }
     else if (currentIndex == 5){
-        myBubbleChart.clear();
+        window.myBubbleChart.clear();
     }
     else{
         
     }
 }
 
-function create_line_chart(currentIndex){
-    var data1 = {
-        labels: ["January", "February", "March", "April", "May", "June", "July"],
-        datasets: [
-            {
-                label: "Time",
-                fill: false,
-                lineTension: 0.2,
-                backgroundColor: "rgba(255,99,132,0.4)",
-                borderColor: window.chartColors.red,
-                borderCapStyle: 'butt',
-                borderDash: [5, 5],
-                borderDashOffset: 0.0,
-                borderJoinStyle: 'miter',
-                pointBorderColor: "rgba(255,99,132,0.4)",
-                pointBackgroundColor: "#fff",
-                pointBorderWidth: 1,
-                pointHoverRadius: 5,
-                pointHoverBackgroundColor: window.chartColors.red,
-                pointHoverBorderColor: window.chartColors.red,
-                pointHoverBorderWidth: 2,
-                pointRadius: 1,
-                pointHitRadius: 10,
-                data: [5, 19, 30, 31, 23, 25, 15],
-                spanGaps: false,
-            }
-        ]
-    };
-    var ctx = document.getElementById("myLineChart").getContext("2d");
-    ctx.canvas.width = 20;
-    ctx.canvas.height = 20;
-    myLineChart = new Chart(ctx, {
-        type: 'line',
-        data: data1,
-        options: {
-                responsive: true,
-                legend: {
-                    position: 'right',
-                    fullWidth: false,
-                    labels: {
-                        boxWidth: 15
-                    }
-                },
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero:true
-                            }
-                        }]
-                    }
-                }
-    });
-    destroy_chart(currentIndex);
+function create_time_chart(offset){
+    var t = setTimeout(function() {
+            var ctx = document.getElementById("timeChart").getContext("2d");
+            ctx.canvas.width = 20;
+            ctx.canvas.height = 20;
+            window.timeChart = new Chart(ctx, time_config);
+    }, offset);
 }
 
-function create_bubble_chart(currentIndex){
-    var addedCount = 0;
-    var color = Chart.helpers.color;
-    var bubbleChartData = {
-        animation: {
-            duration: 10000
-        },
-        datasets: [{
-            label: "Block1",
-            backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
-            borderColor: window.chartColors.red,
-            borderWidth: 2,
-            data: [{
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }]
-        }, {
-            label: "Block2",
-            backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
-            borderColor: window.chartColors.blue,
-            borderWidth: 2,
-            data: [{
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }]
-        }, {
-            label: "Block3",
-            backgroundColor: color(window.chartColors.green).alpha(0.5).rgbString(),
-            borderColor: window.chartColors.green,
-            borderWidth: 2,
-            data: [{
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }, {
-                x: randomScalingFactor(),
-                y: randomScalingFactor(),
-                r: Math.abs(randomScalingFactor()) / 5,
-            }]
-        }]
-    };
-    var ctx = document.getElementById("myBubbleChart").getContext("2d");
-    myBubbleChart = new Chart(ctx, {
-        type: 'bubble',
-        data: bubbleChartData,
-        options: {
-            layout: {
-            padding: 10,
-            },
-            responsive: true,
-            legend: {
-            position: 'right',
-            fullWidth: false,
-            labels: {
-                boxWidth: 15
-            }
-            },
-            tooltips: {
-                mode: 'point'
-            }
-        }
-    });
-    destroy_chart(currentIndex);
+function create_line_chart(offset){
+    var t = setTimeout(function() {
+            var ctx = document.getElementById("myLineChart").getContext("2d");
+            ctx.canvas.width = 20;
+            ctx.canvas.height = 20;
+            window.myLineChart = new Chart(ctx, line_config);
+    }, offset);
 }
 
-function create_polar_chart(currentIndex){
-    var color = Chart.helpers.color;
-    var config4 = {
-        data: {
-            datasets: [{
-                data: [
-                    60,
-                    22,
-                    56,
-                    70,
-                    30,
-                    50,
-                    12,
-                    63,
-                    45,
-                    50,
-                ],
-                backgroundColor: [
-                    color(chartColors.red).alpha(0.7).rgbString(),
-                    color(chartColors.orange).alpha(0.7).rgbString(),
-                    color(chartColors.yellow).alpha(0.7).rgbString(),
-                    color(chartColors.green).alpha(0.7).rgbString(),
-                    color(chartColors.blue).alpha(0.7).rgbString(),
-                    color(chartColors.red).alpha(0.7).rgbString(),
-                    color(chartColors.orange).alpha(0.7).rgbString(),
-                    color(chartColors.yellow).alpha(0.7).rgbString(),
-                    color(chartColors.green).alpha(0.7).rgbString(),
-                    color(chartColors.blue).alpha(0.7).rgbString()
-                ],
-            }],
-            labels: [
-                "var1",
-                "var2",
-                "var3",
-                "var4",
-                "var5",
-                "list1",
-                "list2",
-                "list3",
-                "list4",
-                "list5"
-            ]
-        },
-        options: {
-            responsive: true,
-            legend: {
-                position: 'right',
-                fullWidth: false,
-                labels: {
-                    boxWidth: 15
-                }
-            },
-            scale: {
-            ticks: {
-                beginAtZero: true
-            },
-            reverse: false
-            },
-            animation: {
-                animateRotate: false,
-                animateScale: true
-            }
-        }
-    };
-    var ctx = document.getElementById("myPolarChart");
-    myPolarChart = Chart.PolarArea(ctx, config4);
-    destroy_chart(currentIndex);
+function create_bubble_chart(){
+    var t = setTimeout(function() {   
+        var ctx = document.getElementById("myBubbleChart").getContext("2d");
+        window.myBubbleChart = new Chart(ctx, bubble_config);   
+    }, 600);
 }
 
-function create_doughnut_chart(currentIndex){
-    var ctx = document.getElementById("myDoughnutChart").getContext("2d");
-    ctx.canvas.width = 20;
-    ctx.canvas.height = 20;
-    myDoughnutChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-        datasets: [{
-            data: [
-                10,
-                20,
-                70,
-            ],
-            backgroundColor: [
-                window.chartColors.red,
-                window.chartColors.orange,
-                window.chartColors.yellow,
-            ],
-            label: 'Dataset 1'
-        }],
-        labels: [
-            "Block1",
-            "Block2",
-            "Block3",
-        ]
-    },
-    options: {
-        responsive: true,
-        legend: {
-            position: 'right',
-            fullWidth: false,
-            labels: {
-                        boxWidth: 15
-                    }
-        },
-        animation: {
-            animateScale: true,
-            animateRotate: true
-        }
-    }
-});
-    destroy_chart(currentIndex);
+function create_polar_chart(){
+    var t = setTimeout(function() {   
+        var ctx = document.getElementById("myPolarChart");
+        window.myPolarChart = Chart.PolarArea(ctx, polar_config); 
+    }, 600);
 }
 
-function create_stacked_chart(currentIndex){
-    var ctx = document.getElementById("myStackedChart").getContext("2d");
-    ctx.canvas.width = 20;
-    ctx.canvas.height = 20;
-    var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    var config1 = {
-    type: 'line',
-    data: {
-        labels: ["January", "February", "March", "April", "May", "June", "July"],
-        datasets: [{
-        label: "Block1",
-        borderColor: window.chartColors.red,
-        backgroundColor: window.chartColors.red,
-        data: [
-                        20, 
-                        120, 
-                        0, 
-                        -30, 
-                        -90, 
-                        33, 
-                        149
-                    ],
-        }, {
-        label: "Block2",
-        borderColor: window.chartColors.blue,
-        backgroundColor: window.chartColors.blue,
-        data: [
-                        -20, 
-                        20, 
-                        10, 
-                        0, 
-                        90, 
-                        133, 
-                        9
-                    ],
-        }, {
-        label: "Block3",
-        borderColor: window.chartColors.green,
-        backgroundColor: window.chartColors.green,
-        data: [
-                        -110, 
-                        -66, 
-                        -122, 
-                        100, 
-                        0, 
-                        11, 
-                        39
-                    ],
-        }]
-    },
-    options: {
-        responsive: true,
-        title:{
-        display:false,
-        text:"Chart.js Line Chart - Stacked Area"
-        },
-        legend: {
-            position: 'right',
-            fullWidth: false,
-            labels: {
-                boxWidth: 15
-            }
-        },
-        tooltips: {
-        mode: 'index',
-        },
-        hover: {
-        mode: 'index'
-        },
-        scales: {
-        xAxes: [{
-        }],
-        yAxes: [{
-            stacked: true,
-        }]
-        }
-    }
-    };
-    myStackedChart = new Chart(ctx, config1);
-    destroy_chart(currentIndex);
+function create_doughnut_chart(){
+    var t = setTimeout(function() {   
+        var ctx = document.getElementById("myDoughnutChart").getContext("2d");
+        ctx.canvas.width = 20;
+        ctx.canvas.height = 20;
+        window.myDoughnutChart = new Chart(ctx, doughnut_config);
+    }, 600);
 }
 
+function create_stacked_chart(){
+    var t = setTimeout(function() {   
+        var ctx = document.getElementById("myStackedChart").getContext("2d");
+        ctx.canvas.width = 20;
+        ctx.canvas.height = 20;
+        window.myStackedChart = new Chart(ctx, stacked_config);
+    }, 600);
+}
 
 //resize block code
 addEventListener('DOMContentLoaded', init);

@@ -7,9 +7,9 @@
   <link rel="stylesheet" href="css/bootstrap.css">
   <script src="js/jquery.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.viewportchecker.min.js"></script>
   <script type="text/javascript" src="js_runtime.js"></script>
   <script src="js/Chart.bundle.js"></script>
-  <script src="js/utils.js"></script>
   <style>
     canvas {
         -moz-user-select: none;
@@ -19,27 +19,26 @@
     </style>
 </head>
 <body onload="load_code()" style="margin-bottom: 30px;">
-
-<div class="jumbotron text-center" style="margin-bottom: 0px;">
+<div class="jumbotron text-center" style="margin-bottom: 0px; padding-bottom:17px;">
   <h1>Choo Choo Train</h1>
-  <p>Write and review code like an expert!</p> 
+  <p style="margin-bottom:12px;">Write and review code like an expert!</p> 
+  <button class="btn btn-med" id="restart-button" href="#" role="button" onclick="restart()">Start again</button>
 </div>
 
-<ul class="nav nav-pills nav-justified" id="pills-tab">
-  <li class="active"><a data-toggle="pill" href="#code" style="margin-bottom: 10px; margin-top: 10px;
-  margin-left: 20px;margin-right: 20px;">Code</a></li>
-  <li><a href="#review"style="margin-bottom: 10px; margin-top:0px;
-  margin-left: 20px;margin-right: 20px;">Review</a></li>
+<ul class="nav nav-tabs nav-justified" id="pills-tab">
+  <li class="active"><a data-toggle="tab" href="#code" style="margin-bottom: 10px; margin-top: 10px;">Code</a></li>
+
+  <li><a href="#review"style="margin-bottom: 10px; margin-top:0px;">Review</a></li>
 </ul>
 
-<div class="tab-content">
+<div class="tab-content" style="margin-bottom:15px;">
   <div id="code" class="tab-pane fade in active">
-    <div class="container">
+    <div class="container" id="code-container" style="margin-top:10px;">
       <div class="row">
         <div class="col-sm-7" id="code-column">
           <div class="panel panel-default">
             <div class="panel-heading">
-                <h2>Code Running...</h2>
+                <h2>Code</h2>
             </div>
             <div class="panel-body" id="code-running" style="white-space: pre-wrap">
               <p>Code here</p> 
@@ -78,198 +77,183 @@
 
   </div>
 
-  <div id="review" class="tab-pane fade" style="margin-bottom: 10px; margin-top: 0px;
-  margin-left: 20px;margin-right: 20px;">
-       
-       <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-        <ol class="carousel-indicators">
-          <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-          <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-          <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-          <li data-target="#carousel-example-generic" data-slide-to="3"></li>
-          <li data-target="#carousel-example-generic" data-slide-to="4"></li>
-          <li data-target="#carousel-example-generic" data-slide-to="5"></li>
-        </ol>
-        <div class="carousel-inner" role="listbox" style="padding-bottom: 15px;">
+  <div id="review" class="tab-pane fade">
+    <div class="container marketing text-center" style="margin-top:30px;">
+      <!-- Three columns of text below the carousel -->
+      <div class="row">
+        <div class="col-lg-4 text-center" style="margin-bottom:15px;">
+          <img class="img-circle" src="media/graph1.png" alt="Graph1" width="140" height="140">
+          <p><h2>Total Runtime</h2></p>
+          <p style="margin-left:20px; margin-right:20px;">Check how long it took your code to compile and run from start to finish. The faster your code finishes, the more efficient it is. Getting to your destination fast is important.
+            </p>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 text-center" style="margin-bottom:15px;">
+          <img class="img-circle" src="media/graph2.png" alt="Graph2" width="140" height="140">
+          <p><h2>Code Behavior</h2></p>
+          <p style="margin-left:20px; margin-right:20px;">Check how your code is behaving. Are all variables being used? Which ones are used the most? From how many steps your code generates, to how many loops were made, knowing how code behaves is important.</p>
+         </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 text-center" style="margin-bottom:15px;">
+          <img class="img-circle" src="media/graph3.png" alt="Graph3" width="140" height="140">
+          <p><h2>Memory Usage</h2></p>
+          <p style="margin-left:20px; margin-right:20px;">How much memory you use ends up taking a toll on code performance. Check how 
+            many variables each block uses, sometimes the blocks with the most memory usage are the ones we least expect.</p>
+          </div><!-- /.col-lg-4 -->
+      </div><!-- /.row -->
+      <div class="container">
+        <p><a class="btn btn-default" href="#row1" role="button" style="margin-top:20px;">Review Code &raquo;</a></p>
+      </div>
 
-         <div class="item active" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
-            <div class="panel panel-default" style="max-width:400px; max-height:600;margin-left:auto; margin-right:auto;">
-              <div class="panel-heading text-center" >
-                <h3 style="margin-top: 7px; margin-bottom:7px">Train Runtime</h3>
-              </div>
+      <!-- START THE FEATURETTES -->
+
+      <hr class="featurette-divider" id="row1">
+
+      <div class="row featurette">
+        <div class="col-md-5">
+          <h2 class="featurette-heading">Runtime</h2>
+          <p class="lead">Your program runtime is calculated in milliseconds.Time taken while waiting for input is not included in total runtime calculation.</p>
+        </div>
+        <div class="col-md-7">
+          <div class="panel panel-default" style="max-width:500px; max-height:600;margin-left:auto; margin-right:auto;">
                 <div class="panel-body">
                   <div class="container" >
                       <p>
                         <p>
-                          
-                            <div class="chart-demo1">
+                          <div class="chart-demo1">
                             <h3>32 milliseconds</h3>
-                            <canvas id="timeChart" width="200" height="200"></canvas>
-                            <script>
-                              var ctx = document.getElementById("timeChart").getContext("2d");
-                              ctx.canvas.width = 20;
-                              ctx.canvas.height = 20;
-                              timeChart = new Chart(ctx, {
-                              type: 'doughnut',
-                              data: {
-                                  datasets: [{
-                                      data: [
-                                          32,
-                                      ],
-                                      backgroundColor: [
-                                          window.chartColors.red,
-                                      ],
-                                  }],
-                                  labels: [
-                                      "Total Runtime",
-                                  ]
-                              },
-                              options: {
-                                  responsive: true,
-                                  legend:{
-                                    display: false
-                                  },
-                                  layout: {
-                                    padding: 23
-                                  },
-                                  
-                                  animation: {
-                                      animateScale: true,
-                                      animateRotate: true
-                                  }
-                              }
-                            });
-                          </script>
+                            <canvas id="timeChart" width="500" height="500"></canvas>
                           </div>
                         </p>
                       </p>
                   </div>
                 </div>
-                <div class="panel-footer text-center">Total time of program running</div>
             </div>
-          </div>
-
-          <div class="item" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
-            <div class="panel panel-default" style="max-width:400px;margin-left:auto; margin-right:auto;">
-              <div class="panel-heading text-center" >
-                <h3 style="margin-top: 7px; margin-bottom:7px">Line</h3>
-              </div>
-                <div class="panel-body" style="width: 400px;">
-                  <div class="container" style="padding-left: 45px;">
-                      <p>
-                        <p>
-                        <div class="chart-demo">
-                          <canvas id="myLineChart" width="200" height="200"></canvas>
-                        </div>
-                        </p>
-                      </p>
-                  </div>
-                </div>
-               <div class="panel-footer text-center">Field description here</div>
-            </div>
-          </div>
-
-          <div class="item" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
-            <div class="panel panel-default" style="max-width:400px;margin-left:auto; margin-right:auto;">
-              <div class="panel-heading text-center" >
-                <h3 style="margin-top: 7px; margin-bottom:7px">Doughnut</h3>
-              </div>
-                <div class="panel-body" style="width: 400px;">
-                  <div class="container" style="padding-left: 45px;">
-                      <p>
-                        <p>
-                        <div class="chart-demo">
-                          <canvas id="myDoughnutChart" width="200" height="200"></canvas>
-                        </div>
-                        </p>
-                      </p>
-                  </div>
-                </div>
-                <div class="panel-footer text-center">Field description here</div>
-            </div>
-          </div>
-
-          <div class="item" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
-            <div class="panel panel-default" style="max-width:400px;margin-left:auto; margin-right:auto;">
-              <div class="panel-heading text-center" >
-                <h3 style="margin-top: 7px; margin-bottom:7px">Stacked Area</h3>
-              </div>
-                <div class="panel-body" style="width: 400px;">
-                  <div class="container" style="padding-left: 45px;">
-                      <p>
-                        <p>
-                        <div class="chart-demo">
-                          <canvas id="myStackedChart" width="200" height="200"></canvas>
-                        </div>
-                        </p>
-                      </p>
-                  </div>
-                </div>
-                <div class="panel-footer text-center">Field description here</div>
-            </div>
-          </div>
-
-          <div class="item" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
-            <div class="panel panel-default" style="max-width:400px;margin-left:auto; margin-right:auto;">
-              <div class="panel-heading text-center" >
-                <h3 style="margin-top: 7px; margin-bottom:7px">Polar Area</h3>
-              </div>
-                <div class="panel-body" style="width: 400px;">
-                  <div class="container" style="padding-left: 45px;">
-                      <p>
-                        <p>
-                        <div class="chart-demo">
-                          <canvas id="myPolarChart"></canvas>
-                        </div>
-                        </p>
-                      </p>
-                  </div>
-                </div>
-                <div class="panel-footer text-center">Field description here</div>
-            </div>
-          </div>
-
-          <div class="item" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
-            <div class="panel panel-default" style="max-width:400px;margin-left:auto; margin-right:auto;">
-              <div class="panel-heading text-center" >
-                <h3 style="margin-top: 7px; margin-bottom:7px">Bubble Chart</h3 style="margin-top: 7px; margin-bottom:7px">
-              </div>
-                <div class="panel-body" style="width: 400px;">
-                  <div class="container" style="padding-left: 45px;">
-                      <p>
-                        <p>
-                        <div class="chart-demo">
-                          <canvas id="myBubbleChart" width="200" height="200"></canvas>
-                        </div>
-                        </p>
-                      </p>
-                  </div>
-                </div>
-              <div class="panel-footer text-center">Field description here</div>
-            </div>
-          </div>
-
-
-          </div>
-        <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev" style="
-  margin-bottom: 15px;" >
-          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next" style="
-  margin-bottom: 15px;" >
-          <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
+        </div>
       </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5 col-md-push-7">
+          <h2 class="featurette-heading">Line Chart</h2>
+          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna.</p>
+        </div>
+        <div class="col-md-7 col-md-pull-5">
+          <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myLineChart" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5">
+          <h2 class="featurette-heading">Doughnut Chart</h2>
+          <p class="lead">Your program runtime is calculated in milliseconds.Time taken while waiting for input is not included in total runtime calculation.</p>
+        </div>
+        <div class="col-md-7">
+          <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myDoughnutChart" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5 col-md-push-7">
+          <h2 class="featurette-heading">Stacked Area Chart</h2>
+          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna.</p>
+        </div>
+        <div class="col-md-7 col-md-pull-5">
+            <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myStackedChart" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5">
+          <h2 class="featurette-heading">Polar Chart</h2>
+          <p class="lead">Your program runtime is calculated in milliseconds.Time taken while waiting for input is not included in total runtime calculation.</p>
+        </div>
+        <div class="col-md-7">
+            <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myPolarChart" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5 col-md-push-7">
+          <h2 class="featurette-heading">Bubble Area Chart</h2>
+          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna.</p>
+        </div>
+        <div class="col-md-7 col-md-pull-5">
+            <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myBubbleChart" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+    </div>
   </div>
 </div>
-
-<footer class="footer">
-      <div class="container">
-        <p class="text-muted">Place sticky footer content here.</p>
-      </div>
-</footer>
 
 </body>
 </html>
