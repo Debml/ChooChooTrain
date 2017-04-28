@@ -1,0 +1,17 @@
+block Block15
+receives:
+a of type whole
+{
+    print(a);
+}
+
+starting block Block14
+{   
+    variable a of type whole;
+    a = 5;
+    print(a);
+    
+	call Block15(1);
+    call Block15(2);
+    call Block15(3);
+}

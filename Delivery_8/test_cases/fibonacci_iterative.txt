@@ -1,0 +1,16 @@
+starting block main
+{
+	variable a, b, aux, limit of type whole;
+	a = 0;
+	b = 1;
+
+	print("Limit series at:");
+	input(limit);
+
+	do {
+		print(b);
+		aux = a;
+		a = b;
+		b = aux + b;
+	} until(b > limit)
+}
