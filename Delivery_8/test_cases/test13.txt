@@ -1,0 +1,16 @@
+starting block Block14
+{
+	variable a, b, c, d, e of type decimal;
+	variable g of type whole;
+	variable h, i of type words;
+	a = 1;
+	b = 2;
+	c = 5;
+	d = 0;
+	g = 1;
+	
+	if(5 == 5){
+		g = 5;
+		print(d);
+	}
+}

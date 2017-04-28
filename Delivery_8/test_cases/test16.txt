@@ -1,0 +1,13 @@
+block GenerateGreeting
+receives:
+name of type words
+returns words
+{
+    return "hello, " + name + "!"; 
+}
+
+starting block Block14
+{    
+    print(GenerateGreeting("David"));
+    print(GenerateGreeting("Pec"));
+}

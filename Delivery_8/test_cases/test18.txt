@@ -1,0 +1,21 @@
+block Block14
+receives: a of type whole
+returns whole
+{
+	if(a == 1){
+		return a;
+	}
+}
+
+starting block Block15
+{
+	variable a, i of type whole;
+	i = 1;
+
+	do{
+		a = Block14(i);
+		print(a);
+		i = i + 1;
+	}until(a > 2)
+}
+

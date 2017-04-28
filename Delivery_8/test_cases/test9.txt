@@ -1,0 +1,25 @@
+starting block Block14
+{
+	variable a, b, c of type decimal;
+
+	a = 1;
+	b = 2;
+	c = a * b * b;
+
+	if(c + 5 > 5){
+		print(a, b, c);
+	}
+	else{
+		c = 1 * 2 + c * 5;
+
+		print(c);
+	}
+
+	b = 5 + 0;
+
+	do{
+	print(a);
+	a = a + 1;
+
+	}until(a >= b + 1)
+}
