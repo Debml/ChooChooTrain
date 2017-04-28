@@ -36,7 +36,7 @@ chartColors = {
 };
 
 //config for time chart
-var time_config = { type: 'doughnut',
+window.time_config = { type: 'doughnut',
                     data: {
                         datasets: [{
                             data: [
@@ -418,49 +418,43 @@ var doughnut_config = {
 };
 
 $(document).ready(function(){   
-    $('#carousel-example-generic').on('slide.bs.carousel', function (e) {
-        var currentIndex = $(this).find('.active').index();
-        var slideTo = $(e.relatedTarget).index();
-        updateChart(currentIndex, slideTo);
-    })
-
     $('#timeChart').viewportChecker({
-        offset: 100,                 
+        offset: 200,                 
         callbackFunction: function(elem){
            create_time_chart(0);
         }
     });
 
     $('#myLineChart').viewportChecker({
-        offset: 100,                 
+        offset: 200,                 
         callbackFunction: function(elem){
            create_line_chart(0);
         }
     });
 
     $('#myDoughnutChart').viewportChecker({
-        offset: 100,                 
+        offset: 200,                 
         callbackFunction: function(elem){
            create_doughnut_chart(0);
         }
     });
 
     $('#myStackedChart').viewportChecker({
-        offset: 100,                 
+        offset: 200,                 
         callbackFunction: function(elem){
            create_stacked_chart(0);
         }
     });
 
     $('#myPolarChart').viewportChecker({
-        offset: 100,                 
+        offset: 200,                 
         callbackFunction: function(elem){
            create_polar_chart(0);
         }
     });
 
     $('#myBubbleChart').viewportChecker({
-        offset: 100,                 
+        offset: 200,                 
         callbackFunction: function(elem){
            create_bubble_chart(0);
         }
@@ -472,6 +466,21 @@ $(document).ready(function(){
             $(this).tab('show')
           }
        });
+
+    $('#review-tab').tooltip({trigger: 'manual'});
+
+    $('#review-tab').hover(function () {
+        var tt = $(this);
+        if (!finished_running){
+            tt.tooltip("show");
+        }
+    }, function(){
+        var tt = $(this);
+        if (!finished_running){
+            tt.tooltip( 'hide' );
+        }
+    });
+  
 });
 
 function restart(){
@@ -576,8 +585,13 @@ function get_request_ajax(uri){
             contentType: "application/json",
             success: function (jsonResponse) {
                 //code retreived, call method to append to html
-                code_returned = jsonResponse.code;
+                //index 0 - code
+                //index 1 runtime
+                //index 2 compilation time
+                code_returned = jsonResponse.result[0]
                 show_code(code_returned);
+                //update time chart config info with runtime and compilation time
+                update_time_config(jsonResponse.result[1],jsonResponse.result[2]);
             },
             error: function (errorMessage) {
                 alert(errorMessage);
@@ -585,27 +599,42 @@ function get_request_ajax(uri){
         });
 }
 
-function post_request_ajax(uri,data_js){
-  $.ajax({
-            url: uri,
-            type: "POST",
-            data: data_js,
-            dataType: "json",
-            contentType: "application/json",
-            success: function (jsonResponse) {
-                result_code = jsonResponse.result;
-                if(result_code == 1) {
-                    alert("Code sent");
-                    location.href("runtime.html");
-                }
-                else {
-                    alert("ERROR: Code not sent");
-                }
-            },
-            error: function (errorMessage) {
-                alert(errorMessage);
-            }
-        });
+function update_time_config(runtime, compilation){
+    var a = document.getElementById("label-seconds");
+    a.textContent = runtime + " seconds";
+
+    var b = document.getElementById("runtime-info");
+    b.textContent = b.textContent + " Total compilation time was only "+ compilation + " seconds, this time is included in the total runtime.";
+
+    window.time_config = { type: 'doughnut',
+                    data: {
+                        datasets: [{
+                            data: [
+                                runtime,
+                            ],
+                            backgroundColor: [
+                                chartColors.red,
+                            ],
+                        }],
+                        labels: [
+                            "Total Runtime",
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        legend:{
+                        display: false
+                        },
+                        layout: {
+                        padding: 23
+                        },
+                        
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true
+                        }
+                    }
+                };
 }
 
 //custom alert
@@ -642,70 +671,12 @@ function create_bootstrap_success_alert(strong_t, normal_t){
   document.getElementById("code-container").prepend(node_alert);
 }
 
-
-function updateChart(currentIndex, slideTo){
-    create_chart(slideTo,currentIndex);
-}
-
-function create_chart(slideTo, currentIndex){
-    //destroy_chart(currentIndex);
-    if(slideTo == 0){
-        create_time_chart();
-    }
-    if(slideTo == 1){
-        create_line_chart();
-    }
-    else if (slideTo == 2){
-        create_doughnut_chart();
-    }
-    else if (slideTo == 3){
-        create_stacked_chart();
-    }
-    else if (slideTo == 4){
-        create_polar_chart();
-    }
-    else if (slideTo == 5){
-        create_bubble_chart();
-    }
-    else{
-        
-    }
-}
-
-
-function destroy_chart(currentIndex){
-    if(currentIndex == 0){
-        //destroy line chart
-        window.timeChart.clear();
-    }
-    else if(currentIndex == 1){
-        //destroy line chart
-        window.myLineChart.clear();
-    }
-    else if (currentIndex == 2){
-        //destroy chart
-        window.myDoughnutChart.clear();
-    }
-    else if (currentIndex == 3){
-        window.myStackedChart.clear();
-    }
-    else if (currentIndex == 4){
-        window.myPolarChart.clear();
-    }
-    else if (currentIndex == 5){
-        window.myBubbleChart.clear();
-    }
-    else{
-        
-    }
-}
-
 function create_time_chart(offset){
     var t = setTimeout(function() {
             var ctx = document.getElementById("timeChart").getContext("2d");
             ctx.canvas.width = 20;
             ctx.canvas.height = 20;
-            window.timeChart = new Chart(ctx, time_config);
+            window.timeChart = new Chart(ctx, window.time_config);
     }, offset);
 }
 
@@ -718,36 +689,36 @@ function create_line_chart(offset){
     }, offset);
 }
 
-function create_bubble_chart(){
+function create_bubble_chart(offset){
     var t = setTimeout(function() {   
         var ctx = document.getElementById("myBubbleChart").getContext("2d");
         window.myBubbleChart = new Chart(ctx, bubble_config);   
-    }, 600);
+    }, offset);
 }
 
-function create_polar_chart(){
+function create_polar_chart(offset){
     var t = setTimeout(function() {   
         var ctx = document.getElementById("myPolarChart");
         window.myPolarChart = Chart.PolarArea(ctx, polar_config); 
-    }, 600);
+    }, offset);
 }
 
-function create_doughnut_chart(){
+function create_doughnut_chart(offset){
     var t = setTimeout(function() {   
         var ctx = document.getElementById("myDoughnutChart").getContext("2d");
         ctx.canvas.width = 20;
         ctx.canvas.height = 20;
         window.myDoughnutChart = new Chart(ctx, doughnut_config);
-    }, 600);
+    }, offset);
 }
 
-function create_stacked_chart(){
+function create_stacked_chart(offset){
     var t = setTimeout(function() {   
         var ctx = document.getElementById("myStackedChart").getContext("2d");
         ctx.canvas.width = 20;
         ctx.canvas.height = 20;
         window.myStackedChart = new Chart(ctx, stacked_config);
-    }, 600);
+    }, offset);
 }
 
 //resize block code

@@ -27,8 +27,7 @@
 
 <ul class="nav nav-tabs nav-justified" id="pills-tab">
   <li class="active"><a data-toggle="tab" href="#code" style="margin-bottom: 10px; margin-top: 10px;">Code</a></li>
-
-  <li><a href="#review"style="margin-bottom: 10px; margin-top:0px;">Review</a></li>
+  <li><a id="review-tab" href="#review"style="margin-bottom: 10px; margin-top:0px;" data-toggle="tooltip" title="Code must finish running first">Review</a></li>
 </ul>
 
 <div class="tab-content" style="margin-bottom:15px;">
@@ -110,7 +109,7 @@
       <div class="row featurette">
         <div class="col-md-5">
           <h2 class="featurette-heading">Runtime</h2>
-          <p class="lead">Your program runtime is calculated in milliseconds.Time taken while waiting for input is not included in total runtime calculation.</p>
+          <p class="lead" id="runtime-info">Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.</p>
         </div>
         <div class="col-md-7">
           <div class="panel panel-default" style="max-width:500px; max-height:600;margin-left:auto; margin-right:auto;">
@@ -119,7 +118,7 @@
                       <p>
                         <p>
                           <div class="chart-demo1">
-                            <h3>32 milliseconds</h3>
+                            <h3 id="label-seconds">32 seconds</h3>
                             <canvas id="timeChart" width="500" height="500"></canvas>
                           </div>
                         </p>
@@ -139,7 +138,7 @@
         </div>
         <div class="col-md-7 col-md-pull-5">
           <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
-                <div class="panel-body" style="width: 400px;">
+                <div class="panel-body" style="width: 400px; height:430px;">
                   <div class="container" style="padding-left: 45px;">
                       <p>
                         <p>
@@ -159,11 +158,11 @@
       <div class="row featurette">
         <div class="col-md-5">
           <h2 class="featurette-heading">Doughnut Chart</h2>
-          <p class="lead">Your program runtime is calculated in milliseconds.Time taken while waiting for input is not included in total runtime calculation.</p>
+          <p class="lead">Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.</p>
         </div>
         <div class="col-md-7">
           <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
-                <div class="panel-body" style="width: 400px;">
+                <div class="panel-body" style="width: 400px; height:430px;">
                   <div class="container" style="padding-left: 45px;">
                       <p>
                         <p>
@@ -187,7 +186,7 @@
         </div>
         <div class="col-md-7 col-md-pull-5">
             <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
-                <div class="panel-body" style="width: 400px;">
+                <div class="panel-body" style="width: 400px; height:430px;">
                   <div class="container" style="padding-left: 45px;">
                       <p>
                         <p>
@@ -207,11 +206,11 @@
       <div class="row featurette">
         <div class="col-md-5">
           <h2 class="featurette-heading">Polar Chart</h2>
-          <p class="lead">Your program runtime is calculated in milliseconds.Time taken while waiting for input is not included in total runtime calculation.</p>
+          <p class="lead">Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.</p>
         </div>
         <div class="col-md-7">
             <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
-                <div class="panel-body" style="width: 400px;">
+                <div class="panel-body" style="width: 400px; height:430px;">
                   <div class="container" style="padding-left: 45px;">
                       <p>
                         <p>
@@ -235,7 +234,7 @@
         </div>
         <div class="col-md-7 col-md-pull-5">
             <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
-                <div class="panel-body" style="width: 400px;">
+                <div class="panel-body" style="width: 400px; height:430px;">
                   <div class="container" style="padding-left: 45px;">
                       <p>
                         <p>

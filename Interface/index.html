@@ -50,15 +50,34 @@
         </div>
     </div>
     <div class="col-sm-5">
-      <div class="jumbotron">
+      <div class="jumbotron" style="margin-bottom:5px;">
         <h1>When ready...</h1>
         <p class="lead">It is time to compile and run the code.</p>
         <p>
           <a class="btn btn-lg btn-success" href="#" role="button" onclick="compile_code()">Compile code</a>
           </p>
       </div>
+        <button class="btn btn-link btn-med pull-right" id="add-block-button" role="button" data-toggle="modal" data-target="#myModal">User manual</button>
     </div>
   </div>
+
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Choo Choo Train User Manual</h4>
+        </div>
+        <div class="modal-body">
+          <p>Code help and documentation.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 </body>

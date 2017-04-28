@@ -6,10 +6,14 @@ from flask import request
 from flask import abort
 from flask_cors import CORS, cross_origin
 
+runtime = .04
+compilation_time = .00000067
+
 app = Flask(__name__)
 CORS(app)
 
 code_js = []
+result = []
 
 @app.route('/compile', methods=['POST'])
 def compile_code():
@@ -33,8 +37,17 @@ def compile_code():
 def get_names():
     if not code_js:
         return jsonify({'code': "EMPTY"})
+
     else:
-        return jsonify({'code': code_js[0]})
+        if result:
+            while result:
+                result.pop()
+
+        result.append(code_js[0])
+        result.append(runtime)
+        result.append(compilation_time)
+
+        return jsonify({'result': result})
 
 @app.errorhandler(404)
 def not_found(error):
