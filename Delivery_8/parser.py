@@ -812,6 +812,8 @@ def p_EC_SEEN_START_PARAM(p):
 	if not global_scope.quad_list.append_quad(constants.Operators.OP_ERA, call_block_id, "-1", "-1"):
 		stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
+	#adds false bottom mark to solve operations for parameters first
+	global_scope.pending_operators.push(constants.Misc.FALSE_BOTTOM)
 	global_scope.pending_blocks_argument_counter.push(0)
 	global_scope.pending_parameter_type_counter.push([0,0,0,0])
 
@@ -884,6 +886,9 @@ def abstract_seen_block_call(p, returns_value):
 
 			#remove this instance of the parameter type counter since there are no more parameters
 			global_scope.pending_parameter_type_counter.pop()
+
+			#remove false bottom mark
+			global_scope.pending_operators.pop()
 	else:
 		stop_exec("Block '%s' receives %d parameter(s), found %d argument(s) instead" % (call_block_id, block_parameter_counter, block_argument_counter))
 
