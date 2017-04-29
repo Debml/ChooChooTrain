@@ -288,6 +288,7 @@ function add_block() {
   node.appendChild(node_block_code_form);  
 
   document.getElementById("block-list").appendChild(node); 
+  document.getElementById("block-name" + block_counter).focus(); 
 }
 
 //resize block code
