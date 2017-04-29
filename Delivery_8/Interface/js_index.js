@@ -112,7 +112,7 @@ function block_name_input(id){
 // code ready to be compiled
 function compile_code() {
   //link for compiler
-  var compilerURI = "http://127.0.0.1:5000/compile";
+  var compilerURI = "http://127.0.0.1:5000/post_code";
 
   //get code from blocks
   if(!file_upload){
@@ -275,7 +275,7 @@ function add_block() {
 
   var node_block_code_form = document.createElement("TEXTAREA");
 
-  node_block_code_form.setAttribute("style","overflow:hidden;");
+  node_block_code_form.setAttribute("style","overflow:hidden; max-width:100%");
   node_block_code_form.setAttribute("class","form-control");
   node_block_code_form.setAttribute("rows","1");
   node_block_code_form.setAttribute("class","form-control");
@@ -288,6 +288,7 @@ function add_block() {
   node.appendChild(node_block_code_form);  
 
   document.getElementById("block-list").appendChild(node); 
+  document.getElementById("block-name" + block_counter).focus(); 
 }
 
 //resize block code

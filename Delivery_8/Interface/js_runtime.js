@@ -1,5 +1,7 @@
-// counts number of blocks written
-var block_counter = 0;
+// counts number of alerts written
+var alert_counter = 0;
+var runtime_description = "Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.";
+
 var addedCount = 0;
 var code = "Code not loaded";
 var DEFAULT_DATASET_SIZE = 7;
@@ -417,7 +419,12 @@ var doughnut_config = {
     }
 };
 
-$(document).ready(function(){   
+$(document).ready(function(){ 
+    $("#recompile").click(function(){
+        $(".alert").alert("close");
+        load_code();
+    }); 
+
     $('#timeChart').viewportChecker({
         offset: 200,                 
         callbackFunction: function(elem){
@@ -431,7 +438,6 @@ $(document).ready(function(){
            create_line_chart(0);
         }
     });
-
     $('#myDoughnutChart').viewportChecker({
         offset: 200,                 
         callbackFunction: function(elem){
@@ -469,16 +475,14 @@ $(document).ready(function(){
 
     $('#review-tab').tooltip({trigger: 'manual'});
 
-    $('#review-tab').hover(function () {
+    $('#review-tab').mouseover(function() {
         var tt = $(this);
         if (!finished_running){
             tt.tooltip("show");
         }
-    }, function(){
+    }).mouseout(function() {
         var tt = $(this);
-        if (!finished_running){
-            tt.tooltip( 'hide' );
-        }
+        tt.tooltip( 'hide' );
     });
   
 });
@@ -504,6 +508,8 @@ function init() {
 
 // html loads, print code on html, compile python
 function load_code() {
+    var a = document.getElementById('recompile');
+    a.disabled = true;
     //get code from python
     var compilerURI = "http://127.0.0.1:5000/compile";
     get_request_ajax(compilerURI);
@@ -512,20 +518,29 @@ function load_code() {
 function send_input(){
     //compiler receives input
     disable_input();
-    show_output();
-    runtime_end();
+    show_output(text);
+    //runtime_end();
 }
 
-function show_output(){
+function show_output(text){
     //compiler sent output
     var a = document.getElementById('output-text');
-    a.value = "Output shown";
+    a.focus();
+    a.value = text;
 }
 
 function runtime_end(){
     //alert user, enable review button
     finished_running = true;
-    create_bootstrap_success_alert("Code finished running. ","You can now review your code")
+    //time interval to let user see alert appearing
+    create_bootstrap_success_alert("Code finished running. ","You can now review your code");
+}
+
+function runtime_fail(){
+    //alert user, enable review button
+    finished_running = false;
+    //time interval to let user see alert appearing
+    create_bootstrap_danger_alert("Code compilation/runtime error. ","Check output section for error detail");
 }
 
 /*function create_review_button(){
@@ -575,7 +590,7 @@ function show_code(code_returned) {
 
 function compile_code(){
     //compiler needs input
-    enable_input();
+    //enable_input();
 }
 
 function get_request_ajax(uri){
@@ -588,10 +603,24 @@ function get_request_ajax(uri){
                 //index 0 - code
                 //index 1 runtime
                 //index 2 compilation time
+                //index 3 output
+                //index 4 compilation status
                 code_returned = jsonResponse.result[0]
                 show_code(code_returned);
                 //update time chart config info with runtime and compilation time
                 update_time_config(jsonResponse.result[1],jsonResponse.result[2]);
+                //wait for user to see runtime
+                var t = setTimeout(function() {
+                    show_output(jsonResponse.result[3])
+                    //no error in compilation or runtime
+                    if (jsonResponse.result[4] == 1){
+                        runtime_end();
+                    }
+                    //error in compilation or runtime
+                    else {
+                        runtime_fail();
+                    }
+                }, 700);
             },
             error: function (errorMessage) {
                 alert(errorMessage);
@@ -604,7 +633,7 @@ function update_time_config(runtime, compilation){
     a.textContent = runtime + " seconds";
 
     var b = document.getElementById("runtime-info");
-    b.textContent = b.textContent + " Total compilation time was only "+ compilation + " seconds, this time is included in the total runtime.";
+    b.textContent = runtime_description + " Total compilation time was only "+ compilation + " seconds, this time is included in the total runtime.";
 
     window.time_config = { type: 'doughnut',
                     data: {
@@ -639,6 +668,8 @@ function update_time_config(runtime, compilation){
 
 //custom alert
 function create_bootstrap_success_alert(strong_t, normal_t){
+  alert_counter = alert_counter + 1;
+
   var node_alert = document.createElement("DIV"); 
   var node_dismiss_alert = document.createElement("A");
   var node_strong_text = document.createElement("STRONG"); 
@@ -647,6 +678,7 @@ function create_bootstrap_success_alert(strong_t, normal_t){
   //has two children: dismiss and text
   node_alert.setAttribute("class","alert alert-success alert-dismissable fade in");
   node_alert.setAttribute("style","margin-bottom:10px");
+  node_alert.setAttribute("id","alert" + alert_counter);
 
   node_dismiss_alert.setAttribute("href","#");
   node_dismiss_alert.setAttribute("class","close");
@@ -670,6 +702,44 @@ function create_bootstrap_success_alert(strong_t, normal_t){
 
   document.getElementById("code-container").prepend(node_alert);
 }
+
+//custom danger alert
+function create_bootstrap_danger_alert(strong_t, normal_t){
+  alert_counter = alert_counter + 1;
+
+  var node_alert = document.createElement("DIV"); 
+  var node_dismiss_alert = document.createElement("A");
+  var node_strong_text = document.createElement("STRONG"); 
+  var node_span = document.createElement("SPAN");
+  
+  //has two children: dismiss and text
+  node_alert.setAttribute("class","alert alert-danger alert-dismissable fade in");
+  node_alert.setAttribute("style","margin-bottom:10px");
+  node_alert.setAttribute("id","alert" + alert_counter);
+
+  node_dismiss_alert.setAttribute("href","#");
+  node_dismiss_alert.setAttribute("class","close");
+  node_dismiss_alert.setAttribute("data-dismiss","alert");
+  node_dismiss_alert.setAttribute("aria-label","close");
+
+  var span_text = document.createTextNode("x");
+  node_span.appendChild(span_text);
+
+  node_dismiss_alert.appendChild(node_span);
+  node_alert.appendChild(node_dismiss_alert);
+
+  var strong_text = document.createTextNode(strong_t);
+
+  var other_text = document.createTextNode(normal_t);
+
+  node_strong_text.appendChild(strong_text);
+
+  node_alert.appendChild(node_strong_text);
+  node_alert.appendChild(other_text);
+
+  document.getElementById("code-container").prepend(node_alert);
+}
+
 
 function create_time_chart(offset){
     var t = setTimeout(function() {

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" style="position: relative; min-height: 100%;">
 <head>
-  <title>Choo Choo Train</title>
+  <title>Choo Choo Runtime</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="media/train.ico" />
   <link rel="stylesheet" href="css/bootstrap.css">
   <script src="js/jquery.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
@@ -26,7 +27,11 @@
 </div>
 
 <ul class="nav nav-tabs nav-justified" id="pills-tab">
-  <li class="active"><a data-toggle="tab" href="#code" style="margin-bottom: 10px; margin-top: 10px;">Code</a></li>
+  <li class="active">
+    <a data-toggle="tab" href="#code" style="margin-bottom: 10px; margin-top: 10px;">
+      Code
+      </a>
+  </li>
   <li><a id="review-tab" href="#review"style="margin-bottom: 10px; margin-top:0px;" data-toggle="tooltip" title="Code must finish running first">Review</a></li>
 </ul>
 
@@ -37,7 +42,10 @@
         <div class="col-sm-7" id="code-column">
           <div class="panel panel-default">
             <div class="panel-heading">
-                <h2>Code</h2>
+                <h2>
+                  Code
+                </h2>
+                <a class="btn btn-success pull-right" role="button" id="recompile" style="margin-top:15px;">Recompile code</a>
             </div>
             <div class="panel-body" id="code-running" style="white-space: pre-wrap">
               <p>Code here</p> 
@@ -56,7 +64,7 @@
                   <div class="col-sm-9">
                   </div>
                   <div class="col-sm-3">
-                      <button class="btn btn-primary btn-md" id="send-input-button" href="#" role="button" onclick="send_input()">Send</button>
+                      <button class="btn btn-primary btn-md" id="send-input-button" href="#" role="button" onclick="send_input()" disabled>Send</button>
                   </div>
                 </div>
               </p>
@@ -257,7 +265,7 @@
 <hr class="featurette-divider2">
 
 <footer style="text-align:center;">
-        <p>&copy; 2017 Paulina Escalante, David Benitez. &middot; <a data-toggle="modal" data-target="#about-modal">About</a> </p>
+        <p>&copy; 2017  &middot; Paulina Escalante &middot; David Benitez &middot; <a data-toggle="modal" data-target="#about-modal">About</a> </p>
 </footer>
 
 <div class="modal fade" id="about-modal" role="dialog">
@@ -270,7 +278,6 @@
             <div class="modal-body">
               <p>Choo Choo Train was created by <b>Paulina Escalante</b> and <b>David Benitez</b> for Tecnologico
                 de Monterrey's Compiler Design course project.
-
               </p>
             </div>
             <div class="modal-footer">
