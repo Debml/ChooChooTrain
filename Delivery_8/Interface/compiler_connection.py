@@ -1,4 +1,9 @@
+import sys
+sys.path.insert(0,'..')
+
+import choo_choo_train
 import random
+
 
 class Compiler_Handler:
     def __init__(self):
@@ -25,7 +30,7 @@ class Compiler_Handler:
         self.compilation_time = '{:.7e}'.format(random.uniform(0, 1))
 
         #get output
-        self.output = "Output from compiler handler"
+        self.output = choo_choo_train.attributes.output
 
         self.compilation_status = 1;
 
