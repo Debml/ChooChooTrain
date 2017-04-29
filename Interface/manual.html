@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" style="position: relative; min-height: 100%;">
+<html lang="en">
 <head>
   <title>Choo Choo Train Compiler</title>
   <meta charset="utf-8">
@@ -11,67 +11,19 @@
   <script src="js/bootstrap.min.js"></script>
   <script type="text/javascript" src="js_index.js"></script>
 </head>
-<body style="margin-bottom: 30px;">
+<body>
 
-<div class="jumbotron text-center">
+<div class="jumbotron text-center" id="top_container">
   <h1>Choo Choo Train Compiler</h1>
   <p>Write and review code like an expert!</p> 
 </div>
   
 <div class="container">
-  <div class="row">
-    <div class="col-sm-7" id="code-column">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h2>Code with blocks</h2>
-        </div>
-        <div class="panel-body">
-          <ul class="list-group" id="block-list">
-          </ul>
-          <div class="container">
-                <p><button class="btn btn-primary btn-lg" id="add-block-button" href="#" role="button" onclick="add_block()">Add Block</button></p>
-          </div>
-        </div>
-      </div>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h4>Or upload a file with code</h4>
-            <input id="input-4" name="input4[]" type="file" multiple class="file-loading">
-            <script>
-            $(document).on('ready', function() {
-                $("#input-4").fileinput({
-                  showUpload: false,
-                  showCaption: false,
-                  maxFileCount: 1
-                });
-            });
-            </script>
-        </div>
-        </div>
-    </div>
-    <div class="col-sm-5">
-      <div class="jumbotron" style="margin-bottom:5px;">
-        <h1>When ready...</h1>
-        <p class="lead">It is time to compile and run the code.</p>
-        <p>
-          <a class="btn btn-lg btn-success" href="#" role="button" onclick="compile_code()">Compile code</a>
-          </p>
-      </div>
-        <button class="btn btn-link btn-med pull-right" id="add-block-button" role="button" data-toggle="modal" data-target="#myModal">User Manual</button>
-    </div> 
+  <div class="well">
+    <h3>Choo Choo Train User Manual</h3>
   </div>
 
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog modal-lg"  id="top_container">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h3 class="modal-title" >Choo Choo Train User Manual</h3>
-          <button type="button" class="btn btn-link" role="button" onClick="window.open('manual.html');">Open manual in separate window</button>
-        </div>
-        <div class="modal-body" style="padding-top:10px; padding-bottom:10px; padding-left:5px; padding-right:5px;">
-
-          <div class="container" style="margin-top:0px; width:100%;">
+  <div class="container" style="margin-top:0px; width:100%;">
              
             <div class="row featurette">
               <div class="col-md-12">
@@ -145,7 +97,7 @@
                 <p> To code your first Choo Choo Train program you can either add a text 
                   file with code or click on the Add Block button. The following prompts will appear.</p>
                  <p>
-                   <img src="media/manual1.1.png" alt="Add Block" width="70%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                   <img src="media/manual1.1.png" alt="Add Block" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
                  </p>
                  <p> To start coding a block, write the block name on the first section as:
                     "starting block &#60;block-name&#62;"</p>
@@ -160,7 +112,7 @@
                  <p> To write code inside the block, start typing on the second block. Block code must be inside
                    two { } (curly braces). A simple block with no parameters and no return values with only one print statement looks like this.
                  </p>
-                 <img src="media/manual1.2.png" alt="Code Block" width="70%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                 <img src="media/manual1.2.png" alt="Code Block" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
                  <p> After the code is written or uploaded in a text file, the next step is to click
                     on the compile code button and your code will start compiling and running.
                  </p>
@@ -542,7 +494,7 @@
                   An example of how to code variable declarations of multiple data types is as follows.
                 </p>
                  <p>
-                   <img src="media/manual6.1.png" alt="Declarations" width="70%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                   <img src="media/manual6.1.png" alt="Declarations" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
                  </p>
                 <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
               </div>
@@ -572,7 +524,7 @@
                   An example of how to code a simple list declaration is as follows.
                 </p>
                  <p>
-                   <img src="media/manual7.1.png" alt="List declarations" width="70%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                   <img src="media/manual7.1.png" alt="List declarations" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
                  </p>
                 <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
               </div>
@@ -601,7 +553,7 @@
                   An example of how to code assignments with only constants is as follows.
                 </p>
                 <p>
-                   <img src="media/manual8.1.png" alt="assign" width="70%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                   <img src="media/manual8.1.png" alt="assign" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
                 </p>
                 <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
               </div>
@@ -628,7 +580,7 @@
                 </div>
                 <p>The use of a simple if statement is shown below.</p>
                 <p>
-                  <img src="media/manual9.1.png" alt="if_statement" width="70%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                  <img src="media/manual9.1.png" alt="if_statement" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
                 </p>
                 <p>An <strong>if </strong> statement can be followed by an optional <strong>else </strong> statement, 
                       which executes when the boolean expression is False. The structure of a simple if else statement is as follows.</p>
@@ -640,7 +592,7 @@
                 <p> You can use one <strong>if </strong> or  <strong>else </strong> statement inside another  <strong>if </strong> 
                   or  <strong>else </strong>  statement(s). The use of a simple if else statement is shown below.</p>
                 <p>
-                  <img src="media/manual9.2.png" alt="else_if_statement" width="70%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                  <img src="media/manual9.2.png" alt="else_if_statement" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
                 </p>
                 <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
               </div>
@@ -670,7 +622,7 @@
                 </div>
                 <p> The use of a simple do until loop is shown below.</p>
                 <p>
-                  <img src="media/manual10.1.png" alt="Loops" width="70%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                  <img src="media/manual10.1.png" alt="Loops" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
                 </p>
 
                 <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
@@ -687,7 +639,7 @@
                   expressions you pass into a word data type and writes the result to standard
                    output as follows.</p>
                  <p>
-                 <img src="media/manual1.2.png" alt="Output Block" width="70%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                 <img src="media/manual1.2.png" alt="Output Block" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
                  </p>
                  <p>
                    The previous example produces the following result.
@@ -701,7 +653,7 @@
                   <strong> );</strong> reads one line from standard input and assigns it to the words data type variable specified.
                 </p>
                 <p>
-                 <img src="media/manual11.1.png" alt="Output Block" width="70%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                 <img src="media/manual11.1.png" alt="Output Block" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
                  </p>
                 <p>
                   This prompts you to enter any string and it would display that same string on the screen with an added "Hello " 
@@ -804,7 +756,7 @@
                     The use of the last block definition mentioned would look as follows.
                 </p>
                 <p>
-                 <img src="media/manual12.1.png" alt="Output Block" width="70%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                 <img src="media/manual12.1.png" alt="Output Block" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
                  </p>
                  <p>    
                     The previous has both parameters and a return statement. The return value is then used in a print function.
@@ -820,18 +772,6 @@
               </div>
             </div>
           </div>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-        
-      </div>
-    </div>
-  </div>
-
-  
-
 </div>
 
 <hr class="featurette-divider2">

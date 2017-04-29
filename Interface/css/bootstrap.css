@@ -1153,6 +1153,15 @@ img {
   margin: 60px 0; /* Space out the Bootstrap <hr> more */
 }
 
+.featurette-divider2 {
+  margin: 30px 0; /* Space out the Bootstrap <hr> more */
+}
+
+.featurette-divider3 {
+  margin: 25px 0; /* Space out the Bootstrap <hr> more */
+}
+
+
 @media (min-width: 768px) {
   .featurette-heading {
     font-size: 50px;
