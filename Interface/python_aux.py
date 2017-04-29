@@ -6,8 +6,10 @@ from flask import request
 from flask import abort
 from flask_cors import CORS, cross_origin
 
-runtime = .04
-compilation_time = .00000067
+#any other imports
+from compiler_connection import Compiler_Handler
+
+compiler_handler = Compiler_Handler()
 
 app = Flask(__name__)
 CORS(app)
@@ -15,7 +17,7 @@ CORS(app)
 code_js = []
 result = []
 
-@app.route('/compile', methods=['POST'])
+@app.route('/post_code', methods=['POST'])
 def compile_code():
     #json error
     if not request.json or not 'code' in request.json:
@@ -39,15 +41,9 @@ def get_names():
         return jsonify({'code': "EMPTY"})
 
     else:
-        if result:
-            while result:
-                result.pop()
-
-        result.append(code_js[0])
-        result.append(runtime)
-        result.append(compilation_time)
-
-        return jsonify({'result': result})
+        #compile and update data in class
+        compiler_handler.compile(code_js)
+        return jsonify({'result': compiler_handler.result})
 
 @app.errorhandler(404)
 def not_found(error):

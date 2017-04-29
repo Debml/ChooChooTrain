@@ -512,20 +512,22 @@ function load_code() {
 function send_input(){
     //compiler receives input
     disable_input();
-    show_output();
-    runtime_end();
+    show_output(text);
+    //runtime_end();
 }
 
-function show_output(){
+function show_output(text){
     //compiler sent output
     var a = document.getElementById('output-text');
-    a.value = "Output shown";
+    a.focus();
+    a.value = text;
 }
 
 function runtime_end(){
     //alert user, enable review button
     finished_running = true;
-    create_bootstrap_success_alert("Code finished running. ","You can now review your code")
+    //time interval to let user see alert appearing
+    create_bootstrap_success_alert("Code finished running. ","You can now review your code");
 }
 
 /*function create_review_button(){
@@ -575,7 +577,7 @@ function show_code(code_returned) {
 
 function compile_code(){
     //compiler needs input
-    enable_input();
+    //enable_input();
 }
 
 function get_request_ajax(uri){
@@ -588,10 +590,19 @@ function get_request_ajax(uri){
                 //index 0 - code
                 //index 1 runtime
                 //index 2 compilation time
+                //index 3 output
+                //index 4 compilation status
                 code_returned = jsonResponse.result[0]
                 show_code(code_returned);
                 //update time chart config info with runtime and compilation time
                 update_time_config(jsonResponse.result[1],jsonResponse.result[2]);
+                //wait for user to see runtime
+                var t = setTimeout(function() {
+                    show_output(jsonResponse.result[3])
+                    if (jsonResponse.result[4]){
+                        runtime_end();
+                    }
+                }, 700);
             },
             error: function (errorMessage) {
                 alert(errorMessage);

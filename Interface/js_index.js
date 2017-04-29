@@ -112,7 +112,7 @@ function block_name_input(id){
 // code ready to be compiled
 function compile_code() {
   //link for compiler
-  var compilerURI = "http://127.0.0.1:5000/compile";
+  var compilerURI = "http://127.0.0.1:5000/post_code";
 
   //get code from blocks
   if(!file_upload){
