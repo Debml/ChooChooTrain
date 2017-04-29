@@ -453,18 +453,22 @@ class Stack:
 Activation Record class represents a stack frame that holds the execution context for each function called
 """
 class Activation_Record:
-	def __init__(self, local_variable_counter = None, temporary_variable_counter = None, return_address = None):
-		if local_variable_counter is not None:
-			if temporary_variable_counter is not None:
-				if return_address is not None:
-					#Private variable that holds the memory needed for execution of given block
-					self._block_memory = memory.Block_Memory(local_variable_counter, temporary_variable_counter)
+	def __init__(self, block_name = None, local_variable_counter = None, temporary_variable_counter = None, return_address = None):
+		if block_name is not None:
+			if local_variable_counter is not None:
+				if temporary_variable_counter is not None:
+					if return_address is not None:
+						#Private variable that holds the block name for the activation record
+						self._block_name = block_name
 
-					#Private variable that holds the value that the function returns
-					self._return_value = None
+						#Private variable that holds the memory needed for execution of given block
+						self._block_memory = memory.Block_Memory(local_variable_counter, temporary_variable_counter)
 
-					#Private variable for the instruction pointer where the program should go once the function ends
-					self._return_address = return_address
+						#Private variable that holds the value that the function returns
+						self._return_value = None
+
+						#Private variable for the instruction pointer where the program should go once the function ends
+						self._return_address = return_address
 
 	#Sets the return value for the block
 	def set_return_value(self, return_value = None):
@@ -487,6 +491,10 @@ class Activation_Record:
 	#Returns the block memory
 	def get_block_memory(self):
 		return self._block_memory
+
+	#Returns the block name
+	def get_block_name(self):
+		return self._block_name
 
 #for testing purposes
 if __name__ == '__main__':

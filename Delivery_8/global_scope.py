@@ -1,6 +1,7 @@
 from directories import Function_Directory
 from structures import Queue
 from structures import Stack
+from structures import Dictionary
 from structures import Semantic_Cube
 from structures import Quad_List
 from structures import Activation_Record
@@ -36,6 +37,10 @@ instruction_pointer = 0
 program_memory = Program_Memory()
 temp_activation_record = Activation_Record()
 current_return_value = None
+starting_block = ""
 
 #timer helper variable
 timer_counter = 0
+
+#Code-Review variables
+cr_block_quad_counter = Dictionary()
