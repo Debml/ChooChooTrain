@@ -42,8 +42,8 @@ def get_names():
 
     else:
         #compile and update data in class
-        compiler_handler.compile(code_js)
-        return jsonify({'result': compiler_handler.result})
+        result = compiler_handler.compile(code_js)
+        return jsonify({'result': result})
 
 @app.errorhandler(404)
 def not_found(error):
@@ -51,36 +51,3 @@ def not_found(error):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-"""
-@app.route('/names/<int:index>', methods=['GET'])
-def get_name(index):
-    name = things[index]
-    if index < 0:
-        abort(404)
-    return jsonify({'name': name })
-
-@app.route('/names', methods=['POST'])
-def create_name():
-    #json error
-    if not request.json or not 'name1' in request.json:
-        abort(400)
-    name1 = request.json['name1']
-
-    things.append(name1)
-
-    return jsonify({'new name list': things}), 201
-
-@app.route('/names/<int:id>', methods=['PUT'])
-def update_name(id):
-    task = things[id]
-    if len(task) == 0:
-        abort(404)
-    if not request.json:
-        abort(400)
-    if 'name' in request.json and type(request.json['name']) != unicode:
-        abort(400)
-    #in case it doesn't receive parameter it repeats name
-    things[id] = task + request.json.get('name', task)
-    return jsonify({'updated name': things[id]})
-    """

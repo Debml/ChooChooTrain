@@ -17,9 +17,16 @@ class Compiler_Handler:
                 self.result.pop()
 
         self.code_js = code_js
+
+        # get runtime and format
         self.runtime = '{:.7e}'.format(random.uniform(0, 1))
+
+        #get compile time and format
         self.compilation_time = '{:.7e}'.format(random.uniform(0, 1))
+
+        #get output
         self.output = "Output from compiler handler"
+
         self.compilation_status = 1;
 
         self.result.append(self.code_js[0])
@@ -27,4 +34,6 @@ class Compiler_Handler:
         self.result.append(self.compilation_time)
         self.result.append(self.output)
         self.result.append(self.compilation_status)
+
+        return self.result
 
