@@ -371,6 +371,9 @@ def p_EC_SEEN_BLOCK_BODY_END(p):
 		#global_scope.function_directory.print_variable_list(global_scope.current_block_id)
 		#global_scope.function_directory.clear_variable_list(global_scope.current_block_id)
 
+		#increase the quad count of the block by one
+		global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)
+
 		#Reset local variable type counter for new blocks to begin at 0 and add it to FRT (to create the execution context's memory)
 		local_counter = global_scope.function_directory.memory_handler.reset_local_counter()
 		global_scope.function_directory.add_local_type_counter(global_scope.current_block_id, local_counter)
@@ -524,6 +527,9 @@ def p_EC_SEEN_CONST_LIST(p):
 		if not global_scope.quad_list.append_quad(constants.Operators.OP_VERIFY_INDEX, list_index, list_size, "-1"):
 			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
+		#increase the quad count of the block by one
+		global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)
+
 		result = global_scope.function_directory.get_temporary_address(constants.Data_Types.WHOLE)
 
 		#Stop execution if there is no space for temporary variables
@@ -535,6 +541,9 @@ def p_EC_SEEN_CONST_LIST(p):
 
 		if not global_scope.quad_list.append_quad(constants.Operators.OP_ADDITION, list_index, list_address, result):
 			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+
+		#increase the quad count of the block by one
+		global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)	
 		
 		global_scope.pending_operands.push(result)
 		global_scope.pending_operand_types.push(list_type)
@@ -633,6 +642,9 @@ def p_EC_SEEN_ASSIGN_VALUE(p):
 			if result_type != -1:
 				if not global_scope.quad_list.append_quad(operator, right_operand, "-1", left_operand):
 					stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+
+				#increase the quad count of the block by one
+				global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)	
 			else:
 				stop_exec("Expression of type '%s' cannot be assigned to ID of type '%s'" % (right_type, left_type))
 
@@ -648,6 +660,9 @@ def p_EC_SEEN_IF_EXP(p):
 		if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO_F, result, "-1", "pending"):
 			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
+		#increase the quad count of the block by one
+		global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)
+
 		global_scope.pending_jumps.push(global_scope.quad_list.get_quad_count() - 1)
 	else:
 		stop_exec("Expected a boolean expression, found a '%s' expression instead" % exp_type)
@@ -658,6 +673,9 @@ def p_EC_SEEN_ELSE(p):
 	#Quad for the true case
 	if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "pending"):
 		stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+
+	#increase the quad count of the block by one
+	global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)
 
 	#Fills the 'if' pending jump
 	if_false = global_scope.pending_jumps.pop()
@@ -689,6 +707,9 @@ def p_EC_SEEN_UNTIL(p):
 
 		if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO_F, evaluation_result, "-1", loop_start):
 			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+
+		#increase the quad count of the block by one
+		global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)
 	else:
 		stop_exec("Expected a boolean expression, found a '%s' expression instead" % exp_type)
 
@@ -701,6 +722,9 @@ def p_EC_SEEN_WRITE_EXP(p):
 	if not global_scope.quad_list.append_quad(constants.Operators.OP_PRINT, expression_to_print, "-1", "-1"):
 		stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
+	#increase the quad count of the block by one
+	global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)
+
 #READ action 1 - Generates quad for the read action
 def p_EC_SEEN_READ_ID(p):
 	"EC_SEEN_READ_ID : "
@@ -712,6 +736,9 @@ def p_EC_SEEN_READ_ID(p):
 	#if global_scope.function_directory.primitive_id_exists(id_to_read_into, global_scope.current_block_id):
 	if not global_scope.quad_list.append_quad(constants.Operators.OP_INPUT, input_type, "-1", id_to_read_into):
 			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+
+	#increase the quad count of the block by one
+	global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)
 
 #EXPRESSION action 1 - Pushes the negation operator into the operators stack
 def p_EC_SEEN_NOT(p):
@@ -750,6 +777,9 @@ def p_EC_SEEN_EXPRESSION(p):
 			if not global_scope.quad_list.append_quad(operator, left_operand, "-1", result):
 				stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
+			#increase the quad count of the block by one
+			global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)
+
 			global_scope.pending_operands.push(result)
 			global_scope.pending_operand_types.push(constants.Data_Types.BOOLEAN)
 		else:
@@ -765,6 +795,9 @@ def p_EC_SEEN_START_PROG(p):
 	"EC_SEEN_START_PROG : "
 	if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "pending"):
 		stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+
+	#DO NOT increase quad counter since the initial go to belongs to the program and not a block
+	#global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)
 
 	global_scope.pending_jumps.push(global_scope.quad_list.get_quad_count() - 1)
 
@@ -792,6 +825,9 @@ def p_EC_SEEN_RETURN(p):
 			if not global_scope.quad_list.append_quad(constants.Operators.OP_RETURN, return_value, "-1", "-1"):
 				stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
+			#increase the quad count of the block by one
+			global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)
+
 			global_scope.block_returns = True
 		else:
 			stop_exec("Block '%s' should return a '%s' value, found a '%s' value instead" % (global_scope.current_block_id, block_return_type, return_type))
@@ -811,6 +847,9 @@ def p_EC_SEEN_START_PARAM(p):
 
 	if not global_scope.quad_list.append_quad(constants.Operators.OP_ERA, call_block_id, "-1", "-1"):
 		stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+
+	#increase the quad count of the block by one
+	global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)
 
 	#adds false bottom mark to solve operations for parameters first
 	global_scope.pending_operators.push(constants.Misc.FALSE_BOTTOM)
@@ -842,6 +881,8 @@ def p_EC_SEEN_PARAM(p):
 		if not global_scope.quad_list.append_quad(constants.Operators.OP_PARAM, argument, "-1", param_address):
 			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
+		#increase the quad count of the block by one
+		global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)
 	else:
 		stop_exec("Argument #%d of block '%s' should be a '%s' value, found a '%s' value instead" % (block_argument_counter, call_block_id, parameter_type, argument_type))
 
@@ -869,6 +910,9 @@ def abstract_seen_block_call(p, returns_value):
 		if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_SUB, call_block_id, "-1", call_block_initial_quad):
 			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
+		#increase the quad count of the block by one
+		global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)
+
 		#If the block will resolve to a value
 		if returns_value:
 			return_type = global_scope.function_directory.get_return_type_for_block(call_block_id)
@@ -880,6 +924,9 @@ def abstract_seen_block_call(p, returns_value):
 			
 			if not global_scope.quad_list.append_quad(constants.Operators.OP_ASSIGN, call_block_id, "-1", result):
 				stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+
+			#increase the quad count of the block by one
+			global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)
 
 			global_scope.pending_operands.push(result)
 			global_scope.pending_operand_types.push(return_type)
@@ -936,6 +983,9 @@ def create_binary_operation_quad():
 		if not global_scope.quad_list.append_quad(operator, left_operand, right_operand, result):
 			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
+		#increase the quad count of the block by one
+		global_scope.function_directory.increase_quad_counter(global_scope.current_block_id)
+
 		global_scope.pending_operands.push(result)
 		global_scope.pending_operand_types.push(result_type)
 	else:
@@ -980,8 +1030,8 @@ def stop_exec(message):
 #Prints results of compilation when successful
 def end_compilation():
 	print('Compilation Successful!')
-	#global_scope.function_directory.print_table()
-	#print(global_scope.quad_list)
+	global_scope.function_directory.print_table()
+	print(global_scope.quad_list)
 
 #Entry method to start the compilation process
 def start_compilation(file_name):
