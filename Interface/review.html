@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Choo Choo Train</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js_review.js"></script>
+  <script src="js/Chart.bundle.js"></script>
+  <script src="js/utils.js"></script>
+  <style>
+    canvas {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+    }
+    </style>
+</head>
+<body onload="load_code()">
+
+   <div id="carousel-example-generic" class="carousel slide" data-ride="carousel"´
+        <ol class="carousel-indicators">
+          <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+          <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+          <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+          <li data-target="#carousel-example-generic" data-slide-to="3"></li>
+          <li data-target="#carousel-example-generic" data-slide-to="4"></li>
+          <li data-target="#carousel-example-generic" data-slide-to="5"></li>
+        </ol>
+        <div class="carousel-inner" role="listbox" style="padding-bottom: 15px;">
+
+         <div class="item active" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
+            <div class="panel panel-default" style="max-width:460px; max-height:600;margin-left:auto; margin-right:auto;">
+              <div class="panel-heading text-center" >
+                <h3>Train Runtime</h3>
+              </div>
+                <div class="panel-body">
+                  <div class="container" >
+                      <p>
+                        <p>
+                          
+                            <div class="chart-demo1">
+                            <h3>32 milliseconds</h3>
+                            <canvas id="timeChart" width="200" height="200"></canvas>
+                            <script>
+                              var ctx = document.getElementById("timeChart").getContext("2d");
+                              ctx.canvas.width = 20;
+                              ctx.canvas.height = 20;
+                              timeChart = new Chart(ctx, {
+                              type: 'doughnut',
+                              data: {
+                                  datasets: [{
+                                      data: [
+                                          32,
+                                      ],
+                                      backgroundColor: [
+                                          window.chartColors.red,
+                                      ],
+                                  }],
+                                  labels: [
+                                      "Total Runtime",
+                                  ]
+                              },
+                              options: {
+                                  responsive: true,
+                                  legend:{
+                                    display: false
+                                  },
+                                  layout: {
+                                    padding: 23
+                                  },
+                                  
+                                  animation: {
+                                      animateScale: true,
+                                      animateRotate: true
+                                  }
+                              }
+                            });
+                          </script>
+                          </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+                <div class="panel-footer text-center">Total time of program running</div>
+            </div>
+          </div>
+
+          <div class="item" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
+            <div class="panel panel-default" style="max-width:460px;margin-left:auto; margin-right:auto;">
+              <div class="panel-heading text-center" >
+                <h3>Line</h3>
+              </div>
+                <div class="panel-body" style="width: 50px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myLineChart" width="200" height="200"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+               <div class="panel-footer text-center">Field description here</div>
+            </div>
+          </div>
+
+          <div class="item" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
+            <div class="panel panel-default" style="max-width:460px;margin-left:auto; margin-right:auto;">
+              <div class="panel-heading text-center" >
+                <h3>Doughnut</h3>
+              </div>
+                <div class="panel-body" style="width: 50px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myDoughnutChart" width="200" height="200"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+                <div class="panel-footer text-center">Field description here</div>
+            </div>
+          </div>
+
+          <div class="item" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
+            <div class="panel panel-default" style="max-width:460px;margin-left:auto; margin-right:auto;">
+              <div class="panel-heading text-center" >
+                <h3>Stacked Area</h3>
+              </div>
+                <div class="panel-body" style="width: 50px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myStackedChart" width="200" height="200"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+                <div class="panel-footer text-center">Field description here</div>
+            </div>
+          </div>
+
+          <div class="item" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
+            <div class="panel panel-default" style="max-width:460px;margin-left:auto; margin-right:auto;">
+              <div class="panel-heading text-center" >
+                <h3>Polar Area</h3>
+              </div>
+                <div class="panel-body" style="width: 50px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myPolarChart"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+                <div class="panel-footer text-center">Field description here</div>
+            </div>
+          </div>
+
+          <div class="item" style="background: #585858;padding-top: 15px;padding-bottom: 30px;">
+            <div class="panel panel-default" style="max-width:460px;margin-left:auto; margin-right:auto;">
+              <div class="panel-heading text-center" >
+                <h3>Bubble Chart</h3>
+              </div>
+                <div class="panel-body" style="width: 50px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myBubbleChart" width="200" height="200"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+              <div class="panel-footer text-center">Field description here</div>
+            </div>
+          </div>
+
+
+          </div>
+        <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev" style="
+  margin-bottom: 15px;" >
+          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next" style="
+  margin-bottom: 15px;" >
+          <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+
+</body>
+</html>
