@@ -422,6 +422,9 @@ class Code_Review_Data:
         #public variable for number of executions of each loops per block
         self.block_loop_counter = Dictionary()
 
+        #public variable for the counter of AR in the stack segment at a given time (function call)
+        self.num_ar_on_call = []
+
         #public variable for the max number of activation records at a given time in the execution cycle,
         #starts at one to take into account the starting block that is in the stack segment since the beginning
         self.max_num_ar = 1
@@ -474,9 +477,17 @@ class Code_Review_Data:
                     self.block_loop_counter.insert(current_block, loop_data)
 
     #Increase the max number of activation records at a given time (if needed)
-    def increase_max_num_activation_records(self, ar_count):
-        if ar_count > self.max_num_ar:
-            self.max_num_ar = ar_count
+    def _increase_max_num_activation_records(self, ar_count = None):
+        if ar_count is not None:
+            if ar_count > self.max_num_ar:
+                self.max_num_ar = ar_count
+
+    #Appends a counter of AR in the stack segment at the moment of a function call
+    def add_num_ar_on_call(self, ar_count = None):
+        if ar_count is not None:
+            self.num_ar_on_call.append(ar_count)
+            #takes into account the AR about to be added
+            self._increase_max_num_activation_records(ar_count + 1)
 
 #for testing purposes
 if __name__ == '__main__':
