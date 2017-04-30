@@ -1,4 +1,5 @@
 from directories import Function_Directory
+from directories import Code_Review_Data
 from structures import Queue
 from structures import Stack
 from structures import Dictionary
@@ -12,6 +13,7 @@ from memory import Program_Memory
 function_directory = Function_Directory()
 semantic_cube = Semantic_Cube()
 quad_list = Quad_List()
+code_review = Code_Review_Data()
 
 #Helper variables for semantic validation
 line_count = 1
@@ -41,6 +43,3 @@ starting_block = ""
 
 #timer helper variable
 timer_counter = 0
-
-#Code-Review variables
-cr_block_quad_counter = Dictionary()

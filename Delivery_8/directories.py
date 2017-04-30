@@ -407,6 +407,68 @@ class Function_Directory:
             print(self.function_reference_table[block_key][1][1])
             print("\n")
 
+#Holds the variables that will be used to display graphs at the end of the execution
+class Code_Review_Data:
+    def __init__(self):
+        #public variable for number of executed quads per block
+        self.block_quad_counter = Dictionary()
+
+        #public variable for number of calls per block
+        self.block_num_calls = Dictionary()
+
+        #public variable for number of ifs (not counting loop conditions) in the program
+        self.program_branches = 0
+
+        #public variable for number of executions of each loops per block
+        self.block_loop_counter = Dictionary()
+
+    #Increases the executed quad counter per block
+    def increase_quad_counter(self, current_block = None, starting_block = None):
+        if current_block is not None:
+            if starting_block is not None:
+                #If the block has an entry in the dictionary, increase the counter
+                if self.block_quad_counter.contains(current_block):
+                    self.block_quad_counter[current_block] += 1
+                #If the block has no entry yet, add one and start the counter at 1 or 0
+                else:
+                    #Do not include the quad for the initial 'go-to'
+                    if current_block == starting_block:
+                        self.block_quad_counter.insert(current_block, 0)
+                    else:
+                        self.block_quad_counter.insert(current_block, 1)
+
+    #Increase counter of calls per block
+    def increase_num_call_to_block(self, current_block = None):
+        if current_block is not None:
+            #If the block has an entry in the dictionary, increase the counter
+            if self.block_num_calls.contains(current_block):
+                self.block_num_calls[current_block] += 1
+            #If the block has no entry yet, add one and start the counter at 1
+            else:
+                self.block_num_calls.insert(current_block, 1)
+
+    #Increase counter of conditionals of the program
+    def increase_program_branches(self):
+        self.program_branches += 1
+
+    #Increase counter of each loop on each program
+    def increase_block_loop_counter(self, current_block = None, instruction_pointer = None):
+        if current_block is not None:
+            if instruction_pointer is not None:
+                #If the block has an entry in the dictionary
+                if self.block_loop_counter.contains(current_block):
+                    #If the loop has an entry in the dictionary, increase the counter
+                    if self.block_loop_counter[current_block].contains(instruction_pointer):
+                        self.block_loop_counter[current_block][instruction_pointer] += 1
+                    #If the loop has no entry, add one
+                    else:
+                        self.block_loop_counter[current_block].insert(instruction_pointer, 1)
+                #If the block has no entry yet, add one and start the counter at 1
+                else:
+                    loop_data = Dictionary()
+                    loop_data.insert(instruction_pointer, 1)
+                    self.block_loop_counter.insert(current_block, loop_data)
+
 #for testing purposes
 if __name__ == '__main__':
     directory = Function_Directory()
