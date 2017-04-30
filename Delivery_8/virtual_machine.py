@@ -13,13 +13,17 @@ def execute_code():
     error_flag = False
 
     #Increase block call counter for the current block
+    start_data_timer = time.time()
     global_scope.code_review.increase_num_call_to_block(global_scope.starting_block)
+    global_scope.timer_counter = time.time() - start_data_timer
 
     #Loops until break (end_proc is in charge of breaking)
     while True:
         #If all functions have finished executing (including starting), end program
         if global_scope.program_memory.stack_segment_is_empty() or error_flag:
-            global_scope.code_review.print_data()
+            #start_data_timer = time.time()
+            #global_scope.code_review.print_data()
+            #global_scope.timer_counter = time.time() - start_data_timer
             if (error_flag == True):
                 return 0
             else:
@@ -32,7 +36,9 @@ def execute_code():
         #Do not add initial go to, since it belong to program
         if global_scope.instruction_pointer > 0:
             #Increase quad counter for the current block
+            start_data_timer = time.time()
             global_scope.code_review.increase_executed_quad_counter(current_block)
+            global_scope.timer_counter = time.time() - start_data_timer
 
         if operator == constants.Operators.OP_ADDITION:
             #print "addition"
@@ -149,13 +155,17 @@ def execute_code():
             #print "go to subroutine"
             #add the number of activation records at the moment of the function call
             ar_count = global_scope.program_memory.get_stack_segment_size()
+            start_data_timer = time.time()
             global_scope.code_review.add_num_ar_on_call(ar_count)
+            global_scope.timer_counter = time.time() - start_data_timer
 
             status_code = go_sub_operation(current_instruction)
 
             #Increase block call counter for the current block
             current_block = global_scope.program_memory.get_current_activation_record().get_block_name()
+            start_data_timer = time.time()
             global_scope.code_review.increase_num_call_to_block(current_block)
+            global_scope.timer_counter = time.time() - start_data_timer
 
             if (status_code == 0):
                 error_flag = True
@@ -495,10 +505,14 @@ def increase_go_to_counter(current_block, current_instruction):
 
     #If the jump is to a quad that comes next, it is an 'If' condition operation
     if jump_to_position > global_scope.instruction_pointer:
+        start_data_timer = time.time()
         global_scope.code_review.increase_program_branches()
+        global_scope.timer_counter = time.time() - start_data_timer
     #If the jump is to a previous quad, it is an 'Until' loop operation
     else:
+        start_data_timer = time.time()
         global_scope.code_review.increase_block_executed_loop_counter(current_block, global_scope.instruction_pointer)
+        global_scope.timer_counter = time.time() - start_data_timer
 
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message
@@ -513,8 +527,4 @@ def stop_exec(message = "Unknown operation"):
 #Entry method to start the intermediate code execution
 def start_execution():
     initialize_memory()
-    #print global_scope.function_directory.memory_handler
-    #print(global_scope.cr_block_quad_counter)
-    #global_scope.code_review.print_data()
     return execute_code()
-    #print global_scope.function_directory.memory_handler

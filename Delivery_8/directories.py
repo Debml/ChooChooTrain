@@ -418,8 +418,14 @@ class Code_Review_Data:
         #public variable for number of variables per block
         self.block_variable_counter = Dictionary()
 
+        #public variable for total number of variables
+        self.total_variable_counter = 0
+
         #public variable for number of loops per block
         self.block_compiled_loop_counter = Dictionary()
+
+        #public variable for total number of loops
+        self.total_loop_counter = 0
 
         #Run-time data
         #public variable for number of *executed* quads per block
@@ -461,11 +467,13 @@ class Code_Review_Data:
     def increase_variable_counter(self, current_block = None):
         if current_block is not None:
             self._increase_or_add_entry(self.block_variable_counter, current_block)
+            self.total_variable_counter += 1
 
     #Adds the information about number of loops per block
     def increase_compiled_loop_counter(self, current_block = None):
         if current_block is not None:
             self._increase_or_add_entry(self.block_compiled_loop_counter, current_block)
+            self.total_loop_counter += 1
 
     #Increases the executed quad counter per block
     def increase_executed_quad_counter(self, current_block = None):
@@ -515,8 +523,12 @@ class Code_Review_Data:
         print(self.block_compiled_quad_counter)
         print("# variables")
         print(self.block_variable_counter)
+        print("# total variables")
+        print(self.total_variable_counter)
         print("# loops")
         print(self.block_compiled_loop_counter)
+        print("# total loops")
+        print(self.total_loop_counter)
         print("Run Time data")
         print("# quads")
         print(self.block_executed_quad_counter)
