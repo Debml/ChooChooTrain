@@ -54,20 +54,10 @@ class Function_Directory:
             quad_count = 0
 
             #declare block_data
-            block_data = [return_type, [primitives, lists], parameters, quad_position, local_type_counter, temporary_type_counter, quad_count]
+            block_data = [return_type, [primitives, lists], parameters, quad_position, local_type_counter, temporary_type_counter]
 
             #add new block name as key
             self.function_reference_table.insert(block_name, block_data)
-
-    #Increases the quad count of the block by one
-    def increase_quad_counter(self, block_name = None):
-        if block_name is not None:
-            self.function_reference_table[block_name][6] += 1
-
-    #returns the quad count of the block
-    def get_quad_counter_block(self, block_name = None):
-        if block_name is not None:
-            return self.function_reference_table[block_name][6]
 
     #adds a local_type_counter to a block
     def add_local_type_counter(self, key = None, local_type_counter = None):
@@ -360,6 +350,15 @@ class Function_Directory:
                 else:
                     return self.add_constant(constant_value, constant_type)
 
+    #returns the number of primitives (variables) of a block
+    def get_primitive_count_for_block(self, block_name = None):
+        if block_name is not None:
+            return self.function_reference_table[block_name][1][0].size()
+
+    #returns the number of lists of a block
+    def get_list_count_for_block(self, block_name = None):
+        if block_name is not None:
+            return self.function_reference_table[block_name][1][1].size()
 
     #clears variable list (primitives and lists) in a function
     def clear_variable_list(self, block_key = None):
@@ -394,9 +393,6 @@ class Function_Directory:
             print("\n")
             print(self.function_reference_table[key][5])
             print("\n")
-            print("Function number of quads: ")
-            print(self.function_reference_table[key][6])
-            print("\n")
         print("Constants: ")
         print(self.constant_table)
         print("\n")
@@ -422,6 +418,9 @@ class Code_Review_Data:
         #public variable for number of variables per block
         self.block_variable_counter = Dictionary()
 
+        #public variable for number of loops per block
+        self.block_compiled_loop_counter = Dictionary()
+
         #Run-time data
         #public variable for number of *executed* quads per block
         self.block_executed_quad_counter = Dictionary()
@@ -442,59 +441,54 @@ class Code_Review_Data:
         #starts at one to take into account the starting block that is in the stack segment since the beginning
         self.max_num_ar = 1
 
+    #Increases a counter for a current block or adds an entry
+    def _increase_or_add_entry(self, sent_dictionary = None, current_block = None):
+        if sent_dictionary is not None:
+            if current_block is not None:
+                #If the block has an entry in the dictionary, increase the counter
+                if sent_dictionary.contains(current_block):
+                    sent_dictionary[current_block] += 1
+                #If the block has no entry yet, add one and start the counter at 1
+                else:
+                    sent_dictionary.insert(current_block, 1)
+
     #Adds the information about number of quads per block
-    def initialize_compiled_quad_counter(self, current_block = None, quad_count = None):
+    def increase_compiled_quad_counter(self, current_block = None):
         if current_block is not None:
-            if quad_count is not None:
-                self.block_compiled_quad_counter.insert(current_block, quad_count)
+            self._increase_or_add_entry(self.block_compiled_quad_counter, current_block)
 
     #Adds the information about number of variables per block
-    def initialize_variable_counter(self, current_block = None, variable_count = None):
+    def increase_variable_counter(self, current_block = None):
         if current_block is not None:
-            if variable_count is not None:
-                self.block_variable_counter.insert(current_block, variable_count)
+            self._increase_or_add_entry(self.block_variable_counter, current_block)
+
+    #Adds the information about number of loops per block
+    def increase_compiled_loop_counter(self, current_block = None):
+        if current_block is not None:
+            self._increase_or_add_entry(self.block_compiled_loop_counter, current_block)
 
     #Increases the executed quad counter per block
-    def increase_executed_quad_counter(self, current_block = None, starting_block = None):
+    def increase_executed_quad_counter(self, current_block = None):
         if current_block is not None:
-            if starting_block is not None:
-                #If the block has an entry in the dictionary, increase the counter
-                if self.block_executed_quad_counter.contains(current_block):
-                    self.block_executed_quad_counter[current_block] += 1
-                #If the block has no entry yet, add one and start the counter at 1 or 0
-                else:
-                    #Do not include the quad for the initial 'go-to'
-                    if current_block == starting_block:
-                        self.block_executed_quad_counter.insert(current_block, 0)
-                    else:
-                        self.block_executed_quad_counter.insert(current_block, 1)
+            self._increase_or_add_entry(self.block_executed_quad_counter, current_block)
 
     #Increase counter of calls per block
     def increase_num_call_to_block(self, current_block = None):
         if current_block is not None:
-            #If the block has an entry in the dictionary, increase the counter
-            if self.block_num_calls.contains(current_block):
-                self.block_num_calls[current_block] += 1
-            #If the block has no entry yet, add one and start the counter at 1
-            else:
-                self.block_num_calls.insert(current_block, 1)
+            self._increase_or_add_entry(self.block_num_calls, current_block)
 
     #Increase counter of conditionals of the program
     def increase_program_branches(self):
         self.program_branches += 1
 
     #Increase counter of each loop on each program
-    def increase_block_loop_counter(self, current_block = None, instruction_pointer = None):
+    def increase_block_executed_loop_counter(self, current_block = None, instruction_pointer = None):
         if current_block is not None:
             if instruction_pointer is not None:
-                #If the block has an entry in the dictionary
+                #If the block has an entry (loop) in the dictionary
                 if self.block_executed_loop_counter.contains(current_block):
-                    #If the loop has an entry in the dictionary, increase the counter
-                    if self.block_executed_loop_counter[current_block].contains(instruction_pointer):
-                        self.block_executed_loop_counter[current_block][instruction_pointer] += 1
-                    #If the loop has no entry, add one
-                    else:
-                        self.block_executed_loop_counter[current_block].insert(instruction_pointer, 1)
+                    #add or increase a new loop
+                    self._increase_or_add_entry(self.block_executed_loop_counter[current_block], instruction_pointer)
                 #If the block has no entry yet, add one and start the counter at 1
                 else:
                     loop_data = Dictionary()
@@ -516,13 +510,25 @@ class Code_Review_Data:
 
     #Prints the data stored
     def print_data(self):
+        print("Compile Time data")
+        print("# quads")
         print(self.block_compiled_quad_counter)
+        print("# variables")
         print(self.block_variable_counter)
+        print("# loops")
+        print(self.block_compiled_loop_counter)
+        print("Run Time data")
+        print("# quads")
         print(self.block_executed_quad_counter)
+        print("# calls")
         print(self.block_num_calls)
+        print("# ifs")
         print(self.program_branches)
+        print("# loops")
         print(self.block_executed_loop_counter)
+        print("max AR")
         print(self.max_num_ar)
+        print("AR/calls")
         print(self.num_ar_on_call)
 
 #for testing purposes

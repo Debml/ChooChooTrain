@@ -28,9 +28,11 @@ def execute_code():
         current_instruction = global_scope.program_memory.get_quad_from_memory(global_scope.instruction_pointer)
         operator = current_instruction.get_operator()
 
-        #Increase quad counter for the current block
         current_block = global_scope.program_memory.get_current_activation_record().get_block_name()
-        global_scope.code_review.increase_executed_quad_counter(current_block, global_scope.starting_block)
+        #Do not add initial go to, since it belong to program
+        if global_scope.instruction_pointer > 0:
+            #Increase quad counter for the current block
+            global_scope.code_review.increase_executed_quad_counter(current_block)
 
         if operator == constants.Operators.OP_ADDITION:
             #print "addition"
@@ -184,15 +186,6 @@ def initialize_memory():
 
     aux_program_memory = Program_Memory(global_scope.quad_list, starting_activation_record, cc, global_scope.function_directory.constant_table)
     global_scope.program_memory = aux_program_memory
-
-#Initializes the code review compilation data
-def initialize_compile_data():
-    for block_name in global_scope.function_directory.function_reference_table.get_instance():
-        #compile time quads
-        quad_count = global_scope.function_directory.get_quad_counter_block(block_name)
-        global_scope.code_review.initialize_compiled_quad_counter(block_name, quad_count)
-
-        #compile time variables
 
 #Executes an arithmetic operation
 def binary_arithmetic_operation(operator, current_instruction):
@@ -505,7 +498,7 @@ def increase_go_to_counter(current_block, current_instruction):
         global_scope.code_review.increase_program_branches()
     #If the jump is to a previous quad, it is an 'Until' loop operation
     else:
-        global_scope.code_review.increase_block_loop_counter(current_block, global_scope.instruction_pointer)
+        global_scope.code_review.increase_block_executed_loop_counter(current_block, global_scope.instruction_pointer)
 
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message
@@ -520,7 +513,6 @@ def stop_exec(message = "Unknown operation"):
 #Entry method to start the intermediate code execution
 def start_execution():
     initialize_memory()
-    initialize_compile_data()
     #print global_scope.function_directory.memory_handler
     #print(global_scope.cr_block_quad_counter)
     #global_scope.code_review.print_data()
