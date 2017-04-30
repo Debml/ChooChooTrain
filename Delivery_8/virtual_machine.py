@@ -19,6 +19,7 @@ def execute_code():
     while True:
         #If all functions have finished executing (including starting), end program
         if global_scope.program_memory.stack_segment_is_empty() or error_flag:
+            global_scope.code_review.print_data()
             if (error_flag == True):
                 return 0
             else:
@@ -514,7 +515,7 @@ def stop_exec(message = "Unknown operation"):
 
     #sys.exit("Runtime error: %s" % message)
     #stop execution
-    return 0;
+    return 0
 
 #Entry method to start the intermediate code execution
 def start_execution():
@@ -522,6 +523,6 @@ def start_execution():
     initialize_compile_data()
     #print global_scope.function_directory.memory_handler
     #print(global_scope.cr_block_quad_counter)
-    global_scope.code_review.print_data()
+    #global_scope.code_review.print_data()
     return execute_code()
     #print global_scope.function_directory.memory_handler
