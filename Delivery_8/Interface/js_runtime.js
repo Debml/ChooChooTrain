@@ -1,6 +1,8 @@
 // counts number of alerts written
 var alert_counter = 0;
 var runtime_description = "Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.";
+var memory_use_ar = "Some blocks can take up a lot of memory if they are called numerous times within each other or recursively. If there are many calls within blocks before finishing execution, memory usage can stack up. See how well your code performs with increasing amount of block calls.";
+var memory_use_no_ar = "There were no calls to other blocks except the starting block. Choo Choo Train makes a hidden block call to the starting block in order to start execution of the program.";
 var quote_counter = 0;
 var addedCount = 0;
 var code = "Code not loaded";
@@ -232,7 +234,7 @@ window.doughnut_config = {
                 window.chartColors.red,
                 window.chartColors.orange,
             ],
-            label: 'Steps'
+            label: 'Operations'
         }],
         labels: [
             "Block1",
@@ -267,7 +269,7 @@ window.doughnut_config_runtime = {
                 window.chartColors.red,
                 window.chartColors.orange,
             ],
-            label: 'Steps'
+            label: 'Operations'
         }],
         labels: [
             "Block1",
@@ -297,6 +299,41 @@ window.doughnut_config_vars = {
             data: [
                 10,
                 20,
+            ],
+            backgroundColor: [
+                window.chartColors.red,
+                window.chartColors.orange,
+            ],
+            label: 'Variables'
+        }],
+        labels: [
+            "Block1",
+            "Block2",
+        ]
+    },
+    options: {
+        responsive: true,
+        legend: {
+            position: 'right',
+            fullWidth: false,
+            labels: {
+                        boxWidth: 15
+                    }
+        },
+        animation: {
+            animateScale: true,
+            animateRotate: true
+        }
+    }
+};
+
+window.doughnut_config_ifs = {
+    type: 'doughnut',
+    data: {
+        datasets: [{
+            data: [
+                1,
+                2,
             ],
             backgroundColor: [
                 window.chartColors.red,
@@ -628,13 +665,6 @@ $(document).ready(function(){
         }
     });
 
-    $('#myDoughnutChart').viewportChecker({
-        offset: 200,                 
-        callbackFunction: function(elem){
-           create_doughnut_chart(0);
-        }
-    });
-
     $('#myDoughnutChart_runtime').viewportChecker({
         offset: 200,                 
         callbackFunction: function(elem){
@@ -646,6 +676,13 @@ $(document).ready(function(){
         offset: 200,                 
         callbackFunction: function(elem){
            create_doughnut_chart_vars(0);
+        }
+    });
+
+    $('#myDoughnutChart_ifs').viewportChecker({
+        offset: 200,                 
+        callbackFunction: function(elem){
+           create_doughnut_chart_ifs(0);
         }
     });
 
@@ -895,6 +932,7 @@ function get_request_ajax(uri){
                 //index 9 is last output generated
                 //index 10 is number of activation records
                 //index 11 is the record for the ar's
+                //index 12 is for number of ifs
                 $(".alert").alert("close");
 
                 code_returned = jsonResponse.result[0]
@@ -907,6 +945,8 @@ function get_request_ajax(uri){
                 update_line_config_vars(jsonResponse.result[5], jsonResponse.result[8]);
                 //update activation records line graph
                 update_system_chart_config(jsonResponse.result[10], jsonResponse.result[11]);
+                //update num ifs
+                update_doughnut_chart_ifs(jsonResponse.result[5], jsonResponse.result[12]);
                 //wait for user to see runtime
                 var t = setTimeout(function() {
                     $(".alert").alert("close");
@@ -1048,14 +1088,7 @@ function update_line_config(blocks, compilation_steps, runtime_steps){
             labels: blocks,
             datasets: [
             {
-                label: "Compilation steps",
-                backgroundColor: compilation_colors,
-                borderColor: compilation_colors,
-                borderWidth: 1,
-                data: compilation_steps,
-            },
-            {
-                label: "Runtime steps",
+                label: "Operations",
                 backgroundColor: runtime_colors,
                 borderColor: runtime_colors,
                 borderWidth: 1,
@@ -1079,7 +1112,7 @@ function update_line_config(blocks, compilation_steps, runtime_steps){
                 }
     };
 
-    update_doughnut_chart(blocks, compilation_steps, runtime_colors);
+    //update_doughnut_chart(blocks, compilation_steps, runtime_colors);
     update_doughnut_chart_runtime(blocks, runtime_steps, runtime_colors);
 }
 
@@ -1092,8 +1125,20 @@ function generate_label_system(size){
 }
 
 function update_system_chart_config(num_ar, num_ar_records){
-    var label_data = generate_label_system(num_ar_records.length);
-    var show_points, borderColor;
+    var show_points, borderColor, label_data;
+
+    if(num_ar == 1){
+        label_data = ["0","1"];
+        num_ar_records = [1,1];
+        var a = document.getElementById("memory-use-description");
+        a.textContent = memory_use_no_ar;
+    }
+
+    else {
+        label_data = generate_label_system(num_ar_records.length);
+        var a = document.getElementById("memory-use-description");
+        a.textContent = memory_use_ar;
+    }
 
     if(num_ar_records.length > 40){
         show_points = 0;
@@ -1164,7 +1209,7 @@ function update_system_chart_config(num_ar, num_ar_records){
             }],
             yAxes: [{
                 ticks: {
-                        max: num_ar
+                        max: num_ar+1
                        },
                 stacked: true,
             }]
@@ -1219,7 +1264,7 @@ function update_doughnut_chart(blocks, compilation_steps, colors){
         datasets: [{
             data: compilation_steps,
             backgroundColor: colors,
-            label: 'Steps'
+            label: 'Operations'
         }],
         labels: blocks
     },
@@ -1268,6 +1313,37 @@ function update_doughnut_chart_vars(blocks, num_vars, colors){
     };
 }
 
+function update_doughnut_chart_ifs(blocks, num_ifs){
+    amount_blocks = blocks.length;
+    var colors = generate_colors(amount_blocks);
+    
+    window.doughnut_config_ifs = {
+    type: 'doughnut',
+    data: {
+        datasets: [{
+            data: num_ifs,
+            backgroundColor: colors,
+            label: 'Variables'
+        }],
+        labels: blocks
+    },
+    options: {
+        responsive: true,
+        legend: {
+            position: 'right',
+            fullWidth: false,
+            labels: {
+                        boxWidth: 15
+                    }
+        },
+        animation: {
+            animateScale: true,
+            animateRotate: true
+        }
+    }
+    };
+}
+
 function update_doughnut_chart_runtime(blocks, runtime_steps, colors){
     window.doughnut_config_runtime = {
     type: 'doughnut',
@@ -1275,7 +1351,7 @@ function update_doughnut_chart_runtime(blocks, runtime_steps, colors){
         datasets: [{
             data: runtime_steps,
             backgroundColor: colors,
-            label: 'Steps'
+            label: 'Operations'
         }],
         labels: blocks
     },
@@ -1447,7 +1523,7 @@ function create_line_chart_vars(offset){
             var ctx = document.getElementById("myLineChart_vars").getContext("2d");
             ctx.canvas.width = 20;
             ctx.canvas.height = 20;
-            window.myLineChart_vars = new Chart(ctx, line_config_vars);
+            window.myLineChart_vars = new Chart(ctx, window.line_config_vars);
     }, offset);
 }
 
@@ -1465,21 +1541,21 @@ function create_polar_chart(offset){
     }, offset);
 }
 
-function create_doughnut_chart(offset){
-    var t = setTimeout(function() {   
-        var ctx = document.getElementById("myDoughnutChart").getContext("2d");
-        ctx.canvas.width = 20;
-        ctx.canvas.height = 20;
-        window.myDoughnutChart = new Chart(ctx, doughnut_config);
-    }, offset);
-}
-
 function create_doughnut_chart_vars(offset){
     var t = setTimeout(function() {   
         var ctx = document.getElementById("myDoughnutChart_vars").getContext("2d");
         ctx.canvas.width = 20;
         ctx.canvas.height = 20;
-        window.myDoughnutChart_vars = new Chart(ctx, doughnut_config_vars);
+        window.myDoughnutChart_vars = new Chart(ctx, window.doughnut_config_vars);
+    }, offset);
+}
+
+function create_doughnut_chart_ifs(offset){
+    var t = setTimeout(function() {   
+        var ctx = document.getElementById("myDoughnutChart_ifs").getContext("2d");
+        ctx.canvas.width = 20;
+        ctx.canvas.height = 20;
+        window.myDoughnutChart_ifs = new Chart(ctx, window.doughnut_config_ifs);
     }, offset);
 }
 
@@ -1488,7 +1564,7 @@ function create_doughnut_chart_runtime(offset){
         var ctx = document.getElementById("myDoughnutChart_runtime").getContext("2d");
         ctx.canvas.width = 20;
         ctx.canvas.height = 20;
-        window.myDoughnutChart_runtime = new Chart(ctx, doughnut_config_runtime);
+        window.myDoughnutChart_runtime = new Chart(ctx, window.doughnut_config_runtime);
     }, offset);
 }
 

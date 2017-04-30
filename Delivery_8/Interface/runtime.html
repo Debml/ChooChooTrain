@@ -97,7 +97,7 @@
         <div class="col-lg-4 text-center" style="margin-bottom:15px;">
           <img class="img-circle" src="media/graph2.png" alt="Graph2" width="140" height="140">
           <p><h2>Code Behavior</h2></p>
-          <p style="margin-left:20px; margin-right:20px;">Check how your code is behaving. Are all variables being used? Which ones are used the most? From how many steps your code generates, to how many loops were made, knowing how code behaves is important.</p>
+          <p style="margin-left:20px; margin-right:20px;">Check how your code is behaving. Are all variables being used? Which ones are used the most? From how many operations your code generates, to how many loops were made, knowing how code behaves is important.</p>
          </div><!-- /.col-lg-4 -->
         <div class="col-lg-4 text-center" style="margin-bottom:15px;">
           <img class="img-circle" src="media/graph3.png" alt="Graph3" width="140" height="140">
@@ -141,12 +141,11 @@
 
       <div class="row featurette">
         <div class="col-md-5 col-md-push-7">
-          <h2 class="featurette-heading">Steps per block.</h2>
+          <h2 class="featurette-heading">Operations per block.</h2>
           <p class="lead">
-            Each block generates a number of steps or machine level instructions that are then
+            Each block generates a number of operations or machine level instructions that are then
             read by the Choo Choo Train compiler to be executed. If a block has large amount of 
-            statements, loops, branches, or list manipulations then the number of steps will be higher.
-            The steps generated at compilation time may be different than those generated at runtime.
+            statements, loops, branches, or list manipulations then the number of operations will be higher.
           </p>
         </div>
         <div class="col-md-7 col-md-pull-5">
@@ -170,36 +169,9 @@
 
       <div class="row featurette">
         <div class="col-md-5">
-          <h2 class="featurette-heading">Total compilation steps.</h2>
-          <p class="lead">Each block has its own weight on the entire program. Comparing how
-            many steps each block has compared to others can help visualize just how much work 
-            each block is responsible for during compilation.
-          </p>
-        </div>
-        <div class="col-md-7">
-          <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
-                <div class="panel-body" style="width: 400px; height:430px;">
-                  <div class="container" style="padding-left: 45px;">
-                      <p>
-                        <p>
-                        <div class="chart-demo">
-                          <canvas id="myDoughnutChart" width="500" height="500"></canvas>
-                        </div>
-                        </p>
-                      </p>
-                  </div>
-                </div>
-            </div>
-        </div>
-      </div>
-
-      <hr class="featurette-divider">
-
-      <div class="row featurette">
-        <div class="col-md-5">
-          <h2 class="featurette-heading">Total runtime steps.</h2>
-          <p class="lead">Each block has its own weight on the entire program. Comparing how
-            many steps each block has compared to others can help visualize just how much work 
+          <h2 class="featurette-heading">Total operations.</h2>
+          <p class="lead">Each block has its own weight on the entire program. How
+            many operations each block has compared to others can help visualize just how much work 
             each block is responsible for during runtime.
           </p>
         </div>
@@ -226,7 +198,7 @@
         <div class="col-md-5 col-md-push-7">
           <h2 class="featurette-heading">Variables per block.</h2>
           <p class="lead">
-            Each block has a total amount of variables including variables that are
+            Each block has a total amount of variables including
             simple data types, parameters, and lists. Some blocks contain more variables
             than we expect, these variables take up memory space and can sometimes saturate
             the available memory. 
@@ -280,8 +252,11 @@
 
       <div class="row featurette">
         <div class="col-md-5 col-md-push-7">
-          <h2 class="featurette-heading">Polar Chart</h2>
-          <p class="lead">Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.</p>
+          <h2 class="featurette-heading">Block Memory Performance.</h2>
+          <p class="lead" id="memory-use-description">Some blocks can take up a lot of memory 
+            if they are called numerous times within each other or recursively. If there are
+             many calls within blocks before finishing execution, memory usage can stack up. 
+             See how well your code performs with increasing amount of block calls.</p>
         </div>
         <div class="col-md-7 col-md-pull-5">
             <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
@@ -290,7 +265,7 @@
                       <p>
                         <p>
                         <div class="chart-demo">
-                          <canvas id="myPolarChart" width="500" height="500"></canvas>
+                          <canvas id="mySystemChart" width="500" height="500"></canvas>
                         </div>
                         </p>
                       </p>
@@ -304,17 +279,45 @@
 
       <div class="row featurette">
         <div class="col-md-5">
-          <h2 class="featurette-heading">Memory Usage</h2>
-          <p class="lead">Some blocks can take up a lot of memory usage.</p>
+          <h2 class="featurette-heading">Total branches.</h2>
+          <p class="lead">Branches are sections of code where a conditional statement is 
+            used and the program must choose what to execute according to the evaluated condition.
+            These branches define the direction the program execution takes, just as train tracks branch
+            out and direct trains.
+          </p>
         </div>
         <div class="col-md-7">
+          <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px; height:430px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myDoughnutChart_ifs" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5 col-md-push-7">
+          <h2 class="featurette-heading">Polar Chart</h2>
+          <p class="lead">Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.</p>
+        </div>
+        <div class="col-md-7 col-md-pull-5">
             <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
                 <div class="panel-body" style="width: 400px; height:430px;">
                   <div class="container" style="padding-left: 45px;">
                       <p>
                         <p>
                         <div class="chart-demo">
-                          <canvas id="mySystemChart" width="500" height="500"></canvas>
+                          <canvas id="myPolarChart" width="500" height="500"></canvas>
                         </div>
                         </p>
                       </p>

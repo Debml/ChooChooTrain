@@ -28,6 +28,8 @@ class Compiler_Handler:
         self.num_ar = 0
         #index 11 records
         self.records = []
+        #index 12 number of ifs per block
+        self.num_ifs = []
 
 
     def compile(self, code_js):
@@ -65,16 +67,16 @@ class Compiler_Handler:
         self.compilation_status = choo_choo_train.attributes.compilationstatus
 
         #get block names
-        self.block_names = ["Block1","Block2","Block3","Block4"]
+        self.block_names = choo_choo_train.attributes.block_names
 
         #get steps runtime
-        self.compilation_steps = [10, 23, 14, 37]
+        self.compilation_steps = choo_choo_train.attributes.compilation_steps
 
         #get compilation steps 
-        self.runtime_steps = [13, 23, 44, 17]
+        self.runtime_steps = choo_choo_train.attributes.runtime_steps
 
         #get num vars per block
-        self.num_vars = [2, 3, 4, 1]
+        self.num_vars = choo_choo_train.attributes.num_vars
 
         #get num vars per block
         self.last_output = choo_choo_train.attributes.last_output
@@ -84,6 +86,9 @@ class Compiler_Handler:
 
         #get records
         self.records = choo_choo_train.attributes.records
+
+        #get num ifs
+        self.num_ifs = choo_choo_train.attributes.num_ifs
 
         self.result.append(self.code_js)
         self.result.append(self.runtime)
@@ -97,6 +102,7 @@ class Compiler_Handler:
         self.result.append(self.last_output)
         self.result.append(self.num_ar)
         self.result.append(self.records)
+        self.result.append(self.num_ifs)
 
         return self.result
 

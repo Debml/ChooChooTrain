@@ -5,30 +5,32 @@ import global_scope
 import time
 
 class attributes:  
-    #index 0
+    #index 0*
     code = ""
-    #index 1
+    #index 1*
     runtime = 0
-    #index 2
+    #index 2*
     compilationtime = 0
-    #index 3
+    #index 3*
     output = ""
-    #index 4
+    #index 4*
     compilationstatus = 0
-    #index 5
+    #index 5*
     block_names = []
-    #index 6
+    #index 6*
     compilation_steps = []
-    #index 7
+    #index 7*
     runtime_steps = []
-    #index 8
+    #index 8*
     num_vars = []
-    #index 9
+    #index 9*
     last_output = ""
-    #index 10 
+    #index 10*
     num_ar = 0
-    #index 11
+    #index 11*
     records = []
+    #index 12*
+    num_ifs = []
 
 
 def set_code(code):
@@ -73,6 +75,17 @@ def compile_and_run():
     #set attributes for index 10 and 11
     attributes.num_ar = global_scope.code_review.max_num_ar
     attributes.records = global_scope.code_review.num_ar_on_call
+
+    #get attributes for index 5
+    attributes.block_names = ["Block1","Block2","Block3","Block4"]
+    #get attributes for index 6
+    attributes.compilation_steps = [10, 23, 14, 37]
+    #get attributes for index 7
+    attributes.runtime_steps = [13, 23, 44, 17]
+    #get attributes for index 7
+    attributes.num_vars = [2, 2, 7, 1]
+    #get attrbiutes for index 12
+    attributes.num_ifs = [2,2,0,1]
 
     print compilation_time, "seconds"
     print execution_time, "seconds"

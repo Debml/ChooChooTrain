@@ -499,7 +499,7 @@
                 previewSettings: {
                     image: {width: "auto", height: "160px"},
                     html: {width: "213px", height: "160px"},
-                    text: {width: "213px", height: "160px"},
+                    text: {width: "100%", height: "160px"},
                     video: {width: "auto", height: "100%", 'max-width': "100%"},
                     audio: {width: "100%", height: "30px"},
                     flash: {width: "auto", height: "100%", 'max-width': "100%"},
