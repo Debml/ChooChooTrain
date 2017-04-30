@@ -275,7 +275,7 @@ function add_block() {
 
   var node_block_code_form = document.createElement("TEXTAREA");
 
-  node_block_code_form.setAttribute("style","overflow:hidden; max-width:100%");
+  node_block_code_form.setAttribute("style","overflow:hidden; max-width:100%;");
   node_block_code_form.setAttribute("class","form-control");
   node_block_code_form.setAttribute("rows","1");
   node_block_code_form.setAttribute("class","form-control");

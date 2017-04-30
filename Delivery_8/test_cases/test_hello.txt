@@ -1,4 +1,20 @@
-starting block HelloWorld
+starting block Block14
 {
- print("Hello World");
+	variable h, i of type words;
+	variable a, b of type whole;
+	h = "Hello";
+	i = " World";
+
+	a = 1;
+	b = 3;
+
+	if (a > 0) 
+	{
+	 print(a);
+	}
+    
+	print(h + i);
+	print(a);
+	print(b);
+	print(a+b);
 }

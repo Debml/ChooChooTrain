@@ -9,8 +9,6 @@ from flask_cors import CORS, cross_origin
 #any other imports
 from compiler_connection import Compiler_Handler
 
-compiler_handler = Compiler_Handler()
-
 app = Flask(__name__)
 CORS(app)
 
@@ -18,7 +16,7 @@ code_js = []
 result = []
 
 @app.route('/post_code', methods=['POST'])
-def compile_code():
+def post_code():
     #json error
     if not request.json or not 'code' in request.json:
         #abort(400)
@@ -35,14 +33,26 @@ def compile_code():
 
     return jsonify({'result': result_code}), 201
 
-@app.route('/compile', methods=['GET'])
-def get_names():
+
+@app.route('/get_code', methods=['GET'])
+def get_code():
     if not code_js:
         return jsonify({'code': "EMPTY"})
 
     else:
+        return jsonify({'code': code_js[0]})
+
+@app.route('/compile', methods=['GET'])
+def compile():
+    if not code_js:
+        return jsonify({'code': "EMPTY"})
+
+    else:
+        #compiler handler
+        compiler_handler = Compiler_Handler()
+
         #compile and update data in class
-        result = compiler_handler.compile(code_js)
+        result = compiler_handler.compile(code_js[0])
         return jsonify({'result': result})
 
 @app.errorhandler(404)

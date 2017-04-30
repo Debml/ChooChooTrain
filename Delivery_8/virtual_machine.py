@@ -9,12 +9,17 @@ from memory import Program_Memory
 #Reads the current instruction (Quad) operation and executes it
 def execute_code():
     global_scope.instruction_pointer = 0
+    status_code = 1
+    error_flag = False
 
     #Loops until break (end_proc is in charge of breaking)
     while True:
         #If all functions have finished executing (including starting), end program
-        if global_scope.program_memory.stack_segment_is_empty():
-            break
+        if global_scope.program_memory.stack_segment_is_empty() or error_flag:
+            if (error_flag == True):
+                return 0
+            else:
+                return 1
 
         current_instruction = global_scope.program_memory.get_quad_from_memory(global_scope.instruction_pointer)
         operator = current_instruction.get_operator()
@@ -22,6 +27,7 @@ def execute_code():
         increase_quad_counter(current_instruction)
 
         if operator == constants.Operators.OP_ADDITION:
+<<<<<<< Updated upstream
             binary_arithmetic_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_SUBTRACTION:
             binary_arithmetic_operation(operator, current_instruction)
@@ -73,6 +79,138 @@ def execute_code():
             end_proc_operation(current_instruction)
         else:
             stop_exec()
+=======
+            #print "addition"
+            status_code = binary_arithmetic_operation(operator, current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_SUBTRACTION:
+            #print "subtraction"
+            status_code = binary_arithmetic_operation(operator, current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_MULTIPLICATION:
+            #print "multiplication"
+            status_code = binary_arithmetic_operation(operator, current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_DIVISION:
+            #print "division"
+            status_code = binary_arithmetic_operation(operator, current_instruction)
+            print status_code
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_ASSIGN:
+            #print "assign"
+            status_code = assign_operation(current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_GREATER:
+            #print "greater"
+            status_code = binary_boolean_operation(operator, current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_GREATER_EQUAL:
+            #print "greater than or equal"
+            status_code = binary_boolean_operation(operator, current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_LESS:
+            #print "less than"
+            status_code = binary_boolean_operation(operator, current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_LESS_EQUAL:
+            #print "less than or equal"
+            status_code = binary_boolean_operation(operator, current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_EQUAL:
+            #print "equal"
+            status_code = binary_boolean_operation(operator, current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_NOT_EQUAL:
+            #print "not equal"
+            status_code = binary_boolean_operation(operator, current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_AND:
+            #print "and"
+            status_code = binary_boolean_operation(operator, current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_OR:
+            #print "or"
+            status_code = binary_boolean_operation(operator, current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_NEGATION:
+            #print "negation"
+            status_code = negation_operation(current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_VERIFY_INDEX:
+            #print "verify index"
+            status_code = verify_index_operation(current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_GO_TO:
+            #print "go to"
+            status_code = go_to_operation(operator, current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_GO_TO_T:
+            #print "go to if true"
+            status_code = go_to_operation(operator, current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_GO_TO_F:
+            #print "go to if false"
+            status_code = go_to_operation(operator, current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_PRINT:
+            #print "print"
+            status_code = print_operation(current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_INPUT:
+            #print "input"
+            status_code = input_operation(current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_ERA:
+            #print "era"
+            status_code = era_operation(current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_PARAM:
+            #print "param"
+            status_code = param_operation(current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_GO_SUB:
+            #print "go to subroutine"
+            status_code = go_sub_operation(current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_RETURN:
+            #print "return value"
+            status_code = return_operation(current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        elif operator == constants.Operators.OP_END_PROC:
+            #print "end procedure"
+            status_code = end_proc_operation(current_instruction)
+            if (status_code == 0):
+                error_flag = True
+        else:
+            #print "unsupported"
+            status_code = stop_exec()
+            if (status_code == 0):
+                error_flag = True
+>>>>>>> Stashed changes
 
 #Initializes memory for Run-Time 
 def initialize_memory():
@@ -95,7 +233,7 @@ def binary_arithmetic_operation(operator, current_instruction):
     right_operand_value = global_scope.program_memory.read_from_memory(right_operand_address)
 
     if left_operand_value == None or right_operand_value == None:
-        stop_exec("Variable does not have a value")
+        return stop_exec("Variable does not have a value")
 
     #Does the corresponding operation based on the operator
     if operator == constants.Operators.OP_ADDITION:
@@ -106,11 +244,11 @@ def binary_arithmetic_operation(operator, current_instruction):
         result_value = left_operand_value * right_operand_value
     elif operator == constants.Operators.OP_DIVISION:
         if right_operand_value == 0:
-            stop_exec("Cannot divide by 0")
+            return stop_exec("Cannot divide by 0")
         else:
             result_value = left_operand_value / right_operand_value
     else:
-        stop_exec()
+        return stop_exec()
 
     global_scope.program_memory.write_to_memory(result_value, result_address)
 
@@ -127,7 +265,7 @@ def assign_operation(current_instruction):
 
         #if for some reason (logical error by programmer) the function did not return anything, stop execution
         if value_to_assign is None:
-            stop_exec("Block '%s' did not return any value" % value_to_assign_address)
+            return stop_exec("Block '%s' did not return any value" % value_to_assign_address)
 
         #reset value for next functions
         global_scope.current_return_value = None
@@ -138,7 +276,7 @@ def assign_operation(current_instruction):
         value_to_assign = global_scope.program_memory.read_from_memory(value_to_assign_address)
 
         if value_to_assign == None:
-            stop_exec("Variable does not have a value")
+            return stop_exec("Variable does not have a value")
 
     global_scope.program_memory.write_to_memory(value_to_assign, assignee_address)
 
@@ -154,7 +292,7 @@ def binary_boolean_operation(operator, current_instruction):
     right_operand_value = global_scope.program_memory.read_from_memory(right_operand_address)
 
     if left_operand_value == None or right_operand_value == None:
-        stop_exec("Variable does not have a value")
+        return stop_exec("Variable does not have a value")
 
     #Does the corresponding operation based on the operator
     if operator == constants.Operators.OP_GREATER:
@@ -174,7 +312,7 @@ def binary_boolean_operation(operator, current_instruction):
     elif operator == constants.Operators.OP_OR:
         result_value = left_operand_value or right_operand_value
     else:
-        stop_exec()
+        return stop_exec()
 
     global_scope.program_memory.write_to_memory(result_value, result_address)
 
@@ -188,7 +326,7 @@ def negation_operation(current_instruction):
     left_operand_value = global_scope.program_memory.read_from_memory(left_operand_address)
 
     if left_operand_value == None:
-        stop_exec("Variable does not have a value")
+        return stop_exec("Variable does not have a value")
 
     result_value = not left_operand_value
 
@@ -204,12 +342,12 @@ def verify_index_operation(current_instruction):
     index_value = global_scope.program_memory.read_from_memory(index_address)
 
     if index_value == None:
-        stop_exec("Variable does not have a value")
+        return stop_exec("Variable does not have a value")
 
     if index_value >= 0 and index_value < array_size:
         global_scope.instruction_pointer += 1
     else:
-        stop_exec("Array index '%i' is out of bounds" % index_value)
+        return stop_exec("Array index '%i' is out of bounds" % index_value)
 
 #Prints to console
 def print_operation(current_instruction):
@@ -217,7 +355,11 @@ def print_operation(current_instruction):
     expression_to_print_value = global_scope.program_memory.read_from_memory(expression_to_print_address)
 
     if expression_to_print_value == None:
-        stop_exec("Variable does not have a value")
+        return stop_exec("Variable does not have a value")
+    
+
+    global_scope.output_builder = global_scope.output_builder + str(expression_to_print_value) + "\n"
+    global_scope.last_output = str(expression_to_print_value) + "\n"
 
     print expression_to_print_value
 
@@ -239,7 +381,7 @@ def input_operation(current_instruction):
         global_scope.program_memory.write_to_memory(validated_input, input_address)
         global_scope.instruction_pointer += 1
     else:
-        stop_exec("Input value '%s' is not of type '%s'" % (input_value, input_type))
+        return stop_exec("Input value '%s' is not of type '%s'" % (input_value, input_type))
 
 #Executes a Go-To (True/False/Independent) operation
 def go_to_operation(operator, current_instruction):
@@ -252,7 +394,7 @@ def go_to_operation(operator, current_instruction):
         evaluation_result = global_scope.program_memory.read_from_memory(evaluation_address)
 
         if evaluation_result == None:
-            stop_exec("Variable does not have a value")
+            return stop_exec("Variable does not have a value")
 
         #If evaluation_result resolves to true, go to the given instruction
         if evaluation_result:
@@ -265,7 +407,7 @@ def go_to_operation(operator, current_instruction):
         evaluation_result = global_scope.program_memory.read_from_memory(evaluation_address)
 
         if evaluation_result == None:
-            stop_exec("Variable does not have a value")
+            return stop_exec("Variable does not have a value")
 
         #If evaluation_result resolves to false, go to the given instruction
         if not evaluation_result:
@@ -274,7 +416,7 @@ def go_to_operation(operator, current_instruction):
         else:
             global_scope.instruction_pointer += 1
     else:
-        stop_exec()
+        return stop_exec()
 
 #Generates an activation record
 def era_operation(current_instruction):
@@ -297,7 +439,7 @@ def param_operation(current_instruction):
     argument_value = global_scope.program_memory.read_from_memory(argument_address)
 
     if argument_value == None:
-        stop_exec("Variable does not have a value")
+        return stop_exec("Variable does not have a value")
 
     #write the argument value from the current activation record into the one that is being constructed
     global_scope.temp_activation_record.get_block_memory().write_to_local_memory(argument_value, parameter_address)
@@ -317,7 +459,7 @@ def go_sub_operation(current_instruction):
         block_initial_quad = current_instruction.get_result()
         global_scope.instruction_pointer = block_initial_quad
     else:
-        stop_exec("Number of pending function calls exceeded the limit")
+        return stop_exec("Number of pending function calls exceeded the limit")
 
 #saves the return value and ends the function call
 def return_operation(current_instruction):
@@ -402,12 +544,21 @@ def increase_quad_counter(current_instruction):
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message
 def stop_exec(message = "Unknown operation"):
-	sys.exit("Run-Time error: %s" % message)
+    global_scope.last_output =  "Runtime error: " + message + "\n"
+    global_scope.output_builder = global_scope.output_builder + "Runtime error: " + message + "\n"
+
+    #sys.exit("Runtime error: %s" % message)
+    #stop execution
+    return 0;
 
 #Entry method to start the intermediate code execution
 def start_execution():
     initialize_memory()
     #print global_scope.function_directory.memory_handler
+<<<<<<< Updated upstream
     execute_code()
     #print(global_scope.cr_block_quad_counter)
+=======
+    return execute_code()
+>>>>>>> Stashed changes
     #print global_scope.function_directory.memory_handler

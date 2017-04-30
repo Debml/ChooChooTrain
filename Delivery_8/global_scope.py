@@ -32,6 +32,10 @@ pending_blocks = Stack()
 pending_blocks_argument_counter = Stack()
 pending_lists = Stack()
 
+#generated for javascript output
+output_builder = ""
+last_output = ""
+
 #Run-Time variables
 instruction_pointer = 0
 program_memory = Program_Memory()
@@ -42,5 +46,15 @@ starting_block = ""
 #timer helper variable
 timer_counter = 0
 
+<<<<<<< Updated upstream
 #Code-Review variables
 cr_block_quad_counter = Dictionary()
+=======
+def initialize_structures():
+    global function_directory, semantic_cube, quad_list, output_builder
+    function_directory = Function_Directory()
+    semantic_cube = Semantic_Cube()
+    quad_list = Quad_List()
+    output_builder = ""
+    last_output = ""
+>>>>>>> Stashed changes

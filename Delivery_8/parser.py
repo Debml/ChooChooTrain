@@ -1025,7 +1025,12 @@ def get_parameter_address(parameter_type):
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message
 def stop_exec(message):
+	global_scope.output_builder = global_scope.output_builder + ("Compilation error in line %d: %s" % (global_scope.line_count, message)) + "\n"
+	global_scope.last_output = ("Compilation error in line %d: %s" % (global_scope.line_count, message)) + "\n"
+	#global_scope.function_directory.print_table()
 	sys.exit("Compilation error in line %d: %s" % (global_scope.line_count, message))
+	#stop execution
+    #return 0;
 
 #Prints results of compilation when successful
 def end_compilation():
@@ -1034,12 +1039,9 @@ def end_compilation():
 	#print(global_scope.quad_list)
 
 #Entry method to start the compilation process
-def start_compilation(file_name):
+def start_compilation(code):
+    #initialize structures to begin complation
+	global_scope.initialize_structures()
 	#Build the parser
 	parser = yacc.yacc()
-
-	file_to_parse = open(file_name, "r")
-
-	#Read the file sent as argument and parse it
-	code = file_to_parse.read()
 	parser.parse(code)

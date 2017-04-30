@@ -45,10 +45,10 @@
                 <h2>
                   Code
                 </h2>
-                <a class="btn btn-success pull-right" role="button" id="recompile" style="margin-top:15px;">Recompile code</a>
+                <button class="btn btn-success pull-right" role="button" id="recompile" style="margin-top:15px;">Recompile code</button>
             </div>
             <div class="panel-body" id="code-running" style="white-space: pre-wrap">
-              <p>Code here</p> 
+              <p></p> 
             </div>
           </div>
         </div>
@@ -58,7 +58,7 @@
               <h2>Input</h2>
             </div>
             <div class="panel-body">
-              <textarea class="form-control" rows="3" id="input-text" placeholder="Input goes here" disabled></textarea> 
+              <textarea class="form-control" rows="3" id="input-text" placeholder="Input goes here" style="max-width:100%;"  disabled></textarea> 
               <p>
                 <div class="row">
                   <div class="col-sm-9">
@@ -75,7 +75,7 @@
               <h2>Output</h2>
             </div>
             <div class="panel-body">
-              <textarea class="form-control" rows="3" id="output-text" placeholder="Output goes here" readonly></textarea> 
+              <textarea class="form-control" rows="3" id="output-text" style="max-width:100%;" placeholder="Output goes here"readonly></textarea> 
             </div>
           </div>
         </div>
@@ -116,7 +116,7 @@
 
       <div class="row featurette">
         <div class="col-md-5">
-          <h2 class="featurette-heading">Runtime</h2>
+          <h2 class="featurette-heading">Runtime.</h2>
           <p class="lead" id="runtime-info">Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.</p>
         </div>
         <div class="col-md-7">
@@ -141,8 +141,13 @@
 
       <div class="row featurette">
         <div class="col-md-5 col-md-push-7">
-          <h2 class="featurette-heading">Line Chart</h2>
-          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna.</p>
+          <h2 class="featurette-heading">Steps per block.</h2>
+          <p class="lead">
+            Each block generates a number of steps or machine level instructions that are then
+            read by the Choo Choo Train compiler to be executed. If a block has large amount of 
+            statements, loops, branches, or list manipulations then the number of steps will be higher.
+            The steps generated at compilation time may be different than those generated at runtime.
+          </p>
         </div>
         <div class="col-md-7 col-md-pull-5">
           <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
@@ -165,8 +170,11 @@
 
       <div class="row featurette">
         <div class="col-md-5">
-          <h2 class="featurette-heading">Doughnut Chart</h2>
-          <p class="lead">Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.</p>
+          <h2 class="featurette-heading">Total compilation steps.</h2>
+          <p class="lead">Each block has its own weight on the entire program. Comparing how
+            many steps each block has compared to others can help visualize just how much work 
+            each block is responsible for during compilation.
+          </p>
         </div>
         <div class="col-md-7">
           <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
@@ -188,18 +196,50 @@
       <hr class="featurette-divider">
 
       <div class="row featurette">
-        <div class="col-md-5 col-md-push-7">
-          <h2 class="featurette-heading">Stacked Area Chart</h2>
-          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna.</p>
+        <div class="col-md-5">
+          <h2 class="featurette-heading">Total runtime steps.</h2>
+          <p class="lead">Each block has its own weight on the entire program. Comparing how
+            many steps each block has compared to others can help visualize just how much work 
+            each block is responsible for during runtime.
+          </p>
         </div>
-        <div class="col-md-7 col-md-pull-5">
-            <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+        <div class="col-md-7">
+          <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
                 <div class="panel-body" style="width: 400px; height:430px;">
                   <div class="container" style="padding-left: 45px;">
                       <p>
                         <p>
                         <div class="chart-demo">
-                          <canvas id="myStackedChart" width="500" height="500"></canvas>
+                          <canvas id="myDoughnutChart_runtime" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5 col-md-push-7">
+          <h2 class="featurette-heading">Variables per block.</h2>
+          <p class="lead">
+            Each block has a total amount of variables including variables that are
+            simple data types, parameters, and lists. Some blocks contain more variables
+            than we expect, these variables take up memory space and can sometimes saturate
+            the available memory. 
+          </p>
+        </div>
+        <div class="col-md-7 col-md-pull-5">
+          <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px; height:430px;">
+                  <div class="container" style="padding-left: 45px;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myLineChart_vars" width="500" height="500"></canvas>
                         </div>
                         </p>
                       </p>
@@ -213,17 +253,20 @@
 
       <div class="row featurette">
         <div class="col-md-5">
-          <h2 class="featurette-heading">Polar Chart</h2>
-          <p class="lead">Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.</p>
+          <h2 class="featurette-heading">Total variables.</h2>
+          <p class="lead">Each block has its own weight on the program's memory. Comparing how
+            many variables each block has compared to others can help visualize just how much memory space
+            each block is taking.
+          </p>
         </div>
         <div class="col-md-7">
-            <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+          <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
                 <div class="panel-body" style="width: 400px; height:430px;">
                   <div class="container" style="padding-left: 45px;">
                       <p>
                         <p>
                         <div class="chart-demo">
-                          <canvas id="myPolarChart" width="500" height="500"></canvas>
+                          <canvas id="myDoughnutChart_vars" width="500" height="500"></canvas>
                         </div>
                         </p>
                       </p>
@@ -237,8 +280,8 @@
 
       <div class="row featurette">
         <div class="col-md-5 col-md-push-7">
-          <h2 class="featurette-heading">Bubble Area Chart</h2>
-          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna.</p>
+          <h2 class="featurette-heading">Polar Chart</h2>
+          <p class="lead">Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.</p>
         </div>
         <div class="col-md-7 col-md-pull-5">
             <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
@@ -247,7 +290,7 @@
                       <p>
                         <p>
                         <div class="chart-demo">
-                          <canvas id="myBubbleChart" width="500" height="500"></canvas>
+                          <canvas id="myPolarChart" width="500" height="500"></canvas>
                         </div>
                         </p>
                       </p>
