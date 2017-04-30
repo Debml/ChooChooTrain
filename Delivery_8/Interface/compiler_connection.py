@@ -24,6 +24,10 @@ class Compiler_Handler:
         self.num_vars = []
         #index 9 last output in case of error
         self.last_output = ""
+        #index 10 num ar
+        self.num_ar = 0
+        #index 11 records
+        self.records = []
 
 
     def compile(self, code_js):
@@ -75,6 +79,12 @@ class Compiler_Handler:
         #get num vars per block
         self.last_output = choo_choo_train.attributes.last_output
 
+        #get ar num
+        self.num_ar = choo_choo_train.attributes.num_ar
+
+        #get records
+        self.records = choo_choo_train.attributes.records
+
         self.result.append(self.code_js)
         self.result.append(self.runtime)
         self.result.append(self.compilation_time)
@@ -85,6 +95,8 @@ class Compiler_Handler:
         self.result.append(self.runtime_steps)
         self.result.append(self.num_vars)
         self.result.append(self.last_output)
+        self.result.append(self.num_ar)
+        self.result.append(self.records)
 
         return self.result
 

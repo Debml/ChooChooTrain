@@ -35,6 +35,7 @@ chartColors = {
 	grey: 'rgb(231,233,237)',
     grey_alpha: "rgba(231,233,237,0.5)",
     grey_alpha_high: "rgba(231,233,237,0.7)",
+    transparent: "rgba(231,233,237,0.0)"
 };
 
 //config for time chart
@@ -117,6 +118,70 @@ window.line_config =  {
                     }
                 }
     };
+
+window.system_chart_config = {
+    type: 'line',
+    data: {
+        labels: ["0", "1", "2", "3", "4", "5", "6","7","8","9","10", "11", "12", "13","14", "15", "15", "17",],
+        datasets: [ {
+        label: "System Usage",
+        borderColor: window.chartColors.purple,
+        backgroundColor: window.chartColors.purple_alpha,
+        data: [
+                        10, 
+                        66, 
+                        122, 
+                        100, 
+                        11, 
+                        11, 
+                        39,
+                        8,
+                        12,
+                        2,1,3,4,5,5,3,5,4
+                    ],
+        }]
+    },
+    options: {
+        responsive: true,
+        title:{
+        display: false,
+        text:"System Usage Stacked Area"
+        },
+        legend: {
+            display: false,
+            position: 'right',
+            fullWidth: false,
+            labels: {
+                boxWidth: 15
+            }
+        },
+        tooltips: {
+        mode: 'index',
+        },
+        hover: {
+        mode: 'index'
+        },
+        scales: {
+            xAxes: [{
+                afterTickToLabelConversion: function(data){
+                    var xLabels = data.ticks;
+
+                    xLabels.forEach(function (labels, i, xLabels) {
+                        var size_data = xLabels.length;
+                        var fixed = Math.floor(size_data/5);
+
+                        if (i % fixed != 0){
+                            xLabels[i] = '';
+                        }
+                    });
+                } 
+            }],
+            yAxes: [{
+                stacked: true,
+            }]
+        }
+    }
+};
 
 
 window.line_config_vars =  {
@@ -548,6 +613,13 @@ $(document).ready(function(){
            create_line_chart(0);
         }
     });
+
+    $('#mySystemChart').viewportChecker({
+        offset: 200,                 
+        callbackFunction: function(elem){
+           create_system_chart(0);
+        }
+    });
     
     $('#myLineChart_vars').viewportChecker({
         offset: 200,                 
@@ -816,6 +888,13 @@ function get_request_ajax(uri){
                 //index 2 compilation time
                 //index 3 output
                 //index 4 compilation status
+                //index 5 is block names
+                //index 6 is compilation steps
+                //index 7 is runtime steps
+                //index 8 is number of vars
+                //index 9 is last output generated
+                //index 10 is number of activation records
+                //index 11 is the record for the ar's
                 $(".alert").alert("close");
 
                 code_returned = jsonResponse.result[0]
@@ -826,6 +905,8 @@ function get_request_ajax(uri){
                 update_line_config(jsonResponse.result[5], jsonResponse.result[6], jsonResponse.result[7]);
                 //update vars bar graph
                 update_line_config_vars(jsonResponse.result[5], jsonResponse.result[8]);
+                //update activation records line graph
+                update_system_chart_config(jsonResponse.result[10], jsonResponse.result[11]);
                 //wait for user to see runtime
                 var t = setTimeout(function() {
                     $(".alert").alert("close");
@@ -1000,6 +1081,96 @@ function update_line_config(blocks, compilation_steps, runtime_steps){
 
     update_doughnut_chart(blocks, compilation_steps, runtime_colors);
     update_doughnut_chart_runtime(blocks, runtime_steps, runtime_colors);
+}
+
+function generate_label_system(size){
+    labels = [];
+    for (var i=1; i<=size;i++){
+        labels[i-1] = i.toString();
+    }
+    return labels;
+}
+
+function update_system_chart_config(num_ar, num_ar_records){
+    var label_data = generate_label_system(num_ar_records.length);
+    var show_points, borderColor;
+
+    if(num_ar_records.length > 40){
+        show_points = 0;
+        borderColor = window.chartColors.transparent;
+    }
+
+    else {
+        show_points = 3;
+        borderColor = window.chartColors.purple;
+    }
+
+    window.system_chart_config =  {
+        type: 'line',
+    data: {
+        labels: label_data,
+        datasets: [ {
+        label: "System Usage",
+        borderColor: borderColor,
+        backgroundColor: window.chartColors.purple_alpha,
+        data: num_ar_records,
+        pointBorderColor: window.chartColors.purple,
+        pointBackgroundColor: window.chartColors.purple,
+        }
+    ]
+    },
+    options: {
+        elements: {
+                    point:{
+                        radius: show_points
+                    },
+                    line:{
+                        borderWidth: 2
+                    }
+        },
+        responsive: true,
+        title:{
+        display: false,
+        text:"System Usage Stacked Area"
+        },
+        legend: {
+            display: false,
+            position: 'right',
+            fullWidth: false,
+            labels: {
+                boxWidth: 15
+            }
+        },
+        tooltips: {
+        mode: 'index',
+        },
+        hover: {
+        mode: 'index'
+        },
+        scales: {
+            xAxes: [{
+                afterTickToLabelConversion: function(data){
+                    var xLabels = data.ticks;
+
+                    xLabels.forEach(function (labels, i, xLabels) {
+                        var size_data = xLabels.length;
+                        var fixed = Math.floor(size_data/5);
+
+                        if (i % fixed != 0){
+                            xLabels[i] = '';
+                        }
+                    });
+                } 
+            }],
+            yAxes: [{
+                ticks: {
+                        max: num_ar
+                       },
+                stacked: true,
+            }]
+        }
+    }
+};
 }
 
 function update_line_config_vars(blocks, num_vars){
@@ -1258,7 +1429,16 @@ function create_line_chart(offset){
             var ctx = document.getElementById("myLineChart").getContext("2d");
             ctx.canvas.width = 20;
             ctx.canvas.height = 20;
-            window.myLineChart = new Chart(ctx, line_config);
+            window.myLineChart = new Chart(ctx, window.line_config);
+    }, offset);
+}
+
+function create_system_chart(offset){
+    var t = setTimeout(function() {
+            var ctx = document.getElementById("mySystemChart").getContext("2d");
+            ctx.canvas.width = 20;
+            ctx.canvas.height = 20;
+            window.mySystemChart = new Chart(ctx, window.system_chart_config);
     }, offset);
 }
 
