@@ -76,6 +76,10 @@ def execute_code():
             #Increase block call counter for the current block
             current_block = global_scope.program_memory.get_current_activation_record().get_block_name()
             global_scope.code_review.increase_num_call_to_block(current_block)
+
+            #update the max number of AR if needed
+            ar_count = global_scope.program_memory.get_stack_segment_size()
+            global_scope.code_review.increase_max_num_activation_records(ar_count)
         elif operator == constants.Operators.OP_RETURN:
             return_operation(current_instruction)
         elif operator == constants.Operators.OP_END_PROC:
@@ -417,4 +421,5 @@ def start_execution():
     print(global_scope.code_review.block_num_calls)
     print(global_scope.code_review.program_branches)
     print(global_scope.code_review.block_loop_counter)
+    print(global_scope.code_review.max_num_ar)
     #print global_scope.function_directory.memory_handler

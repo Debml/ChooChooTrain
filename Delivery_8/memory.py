@@ -592,4 +592,9 @@ class Program_Memory:
 			return True
 		else:
 			return False
+	
+	#Returns the number of activation records in the stack segment
+	def get_stack_segment_size(self):
+		return self._stack_segment.size()
+
 

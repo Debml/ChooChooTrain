@@ -422,6 +422,10 @@ class Code_Review_Data:
         #public variable for number of executions of each loops per block
         self.block_loop_counter = Dictionary()
 
+        #public variable for the max number of activation records at a given time in the execution cycle,
+        #starts at one to take into account the starting block that is in the stack segment since the beginning
+        self.max_num_ar = 1
+
     #Increases the executed quad counter per block
     def increase_quad_counter(self, current_block = None, starting_block = None):
         if current_block is not None:
@@ -468,6 +472,11 @@ class Code_Review_Data:
                     loop_data = Dictionary()
                     loop_data.insert(instruction_pointer, 1)
                     self.block_loop_counter.insert(current_block, loop_data)
+
+    #Increase the max number of activation records at a given time (if needed)
+    def increase_max_num_activation_records(self, ar_count):
+        if ar_count > self.max_num_ar:
+            self.max_num_ar = ar_count
 
 #for testing purposes
 if __name__ == '__main__':
