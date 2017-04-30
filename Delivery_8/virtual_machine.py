@@ -24,7 +24,7 @@ def execute_code():
 
         #Increase quad counter for the current block
         current_block = global_scope.program_memory.get_current_activation_record().get_block_name()
-        global_scope.code_review.increase_quad_counter(current_block, global_scope.starting_block)
+        global_scope.code_review.increase_executed_quad_counter(current_block, global_scope.starting_block)
 
         if operator == constants.Operators.OP_ADDITION:
             binary_arithmetic_operation(operator, current_instruction)
@@ -98,6 +98,12 @@ def initialize_memory():
 
     aux_program_memory = Program_Memory(global_scope.quad_list, starting_activation_record, cc, global_scope.function_directory.constant_table)
     global_scope.program_memory = aux_program_memory
+
+#Initializes the code review compilation data
+def initialize_compile_data():
+    for block_name in global_scope.function_directory.function_reference_table.get_instance():
+        quad_count = global_scope.function_directory.get_quad_counter_block(block_name)
+        global_scope.code_review.initialize_compiled_quad_counter(block_name, quad_count)
 
 #Executes an arithmetic operation
 def binary_arithmetic_operation(operator, current_instruction):
@@ -416,12 +422,9 @@ def stop_exec(message = "Unknown operation"):
 #Entry method to start the intermediate code execution
 def start_execution():
     initialize_memory()
+    initialize_compile_data()
     #print global_scope.function_directory.memory_handler
     execute_code()
-    print(global_scope.code_review.block_quad_counter)
-    print(global_scope.code_review.block_num_calls)
-    print(global_scope.code_review.program_branches)
-    print(global_scope.code_review.block_loop_counter)
-    print(global_scope.code_review.max_num_ar)
-    print(global_scope.code_review.num_ar_on_call)
+    
+    global_scope.code_review.print_data()
     #print global_scope.function_directory.memory_handler
