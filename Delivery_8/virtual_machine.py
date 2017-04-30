@@ -21,9 +21,10 @@ def execute_code():
     while True:
         #If all functions have finished executing (including starting), end program
         if global_scope.program_memory.stack_segment_is_empty() or error_flag:
-            #start_data_timer = time.time()
-            #global_scope.code_review.print_data()
-            #global_scope.timer_counter = time.time() - start_data_timer
+            start_data_timer = time.time()
+            global_scope.code_review.print_data()
+            global_scope.timer_counter = time.time() - start_data_timer
+
             if (error_flag == True):
                 return 0
             else:
@@ -128,6 +129,7 @@ def execute_code():
                 error_flag = True
         elif operator == constants.Operators.OP_GO_TO_F:
             #print "go to if false"
+            increase_go_to_counter(current_block, current_instruction)
             status_code = go_to_operation(operator, current_instruction)
             if (status_code == 0):
                 error_flag = True
@@ -503,13 +505,8 @@ def value_is_address(value):
 def increase_go_to_counter(current_block, current_instruction):
     jump_to_position = current_instruction.get_result()
 
-    #If the jump is to a quad that comes next, it is an 'If' condition operation
-    if jump_to_position > global_scope.instruction_pointer:
-        start_data_timer = time.time()
-        global_scope.code_review.increase_program_branches()
-        global_scope.timer_counter = time.time() - start_data_timer
-    #If the jump is to a previous quad, it is an 'Until' loop operation
-    else:
+    #If the jump is to a quad that comes before, it is an 'until' loop operation
+    if jump_to_position < global_scope.instruction_pointer:
         start_data_timer = time.time()
         global_scope.code_review.increase_block_executed_loop_counter(current_block, global_scope.instruction_pointer)
         global_scope.timer_counter = time.time() - start_data_timer

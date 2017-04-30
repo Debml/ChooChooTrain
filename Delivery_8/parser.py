@@ -3,6 +3,7 @@ import sys
 import ply.yacc as yacc
 import global_scope
 import constants
+import time
 tokens = scanner.tokens
 
 def p_PROGRAM(p):
@@ -319,6 +320,7 @@ def p_EC_SEEN_BLOCK_ID(p):
 			global_scope.function_directory.starting_block_key = global_scope.current_block_id
 
 		global_scope.function_directory.add_block_name(global_scope.current_block_id)
+		global_scope.code_review.add_entry(global_scope.current_block_id)
 	else:
 		stop_exec("Block named '%s' is already defined" % global_scope.current_block_id)
 
@@ -703,6 +705,8 @@ def p_EC_SEEN_END_IF(p):
 	end_if = global_scope.pending_jumps.pop()
 	global_scope.quad_list.set_result(end_if)
 
+	global_scope.code_review.increase_if_counter(global_scope.current_block_id)
+
 #LOOP action 1 - Pushes starting point of loop to the pending jumps stack
 def p_EC_SEEN_DO(p):
 	"EC_SEEN_DO : "
@@ -724,8 +728,8 @@ def p_EC_SEEN_UNTIL(p):
 		#increase the quad count of the block by one
 		global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
 
-		#increase the loop count of the block by one
-		global_scope.code_review.increase_compiled_loop_counter(global_scope.current_block_id)
+		#increase the loop count of the block by one, and send the number of the just added quad
+		global_scope.code_review.increase_compiled_loop_counter(global_scope.current_block_id, global_scope.quad_list.get_quad_count() - 1)
 	else:
 		stop_exec("Expected a boolean expression, found a '%s' expression instead" % exp_type)
 
@@ -1052,7 +1056,7 @@ def stop_exec(message):
 def end_compilation():
 	print('Compilation Successful!')
 	#global_scope.function_directory.print_table()
-	#print(global_scope.quad_list)
+	print(global_scope.quad_list)
 
 #Entry method to start the compilation process
 def start_compilation(code):
