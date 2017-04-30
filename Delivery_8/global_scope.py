@@ -1,4 +1,5 @@
 from directories import Function_Directory
+from directories import Code_Review_Data
 from structures import Queue
 from structures import Stack
 from structures import Dictionary
@@ -12,6 +13,7 @@ from memory import Program_Memory
 function_directory = Function_Directory()
 semantic_cube = Semantic_Cube()
 quad_list = Quad_List()
+code_review = Code_Review_Data()
 
 #Helper variables for semantic validation
 line_count = 1
@@ -46,15 +48,11 @@ starting_block = ""
 #timer helper variable
 timer_counter = 0
 
-<<<<<<< Updated upstream
-#Code-Review variables
-cr_block_quad_counter = Dictionary()
-=======
 def initialize_structures():
-    global function_directory, semantic_cube, quad_list, output_builder
+    global function_directory, semantic_cube, quad_list, output_builder, code_review, output_builder, last_output
+    code_review = Code_Review_Data()
     function_directory = Function_Directory()
     semantic_cube = Semantic_Cube()
     quad_list = Quad_List()
     output_builder = ""
     last_output = ""
->>>>>>> Stashed changes

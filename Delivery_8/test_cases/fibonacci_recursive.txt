@@ -14,11 +14,7 @@ returns whole
 starting block main
 {
 	variable n of type whole;
-<<<<<<< Updated upstream
 	n = 15;
-=======
-	n = 23;
->>>>>>> Stashed changes
 
 	print(recursiveFibonacci(n));
 }

@@ -64,6 +64,11 @@ class Function_Directory:
         if block_name is not None:
             self.function_reference_table[block_name][6] += 1
 
+    #returns the quad count of the block
+    def get_quad_counter_block(self, block_name = None):
+        if block_name is not None:
+            return self.function_reference_table[block_name][6]
+
     #adds a local_type_counter to a block
     def add_local_type_counter(self, key = None, local_type_counter = None):
         #key should have value
@@ -406,6 +411,109 @@ class Function_Directory:
             print("Lists: ")
             print(self.function_reference_table[block_key][1][1])
             print("\n")
+
+#Holds the variables that will be used to display graphs at the end of the execution
+class Code_Review_Data:
+    def __init__(self):
+        #Compile-time data
+        #public variable for number of quads per block
+        self.block_compiled_quad_counter = Dictionary()
+
+        #Run-time data
+        #public variable for number of *executed* quads per block
+        self.block_executed_quad_counter = Dictionary()
+
+        #public variable for number of calls per block
+        self.block_num_calls = Dictionary()
+
+        #public variable for number of ifs (not counting loop conditions) in the program
+        self.program_branches = 0
+
+        #public variable for number of executions of each loops per block
+        self.block_executed_loop_counter = Dictionary()
+
+        #public variable for the counter of AR in the stack segment at a given time (function call)
+        self.num_ar_on_call = []
+
+        #public variable for the max number of activation records at a given time in the execution cycle,
+        #starts at one to take into account the starting block that is in the stack segment since the beginning
+        self.max_num_ar = 1
+
+    #Adds the information about number of quads per block
+    def initialize_compiled_quad_counter(self, current_block = None, quad_count = None):
+        if current_block is not None:
+            if quad_count is not None:
+                self.block_compiled_quad_counter.insert(current_block, quad_count)
+
+    #Increases the executed quad counter per block
+    def increase_executed_quad_counter(self, current_block = None, starting_block = None):
+        if current_block is not None:
+            if starting_block is not None:
+                #If the block has an entry in the dictionary, increase the counter
+                if self.block_executed_quad_counter.contains(current_block):
+                    self.block_executed_quad_counter[current_block] += 1
+                #If the block has no entry yet, add one and start the counter at 1 or 0
+                else:
+                    #Do not include the quad for the initial 'go-to'
+                    if current_block == starting_block:
+                        self.block_executed_quad_counter.insert(current_block, 0)
+                    else:
+                        self.block_executed_quad_counter.insert(current_block, 1)
+
+    #Increase counter of calls per block
+    def increase_num_call_to_block(self, current_block = None):
+        if current_block is not None:
+            #If the block has an entry in the dictionary, increase the counter
+            if self.block_num_calls.contains(current_block):
+                self.block_num_calls[current_block] += 1
+            #If the block has no entry yet, add one and start the counter at 1
+            else:
+                self.block_num_calls.insert(current_block, 1)
+
+    #Increase counter of conditionals of the program
+    def increase_program_branches(self):
+        self.program_branches += 1
+
+    #Increase counter of each loop on each program
+    def increase_block_loop_counter(self, current_block = None, instruction_pointer = None):
+        if current_block is not None:
+            if instruction_pointer is not None:
+                #If the block has an entry in the dictionary
+                if self.block_executed_loop_counter.contains(current_block):
+                    #If the loop has an entry in the dictionary, increase the counter
+                    if self.block_executed_loop_counter[current_block].contains(instruction_pointer):
+                        self.block_executed_loop_counter[current_block][instruction_pointer] += 1
+                    #If the loop has no entry, add one
+                    else:
+                        self.block_executed_loop_counter[current_block].insert(instruction_pointer, 1)
+                #If the block has no entry yet, add one and start the counter at 1
+                else:
+                    loop_data = Dictionary()
+                    loop_data.insert(instruction_pointer, 1)
+                    self.block_executed_loop_counter.insert(current_block, loop_data)
+
+    #Increase the max number of activation records at a given time (if needed)
+    def _increase_max_num_activation_records(self, ar_count = None):
+        if ar_count is not None:
+            if ar_count > self.max_num_ar:
+                self.max_num_ar = ar_count
+
+    #Appends a counter of AR in the stack segment at the moment of a function call
+    def add_num_ar_on_call(self, ar_count = None):
+        if ar_count is not None:
+            self.num_ar_on_call.append(ar_count)
+            #takes into account the AR about to be added
+            self._increase_max_num_activation_records(ar_count + 1)
+
+    #Prints the data stored
+    def print_data(self):
+        print(self.block_compiled_quad_counter)
+        print(self.block_executed_quad_counter)
+        print(self.block_num_calls)
+        print(self.program_branches)
+        print(self.block_executed_loop_counter)
+        print(self.max_num_ar)
+        print(self.num_ar_on_call)
 
 #for testing purposes
 if __name__ == '__main__':

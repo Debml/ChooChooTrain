@@ -12,6 +12,9 @@ def execute_code():
     status_code = 1
     error_flag = False
 
+    #Increase block call counter for the current block
+    global_scope.code_review.increase_num_call_to_block(global_scope.starting_block)
+
     #Loops until break (end_proc is in charge of breaking)
     while True:
         #If all functions have finished executing (including starting), end program
@@ -24,62 +27,11 @@ def execute_code():
         current_instruction = global_scope.program_memory.get_quad_from_memory(global_scope.instruction_pointer)
         operator = current_instruction.get_operator()
 
-        increase_quad_counter(current_instruction)
+        #Increase quad counter for the current block
+        current_block = global_scope.program_memory.get_current_activation_record().get_block_name()
+        global_scope.code_review.increase_executed_quad_counter(current_block, global_scope.starting_block)
 
         if operator == constants.Operators.OP_ADDITION:
-<<<<<<< Updated upstream
-            binary_arithmetic_operation(operator, current_instruction)
-        elif operator == constants.Operators.OP_SUBTRACTION:
-            binary_arithmetic_operation(operator, current_instruction)
-        elif operator == constants.Operators.OP_MULTIPLICATION:
-            binary_arithmetic_operation(operator, current_instruction)
-        elif operator == constants.Operators.OP_DIVISION:
-            binary_arithmetic_operation(operator, current_instruction)
-        elif operator == constants.Operators.OP_ASSIGN:
-            assign_operation(current_instruction)
-        elif operator == constants.Operators.OP_GREATER:
-            binary_boolean_operation(operator, current_instruction)
-        elif operator == constants.Operators.OP_GREATER_EQUAL:
-            binary_boolean_operation(operator, current_instruction)
-        elif operator == constants.Operators.OP_LESS:
-            binary_boolean_operation(operator, current_instruction)
-        elif operator == constants.Operators.OP_LESS_EQUAL:
-            binary_boolean_operation(operator, current_instruction)
-        elif operator == constants.Operators.OP_EQUAL:
-            binary_boolean_operation(operator, current_instruction)
-        elif operator == constants.Operators.OP_NOT_EQUAL:
-            binary_boolean_operation(operator, current_instruction)
-        elif operator == constants.Operators.OP_AND:
-            binary_boolean_operation(operator, current_instruction)
-        elif operator == constants.Operators.OP_OR:
-            binary_boolean_operation(operator, current_instruction)
-        elif operator == constants.Operators.OP_NEGATION:
-            negation_operation(current_instruction)
-        elif operator == constants.Operators.OP_VERIFY_INDEX:
-            verify_index_operation(current_instruction)
-        elif operator == constants.Operators.OP_GO_TO:
-            go_to_operation(operator, current_instruction)
-        elif operator == constants.Operators.OP_GO_TO_T:
-            go_to_operation(operator, current_instruction)
-        elif operator == constants.Operators.OP_GO_TO_F:
-            go_to_operation(operator, current_instruction)
-        elif operator == constants.Operators.OP_PRINT:
-            print_operation(current_instruction)
-        elif operator == constants.Operators.OP_INPUT:
-            input_operation(current_instruction)
-        elif operator == constants.Operators.OP_ERA:
-            era_operation(current_instruction)
-        elif operator == constants.Operators.OP_PARAM:
-            param_operation(current_instruction)
-        elif operator == constants.Operators.OP_GO_SUB:
-            go_sub_operation(current_instruction)
-        elif operator == constants.Operators.OP_RETURN:
-            return_operation(current_instruction)
-        elif operator == constants.Operators.OP_END_PROC:
-            end_proc_operation(current_instruction)
-        else:
-            stop_exec()
-=======
             #print "addition"
             status_code = binary_arithmetic_operation(operator, current_instruction)
             if (status_code == 0):
@@ -192,9 +144,19 @@ def execute_code():
                 error_flag = True
         elif operator == constants.Operators.OP_GO_SUB:
             #print "go to subroutine"
+            #add the number of activation records at the moment of the function call
+            ar_count = global_scope.program_memory.get_stack_segment_size()
+            global_scope.code_review.add_num_ar_on_call(ar_count)
+
             status_code = go_sub_operation(current_instruction)
+
+            #Increase block call counter for the current block
+            current_block = global_scope.program_memory.get_current_activation_record().get_block_name()
+            global_scope.code_review.increase_num_call_to_block(current_block)
+
             if (status_code == 0):
                 error_flag = True
+                
         elif operator == constants.Operators.OP_RETURN:
             #print "return value"
             status_code = return_operation(current_instruction)
@@ -210,7 +172,6 @@ def execute_code():
             status_code = stop_exec()
             if (status_code == 0):
                 error_flag = True
->>>>>>> Stashed changes
 
 #Initializes memory for Run-Time 
 def initialize_memory():
@@ -222,6 +183,12 @@ def initialize_memory():
 
     aux_program_memory = Program_Memory(global_scope.quad_list, starting_activation_record, cc, global_scope.function_directory.constant_table)
     global_scope.program_memory = aux_program_memory
+
+#Initializes the code review compilation data
+def initialize_compile_data():
+    for block_name in global_scope.function_directory.function_reference_table.get_instance():
+        quad_count = global_scope.function_directory.get_quad_counter_block(block_name)
+        global_scope.code_review.initialize_compiled_quad_counter(block_name, quad_count)
 
 #Executes an arithmetic operation
 def binary_arithmetic_operation(operator, current_instruction):
@@ -525,21 +492,16 @@ def value_is_address(value):
         else:
             return False
 
-#Increases the quad counter for the current block
-def increase_quad_counter(current_instruction):
-    current_block = global_scope.program_memory.get_current_activation_record().get_block_name()
+#Checks if the 'Go-To' corresponds to an If or a Loop, and updates the corresponding counter
+def increase_go_to_counter(current_block, current_instruction):
+    jump_to_position = current_instruction.get_result()
 
-    #If the block has an entry in the dictionary, increase the counter
-    if global_scope.cr_block_quad_counter.contains(current_block):
-        global_scope.cr_block_quad_counter[current_block] += 1
-    #If the block has no entry yet, add one and start the counter at 1 or 0
+    #If the jump is to a quad that comes next, it is an 'If' condition operation
+    if jump_to_position > global_scope.instruction_pointer:
+        global_scope.code_review.increase_program_branches()
+    #If the jump is to a previous quad, it is an 'Until' loop operation
     else:
-        #Do not include the quad for the initial 'go-to'
-        if current_block == global_scope.starting_block:
-            global_scope.cr_block_quad_counter.insert(current_block, 0)
-        else:
-            global_scope.cr_block_quad_counter.insert(current_block, 1)
-
+        global_scope.code_review.increase_block_loop_counter(current_block, global_scope.instruction_pointer)
 
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message
@@ -554,11 +516,9 @@ def stop_exec(message = "Unknown operation"):
 #Entry method to start the intermediate code execution
 def start_execution():
     initialize_memory()
+    initialize_compile_data()
     #print global_scope.function_directory.memory_handler
-<<<<<<< Updated upstream
-    execute_code()
     #print(global_scope.cr_block_quad_counter)
-=======
+    global_scope.code_review.print_data()
     return execute_code()
->>>>>>> Stashed changes
     #print global_scope.function_directory.memory_handler
