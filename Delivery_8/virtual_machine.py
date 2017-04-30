@@ -102,8 +102,11 @@ def initialize_memory():
 #Initializes the code review compilation data
 def initialize_compile_data():
     for block_name in global_scope.function_directory.function_reference_table.get_instance():
+        #compile time quads
         quad_count = global_scope.function_directory.get_quad_counter_block(block_name)
         global_scope.code_review.initialize_compiled_quad_counter(block_name, quad_count)
+
+        #compile time variables
 
 #Executes an arithmetic operation
 def binary_arithmetic_operation(operator, current_instruction):
