@@ -409,5 +409,5 @@ def start_execution():
     initialize_memory()
     #print global_scope.function_directory.memory_handler
     execute_code()
-    print(global_scope.cr_block_quad_counter)
+    #print(global_scope.cr_block_quad_counter)
     #print global_scope.function_directory.memory_handler
