@@ -8,6 +8,7 @@ from memory import Program_Memory
 
 #Reads the current instruction (Quad) operation and executes it
 def execute_code():
+    global_scope.block_run_time = time.time()
     global_scope.instruction_pointer = 0
     status_code = 1
     error_flag = False
@@ -21,9 +22,9 @@ def execute_code():
     while True:
         #If all functions have finished executing (including starting), end program
         if global_scope.program_memory.stack_segment_is_empty() or error_flag:
-            start_data_timer = time.time()
-            global_scope.code_review.print_data()
-            global_scope.timer_counter = time.time() - start_data_timer
+            #start_data_timer = time.time()
+            #global_scope.code_review.print_data()
+            #global_scope.timer_counter = time.time() - start_data_timer
 
             if (error_flag == True):
                 return 0
@@ -161,6 +162,8 @@ def execute_code():
             global_scope.code_review.add_num_ar_on_call(ar_count)
             global_scope.timer_counter = time.time() - start_data_timer
 
+            increase_run_time()
+
             status_code = go_sub_operation(current_instruction)
 
             #Increase block call counter for the current block
@@ -174,12 +177,18 @@ def execute_code():
                 
         elif operator == constants.Operators.OP_RETURN:
             #print "return value"
+            increase_run_time()
+
             status_code = return_operation(current_instruction)
+
             if (status_code == 0):
                 error_flag = True
         elif operator == constants.Operators.OP_END_PROC:
             #print "end procedure"
+            increase_run_time()
+
             status_code = end_proc_operation(current_instruction)
+
             if (status_code == 0):
                 error_flag = True
         else:
@@ -510,6 +519,15 @@ def increase_go_to_counter(current_block, current_instruction):
         start_data_timer = time.time()
         global_scope.code_review.increase_block_executed_loop_counter(current_block, global_scope.instruction_pointer)
         global_scope.timer_counter = time.time() - start_data_timer
+
+#Update the run time for the current block before going to the next one
+def increase_run_time():
+    global_scope.block_run_time = time.time() - global_scope.block_run_time
+    block_name = global_scope.program_memory.get_current_activation_record().get_block_name()
+    global_scope.code_review.increase_run_time(block_name, global_scope.block_run_time)
+
+    #reset the run time counter
+    global_scope.block_run_time = time.time()
 
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message
