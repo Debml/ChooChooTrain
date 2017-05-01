@@ -78,3 +78,14 @@ class Memory_Limits:
     CONSTANT_RANGES = [13000, 14000, 15000, 16000]
     CONSTANT_SIZE = 1000
     STACK_SEGMENT_SIZE = 500
+
+class Error(Exception):
+    pass
+
+class ChooChooSyntaxError(Error):
+    def __init__(self, message):
+        self.message = message
+
+class ChooChooExecutionError(Error):
+    def __init__(self, message):
+        self.message = message

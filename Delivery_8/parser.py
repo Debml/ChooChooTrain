@@ -1048,9 +1048,7 @@ def stop_exec(message):
 	global_scope.output_builder = global_scope.output_builder + ("Compilation error in line %d: %s" % (global_scope.line_count, message)) + "\n"
 	global_scope.last_output = ("Compilation error in line %d: %s" % (global_scope.line_count, message)) + "\n"
 	#global_scope.function_directory.print_table()
-	sys.exit("Compilation error in line %d: %s" % (global_scope.line_count, message))
-	#stop execution
-    #return 0;
+	raise constants.ChooChooSyntaxError("Compilation error in line %d: %s" % (global_scope.line_count, message))
 
 #Prints results of compilation when successful
 def end_compilation():

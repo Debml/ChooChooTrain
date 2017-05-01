@@ -1,4 +1,5 @@
 import sys
+import constants
 import parser
 import virtual_machine
 import global_scope
@@ -46,7 +47,11 @@ def compile_and_run():
     #filep = open("/Users/pescalante/Desktop/Tec/Universidad/8Semestre/Compiladores/ChooChooTrain Proyecto/ChooChooTrain/Delivery_8/test_cases/test_hello.txt","r")
     #code = filep.read()
 
-    parser.start_compilation(code)
+    try:
+        parser.start_compilation(code)
+    except constants.ChooChooSyntaxError as error:
+        sys.exit(error.message)
+
     r_status = virtual_machine.start_execution()
 
     #finished execution
