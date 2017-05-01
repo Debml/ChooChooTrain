@@ -435,6 +435,9 @@ class Code_Review_Data:
         #public variable that holds the data of each block
         self.block_data = Dictionary()
 
+        #public variable that holds the total run time
+        self.total_run_time = 0
+
     def add_entry(self, block_name = None):
         if block_name is not None:
             #Compile-time data
@@ -460,7 +463,10 @@ class Code_Review_Data:
             #number of executions of each loops per block
             executed_loop_counter = Dictionary()
 
-            data = [compiled_quad_counter, variable_counter, compiled_loop_counter, executed_quad_counter, num_calls, executed_loop_counter, if_counter]
+            #run time for each block
+            run_time = 0
+
+            data = [compiled_quad_counter, variable_counter, compiled_loop_counter, executed_quad_counter, num_calls, executed_loop_counter, if_counter, run_time]
 
             self.block_data.insert(block_name, data)
 
@@ -507,6 +513,12 @@ class Code_Review_Data:
             self.block_data[current_block][6] += 1
             self.total_if_counter += 1
 
+    def increase_run_time(self, current_block = None, run_time = None):
+        if current_block is not None:
+            if run_time is not None:
+                self.block_data[current_block][7] += run_time
+                self.total_run_time += run_time
+
     #Increase the max number of activation records at a given time (if needed)
     def _increase_max_num_activation_records(self, ar_count = None):
         if ar_count is not None:
@@ -540,6 +552,8 @@ class Code_Review_Data:
             print(self.block_data[current_block][5])
             print("# ifs")
             print(self.block_data[current_block][6])
+            print("# seconds")
+            print(self.block_data[current_block][7])
 
         print("# total variables")
         print(self.total_variable_counter)
@@ -547,6 +561,8 @@ class Code_Review_Data:
         print(self.total_loop_counter)
         print("# total ifs")
         print(self.total_if_counter)
+        print("# total seconds")
+        print(self.total_run_time)
         print("max AR")
         print(self.max_num_ar)
         print("AR/calls")

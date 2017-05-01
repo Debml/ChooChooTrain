@@ -47,6 +47,7 @@ starting_block = ""
 
 #timer helper variable
 timer_counter = 0
+block_run_time = 0
 
 def initialize_structures():
     global function_directory, semantic_cube, quad_list, output_builder, code_review, output_builder, last_output
