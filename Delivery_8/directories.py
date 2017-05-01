@@ -528,7 +528,7 @@ class Code_Review_Data:
     #Appends a counter of AR in the stack segment at the moment of a function call
     def add_num_ar_on_call(self, ar_count = None):
         if ar_count is not None:
-            self.num_ar_on_call.append(ar_count)
+            self.num_ar_on_call.append(float(ar_count)/constants.Memory_Limits.STACK_SEGMENT_SIZE)
             #takes into account the AR about to be added
             self._increase_max_num_activation_records(ar_count + 1)
 
