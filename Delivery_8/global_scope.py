@@ -13,7 +13,6 @@ from memory import Program_Memory
 function_directory = Function_Directory()
 semantic_cube = Semantic_Cube()
 quad_list = Quad_List()
-code_review = Code_Review_Data()
 
 #Helper variables for semantic validation
 line_count = 1

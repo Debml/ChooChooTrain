@@ -1,7 +1,6 @@
 import sys
 import global_scope
 import constants
-import time
 from structures import Quad
 from structures import Activation_Record
 from memory import Program_Memory
@@ -9,9 +8,6 @@ from memory import Program_Memory
 #Reads the current instruction (Quad) operation and executes it
 def execute_code():
     global_scope.instruction_pointer = 0
-
-    #Increase block call counter for the current block
-    global_scope.code_review.increase_num_call_to_block(global_scope.starting_block)
 
     #Loops until break (end_proc is in charge of breaking)
     while True:
@@ -24,7 +20,6 @@ def execute_code():
 
         #Increase quad counter for the current block
         current_block = global_scope.program_memory.get_current_activation_record().get_block_name()
-        global_scope.code_review.increase_executed_quad_counter(current_block, global_scope.starting_block)
 
         if operator == constants.Operators.OP_ADDITION:
             binary_arithmetic_operation(operator, current_instruction)
@@ -61,7 +56,6 @@ def execute_code():
         elif operator == constants.Operators.OP_GO_TO_T:
             go_to_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_GO_TO_F:
-            increase_go_to_counter(current_block, current_instruction)
             go_to_operation(operator, current_instruction)
         elif operator == constants.Operators.OP_PRINT:
             print_operation(current_instruction)
@@ -72,15 +66,7 @@ def execute_code():
         elif operator == constants.Operators.OP_PARAM:
             param_operation(current_instruction)
         elif operator == constants.Operators.OP_GO_SUB:
-            #add the number of activation records at the moment of the function call
-            ar_count = global_scope.program_memory.get_stack_segment_size()
-            global_scope.code_review.add_num_ar_on_call(ar_count)
-
             go_sub_operation(current_instruction)
-
-            #Increase block call counter for the current block
-            current_block = global_scope.program_memory.get_current_activation_record().get_block_name()
-            global_scope.code_review.increase_num_call_to_block(current_block)
         elif operator == constants.Operators.OP_RETURN:
             return_operation(current_instruction)
         elif operator == constants.Operators.OP_END_PROC:
@@ -98,15 +84,6 @@ def initialize_memory():
 
     aux_program_memory = Program_Memory(global_scope.quad_list, starting_activation_record, cc, global_scope.function_directory.constant_table)
     global_scope.program_memory = aux_program_memory
-
-#Initializes the code review compilation data
-def initialize_compile_data():
-    for block_name in global_scope.function_directory.function_reference_table.get_instance():
-        #compile time quads
-        quad_count = global_scope.function_directory.get_quad_counter_block(block_name)
-        global_scope.code_review.initialize_compiled_quad_counter(block_name, quad_count)
-
-        #compile time variables
 
 #Executes an arithmetic operation
 def binary_arithmetic_operation(operator, current_instruction):
@@ -406,17 +383,6 @@ def value_is_address(value):
         else:
             return False
 
-#Checks if the 'Go-To' corresponds to an If or a Loop, and updates the corresponding counter
-def increase_go_to_counter(current_block, current_instruction):
-    jump_to_position = current_instruction.get_result()
-
-    #If the jump is to a quad that comes next, it is an 'If' condition operation
-    if jump_to_position > global_scope.instruction_pointer:
-        global_scope.code_review.increase_program_branches()
-    #If the jump is to a previous quad, it is an 'Until' loop operation
-    else:
-        global_scope.code_review.increase_block_loop_counter(current_block, global_scope.instruction_pointer)
-
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message
 def stop_exec(message = "Unknown operation"):
@@ -425,9 +391,5 @@ def stop_exec(message = "Unknown operation"):
 #Entry method to start the intermediate code execution
 def start_execution():
     initialize_memory()
-    initialize_compile_data()
     #print global_scope.function_directory.memory_handler
     execute_code()
-    
-    global_scope.code_review.print_data()
-    #print global_scope.function_directory.memory_handler
