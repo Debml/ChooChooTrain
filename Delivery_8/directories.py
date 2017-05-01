@@ -50,24 +50,11 @@ class Function_Directory:
             #public variable for temporary variable type counter
             temporary_type_counter = [0,0,0,0]
 
-            #public variable that holds the quad count for each block
-            quad_count = 0
-
             #declare block_data
-            block_data = [return_type, [primitives, lists], parameters, quad_position, local_type_counter, temporary_type_counter, quad_count]
+            block_data = [return_type, [primitives, lists], parameters, quad_position, local_type_counter, temporary_type_counter]
 
             #add new block name as key
             self.function_reference_table.insert(block_name, block_data)
-
-    #Increases the quad count of the block by one
-    def increase_quad_counter(self, block_name = None):
-        if block_name is not None:
-            self.function_reference_table[block_name][6] += 1
-
-    #returns the quad count of the block
-    def get_quad_counter_block(self, block_name = None):
-        if block_name is not None:
-            return self.function_reference_table[block_name][6]
 
     #adds a local_type_counter to a block
     def add_local_type_counter(self, key = None, local_type_counter = None):

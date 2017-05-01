@@ -1,5 +1,4 @@
 from directories import Function_Directory
-from directories import Code_Review_Data
 from structures import Queue
 from structures import Stack
 from structures import Dictionary
