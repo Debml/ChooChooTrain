@@ -22,9 +22,9 @@ def execute_code():
     while True:
         #If all functions have finished executing (including starting), end program
         if global_scope.program_memory.stack_segment_is_empty() or error_flag:
-            start_data_timer = time.time()
-            global_scope.code_review.print_data()
-            global_scope.timer_counter = time.time() - start_data_timer
+            #start_data_timer = time.time()
+            #global_scope.code_review.print_data()
+            #global_scope.timer_counter = time.time() - start_data_timer
 
             if (error_flag == True):
                 return 0

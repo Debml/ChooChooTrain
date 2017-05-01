@@ -1056,7 +1056,7 @@ def stop_exec(message):
 def end_compilation():
 	print('Compilation Successful!')
 	#global_scope.function_directory.print_table()
-	print(global_scope.quad_list)
+	#print(global_scope.quad_list)
 
 #Entry method to start the compilation process
 def start_compilation(code):
