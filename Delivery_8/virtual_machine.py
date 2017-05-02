@@ -9,15 +9,9 @@ from memory import Program_Memory
 #Reads the current instruction (Quad) operation and executes it
 def execute_code():
     global_scope.block_run_time = time.time()
-    global_scope.instruction_pointer = 0
     status_code = 1
     error_flag = False
     input_flag = False
-
-    #Increase block call counter for the current block
-    start_data_timer = time.time()
-    global_scope.code_review.increase_num_call_to_block(global_scope.starting_block)
-    global_scope.block_run_time = global_scope.block_run_time + (time.time() - start_data_timer)
 
     #Loops until break (end_proc is in charge of breaking)
     while True:
@@ -360,24 +354,22 @@ def input_operation(current_instruction):
     input_address = current_instruction.get_result()
     input_type = current_instruction.get_left_operand()
 
-    #counts time for input
-    start_input_timer = time.time()
+    if (global_scope.user_input == ""):
+        increase_run_time()
+        print "****"
+        print"INPUT EXPECTED"
+        #raise input error
+        raise constants.ChooChooInput()
 
-    #raise input error
-    #raise constants.ChooChooSyntaxError(global_scope.output_builder)
-    print "****"
-    print"INPUT EXPECTED"
-    return stop_exec("INPUT")  
-    print "****"  
-    print"INPUT RECEIVED"
+    #user sent input
+    input_value = global_scope.user_input
 
-    #input_value = raw_input()
-
-    global_scope.timer_counter = time.time() - start_input_timer
+    #reset input value
+    global_scope.user_input = ""
 
     validated_input = validate_input(input_value, input_type)
 
-    if  validated_input is not None:
+    if validated_input is not None:
         global_scope.program_memory.write_to_memory(validated_input, input_address)
         global_scope.instruction_pointer += 1
     else:
@@ -560,4 +552,15 @@ def stop_exec(message = "Unknown operation"):
 #Entry method to start the intermediate code execution
 def start_execution():
     initialize_memory()
+    initialize_execution()
+
     return execute_code()
+
+def initialize_execution():
+    #start program pointer
+    global_scope.instruction_pointer = 0
+
+    #Increase block call counter for the current block
+    start_data_timer = time.time()
+    global_scope.code_review.increase_num_call_to_block(global_scope.starting_block)
+    global_scope.block_run_time = global_scope.block_run_time + (time.time() - start_data_timer)

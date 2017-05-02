@@ -685,8 +685,14 @@ window.bar_summary_config =  {
 $(document).ready(function(){ 
     $('[data-toggle="popover"]').popover();  
 
-    $("#recompile").click(function(){
+    $('#input-text').keypress(function(e){
+      if(e.which == 13){
+           //send input
+           send_input()
+       }
+    });
 
+    $("#recompile").click(function(){
         $(".alert").alert("close");
         //clear output
         var a = document.getElementById('output-text');
@@ -884,14 +890,25 @@ function load_code() {
 function send_input(){
     //get input value
     var a = document.getElementById('input-text');
-    var user_input = a.value;
+    if(a.value != ""){
+        var user_input = a.value;
 
-    //build json from code
-    var data_js = JSON.stringify({"user_input":user_input});
+        disable_input();
 
-    //post input to API
-    var postUserInputURI = "http://127.0.0.1:5000/post_input";
-    post_request_ajax_input(postUserInputURI, data_js);
+        //build json from code
+        var data_js = JSON.stringify({"user_input":user_input});
+
+        //post input to API
+        var postUserInputURI = "http://127.0.0.1:5000/post_input";
+        post_request_ajax_input(postUserInputURI, data_js);
+    }
+    else{
+        $(".alert").alert("close");
+        var t = setTimeout(function() {
+             create_bootstrap_danger_alert("Input must not be empty"+ ". ","Click send after writing input");
+            }, 300);
+
+    }
 }
 
 function show_output(text){
@@ -1022,15 +1039,78 @@ function post_request_ajax_input(uri,data_js){
 
 //ajax response callback
 function response_post_ajax(jsonResponse){
-    result_code = jsonResponse.result;
-    if(result_code == 1) {
-        //input was posted
-        disable_input();
-    }
-    else {
-        //bootstrap alert
-        create_bootstrap_alert("ERROR " + result_code,": User input not sent");
-    }
+    //code retreived, call method to append to html
+    //index 0 - code
+    //index 1 runtime
+    //index 2 compilation time
+    //index 3 output
+    //index 4 compilation status
+    //index 5 is block names
+    //index 6 is compilation steps
+    //index 7 is runtime steps
+    //index 8 is number of vars
+    //index 9 is last output generated
+    //index 10 is number of activation records
+    //index 11 is the record for the ar's
+    //index 12 is for number of ifs
+    $(".alert").alert("close");
+    code_returned = jsonResponse.result[0]
+    //update time chart config info with runtime and compilation time
+    update_time_config(jsonResponse.result[1],jsonResponse.result[2]);
+    //update bar graph
+    update_line_config(jsonResponse.result[5], jsonResponse.result[6], jsonResponse.result[7]);
+    //update vars bar graph
+    update_line_config_vars(jsonResponse.result[5], jsonResponse.result[8]);
+    //update activation records line graph
+    update_system_chart_config(jsonResponse.result[10], jsonResponse.result[11]);
+    //update num ifs
+    update_doughnut_chart_ifs(jsonResponse.result[5], jsonResponse.result[12]);
+    //update num loops
+    update_doughnut_chart_loops(jsonResponse.result[5], jsonResponse.result[13]);
+    //update cycles
+    update_polar_chart(jsonResponse.result[14], jsonResponse.result[15]);
+    //update elements
+    update_bar_elements_chart(jsonResponse.result[5], jsonResponse.result[8],jsonResponse.result[12],jsonResponse.result[13]);
+    //update calls to blocks
+    update_polar_calls_chart(jsonResponse.result[5], jsonResponse.result[19]);
+    //update calls to blocks
+    update_line_runs_config(jsonResponse.result[5], jsonResponse.result[20]);
+    //update summary
+    update_bar_summary(jsonResponse.result[8], jsonResponse.result[13], jsonResponse.result[12]);
+    //wait for user to see runtime
+    var t = setTimeout(function() {
+        $(".alert").alert("close");
+        //no error in compilation or runtime
+        if (jsonResponse.result[4] == 1){
+            runtime_end();
+            show_output(jsonResponse.result[3])
+        }
+        //error in compilation or runtime, or input
+        else {
+            //asks for input
+            if(jsonResponse.result[4] == 3){
+                ask_input("User input needed to continue running");
+                //show all previous output
+                show_output_input(jsonResponse.result[3])
+            }
+            //compilation error
+            else if(jsonResponse.result[4] == 2){
+                runtime_fail(jsonResponse.result[9]);
+                show_output(jsonResponse.result[9])
+            }
+            //runtime error
+            else {
+                runtime_fail(jsonResponse.result[9]);
+                show_output(jsonResponse.result[3])
+            }
+        }
+
+        var but = document.getElementById('recompile');
+        but.style.visibility = 'visible';
+        var but1 = document.getElementById('restart-button');
+        but1.style.visibility = 'visible';
+    }, 700);
+            
 }
 
 
@@ -1053,7 +1133,7 @@ function get_request_ajax_code(uri){
                 get_request_ajax(compilerURI);
             },
             error: function (errorMessage) {
-                alert(errorMessage);
+                create_bootstrap_alert("ERROR",": Connection to compiler failed");
             }
         });
 }
@@ -1140,7 +1220,7 @@ function get_request_ajax(uri){
                 }, 700);
             },
             error: function (errorMessage) {
-                alert(errorMessage);
+                create_bootstrap_alert("ERROR",": Connection to compiler failed");
             }
         });
 }
@@ -1647,9 +1727,11 @@ function update_doughnut_chart_ifs(blocks, num_ifs){
 }
 
 function update_polar_chart(blocks_loops, num_cycles){
+    var maxn = Math.max(...num_cycles)+5;
     amount_blocks = blocks_loops.length;
     var colors = generate_colors_alpha_high(amount_blocks);
     var borders = generate_colors_alpha_low(amount_blocks);
+    var fixed = Math.floor(maxn/5);
 
     if(are_all_zero(num_cycles)){
         var a = document.getElementById("cycles-description");
@@ -1672,12 +1754,12 @@ function update_polar_chart(blocks_loops, num_cycles){
         },
         options: {
             layout: {
-                padding: 20
+                padding: 0
             },
             responsive: true,
             title:{
             display: true,
-            padding: 15,
+            padding: 7,
             position: "bottom",
             text:"Hover over areas to see details",
             fontSize:10,
@@ -1685,15 +1767,19 @@ function update_polar_chart(blocks_loops, num_cycles){
             },
             legend: {
                 position: 'right',
-                display:false,
-                fullWidth: false,
+                display:true,
+                fullWidth: true,
                 labels: {
-                    boxWidth: 15
-                }
+                    boxWidth: 15,
+                    fontSize:9,
+                    padding:10
+                },
             },
             scale: {
             ticks: {
-                beginAtZero: true
+                beginAtZero: true,
+                maxTicksLimit: 6,
+                min: 0,
             },
             reverse: false
             },
@@ -2057,16 +2143,21 @@ function update_line_runs_config (blocks, runtimes){
         },
         tooltips: {
                 callbacks: {
+                    title: function (tooltipItems, data) {
+                        var item = tooltipItems[0];
+                        if (item.datasetIndex == 0)
+                            return data.labels[item.index];
+                        return "Accumulated runtime";
+                    },
                     label: function (tooltipItems, data) {
-                        return tooltipItems.yLabel.toFixed(8)
+                        tooltipItems.yLabel = tooltipItems.yLabel.toFixed(8)
+                        return tooltipItems.yLabel;
                     }
                 },
-                mode: 'index',
-                intersect: false,
             },
             hover: {
-                mode: 'nearest',
-                intersect: true
+                mode: 'point',
+                intersect: false
         },
         scales: {
             xAxes: [{

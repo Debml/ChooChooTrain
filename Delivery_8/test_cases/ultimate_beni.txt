@@ -1,0 +1,163 @@
+block bubbleSort
+{
+    variable i, j, val, temp, count of type whole;
+    list a[10] of type whole;
+    val = 9;
+    count = 0;
+
+    i = 0;
+    do {
+        a[i] = val;
+        i = i + 1;
+        val = val - 1;
+    } until(i > 9)
+
+    i = 0;
+    do {
+        print(a[i]);
+        i = i + 1;
+    } until(i > 9)
+
+    i = 1;
+    do {
+        j = 0;
+        do {
+	    count = count + 1;
+            if (a[j] > a[j + 1]) {
+                temp = a[j];
+                a[j] = a[j + 1];
+                a[j + 1] = temp;
+            }
+            j = j + 1;
+        } until (j > (9 - i))
+        i = i + 1;
+    } until (i > 9)
+
+    i = 0;
+    do {
+        print(a[i]);
+        i = i + 1;
+    } until(i > 9)
+}
+
+block binarySearch
+receives: n of type whole
+{
+    list a[300] of type whole;
+    variable i, mid, low, high, value, val of type whole;
+    variable found of type boolean;
+
+    found = False;
+    low = 0;
+    high = 150;
+    val = 0;
+    i = 0;
+    value = n;
+
+    do {
+        a[i] = val;
+        val = val + 1;
+        i = i + 1;
+    } until(i > high)
+
+    i = 0;
+    do {
+        i = i + 1;
+    } until(i > high)
+
+    do {
+        mid = (low + high) / 2;
+
+        if (a[mid] > value){
+			high = mid - 1;
+        }
+		else {
+            if (a[mid] < value){
+                low = mid + 1;
+            }
+            else {
+                found = True;
+            }
+        }    
+    } until(low > high or found == True)
+
+    if(found == True){
+        print("found a", value, "at index", mid);
+    }
+    else{
+        print(value, "not found");
+    }
+}
+
+block iterativeFibonacci
+receives: n of type whole
+returns whole
+{
+	variable a, b, aux, i of type whole;
+	a = 0;
+	b = 1;
+	i = 1;
+
+	do {
+		aux = a;
+		a = b;
+		b = aux + b;
+		i = i + 1;
+	} until(i > n - 1)
+
+	return b;
+}
+
+block recursiveFibonacci
+receives: n of type whole
+returns whole
+{
+	if (n == 1 or n == 2) {
+		return 1;
+	}
+	else {
+		return recursiveFibonacci(n - 1) + recursiveFibonacci(n - 2);
+	}
+}
+
+block GenerateGreeting
+receives:
+name of type words
+returns words
+{
+    return "hello, " + name + "!"; 
+}
+
+starting block main
+{
+    variable n of type whole;
+	variable a, b of type words;
+
+    n = 8;
+    print("Enter number for Fibonacci:");
+    input(n);
+    print("Iterative fibonacci for:",n);
+    print(iterativeFibonacci(n));
+	print("Recursive fibonacci for:",n);
+    print(recursiveFibonacci(n));
+
+	print("Enter number to find in list (0-299):");
+    input(n);
+	call binarySearch(n);
+
+	print("Enter 1 to sort array, 0 to ignore:");
+	input(n);
+	if (n == 1) {
+		call bubbleSort();
+	}
+
+	print("Enter your name:");
+    input(a);
+	print("Enter your best friend's name:");
+    input(b);
+	
+	print(GenerateGreeting(a));
+    print(GenerateGreeting(b));
+
+	print("Finished with tests");
+}

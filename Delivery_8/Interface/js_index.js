@@ -226,7 +226,6 @@ function create_bootstrap_alert(strong_t, normal_t){
 
 //ajax post request
 function post_request_ajax(uri,data_js){
-
   $.ajax({
             url: uri,
             type: "POST",

@@ -44,6 +44,7 @@ program_memory = Program_Memory()
 temp_activation_record = Activation_Record()
 current_return_value = None
 starting_block = ""
+user_input = ""
 
 #timer helper variable
 timer_counter = 0
@@ -57,3 +58,5 @@ def initialize_structures():
     quad_list = Quad_List()
     output_builder = ""
     last_output = ""
+    user_input = ""
+    line_count = 1

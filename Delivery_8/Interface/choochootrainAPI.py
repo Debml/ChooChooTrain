@@ -51,9 +51,9 @@ def post_user_input():
 
         user_input.append(request.json['user_input']);
         #send input to handler and receive result
-        result_code = compiler_handler.send_input(user_input[0])
-
-    return jsonify({'result': result_code}), 201
+        result = compiler_handler.send_input(user_input[0])
+        
+    return jsonify({'result': result}), 201
 
 @app.route('/get_code', methods=['GET'])
 def get_code():

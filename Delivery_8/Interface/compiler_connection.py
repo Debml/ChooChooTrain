@@ -55,8 +55,117 @@ class Compiler_Handler:
         self.input = ""
 
     def send_input(self, user_input):
+        #only write send_input data to choochootrain
+        choo_choo_train.clear_input()
         choo_choo_train.set_input(user_input)
-        return 1
+
+        #continue choo choo execution with new data
+        #compilation already done
+        choo_choo_train.continue_execution()
+
+        #restart result array
+        if self.result:
+            while self.result:
+                print self.result.pop()
+
+        # get runtime and format
+        if (choo_choo_train.attributes.runtime > 0.00001):
+            self.runtime = '{:0.5f}'.format(choo_choo_train.attributes.runtime)
+        
+        else:
+            self.runtime = '{:.5e}'.format(choo_choo_train.attributes.runtime)
+
+        #get compile time and format
+        if (self.compilation_time == 0):
+            self.compilation_time = 0
+        
+        else:
+            self.compilation_time = '{:.7e}'.format(choo_choo_train.attributes.compilationtime)
+
+        #get output
+        self.output = choo_choo_train.attributes.output
+
+        #get compilation status
+        self.compilation_status = choo_choo_train.attributes.compilationstatus
+
+        #get block names
+        self.block_names = choo_choo_train.attributes.block_names
+
+        #get steps runtime
+        self.compilation_steps = choo_choo_train.attributes.compilation_steps
+
+        #get compilation steps 
+        self.runtime_steps = choo_choo_train.attributes.runtime_steps
+
+        #get num vars per block
+        self.num_vars = choo_choo_train.attributes.num_vars
+
+        #get num vars per block
+        self.last_output = choo_choo_train.attributes.last_output
+
+        #get ar num
+        self.num_ar = choo_choo_train.attributes.num_ar
+
+        #get records
+        self.records = choo_choo_train.attributes.records
+
+        #get num ifs
+        self.num_ifs = choo_choo_train.attributes.num_ifs
+
+        #get num ifs 
+        self.num_loops = choo_choo_train.attributes.num_loops
+
+        #get names of loops
+        self.names_loops_blocks = choo_choo_train.attributes.names_loops_blocks
+
+        #get loops executed
+        self.cycles = choo_choo_train.attributes.cycles
+
+        #get num ifs 
+        self.total_vars = choo_choo_train.attributes.total_vars
+
+        #get names of loops
+        self.total_loops = choo_choo_train.attributes.total_loops
+
+        #get loops executed
+        self.total_ifs = choo_choo_train.attributes.total_ifs
+
+        #get num of calls
+        self.num_calls_block = choo_choo_train.attributes.num_calls_block
+
+        #get loops executed
+        self.runtime_per_block = choo_choo_train.attributes.runtime_per_block
+
+        #set result array values
+        self.result.append(self.code_js)
+        self.result.append(self.runtime)
+        self.result.append(self.compilation_time)
+        self.result.append(self.output)
+        self.result.append(self.compilation_status)
+        self.result.append(self.block_names)
+        self.result.append(self.compilation_steps)
+        self.result.append(self.runtime_steps)
+        self.result.append(self.num_vars)
+        #index 9
+        self.result.append(self.last_output)
+
+        self.result.append(self.num_ar)
+        self.result.append(self.records)
+        self.result.append(self.num_ifs)
+        self.result.append(self.num_loops)
+        self.result.append(self.names_loops_blocks)
+        self.result.append(self.cycles)
+        self.result.append(self.total_vars)
+        #index 17
+        self.result.append(self.total_loops)
+        self.result.append(self.total_ifs)
+        self.result.append(self.num_calls_block)
+        self.result.append(self.runtime_per_block)
+
+        #clear attribtues for new program run
+        choo_choo_train.clear_attributes()
+
+        return self.result
 
     def build_program_result(self):
         #clear result array

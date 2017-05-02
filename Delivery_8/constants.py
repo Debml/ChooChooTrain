@@ -91,8 +91,8 @@ class ChooChooExecutionError(Error):
         self.message = message
 
 class ChooChooInput(Error):
-    def __init__(self, output_builder):
-        self.accum_output = output_builder
+    def __init__(self):
+        self.message = "Input"
 
 class ChooChooExecutionError(Error):
     def __init__(self, message):
