@@ -18,24 +18,31 @@ var randomScalingFactor = function() {
 chartColors = {
 	red: 'rgb(255, 99, 132)',
     red_alpha: "rgba(255, 99, 132, 0.5)",
+    red_alpha_low: "rgba(255, 99, 132, 0.2)",
     red_alpha_high: "rgba(255, 99, 132, 0.7)",
 	orange: 'rgb(255, 159, 64)',
     orange_alpha: "rgba(255, 159, 64,0.5)",
+    orange_alpha_low: "rgba(255, 159, 64,0.2)",
     orange_alpha_high: "rgba(255, 159, 64,0.7)",
 	yellow: 'rgb(255, 205, 86)',
     yellow_alpha: "rgba(255, 205, 86,0.5)",
+    yellow_alpha_low: "rgba(255, 205, 86,0.2)",
     yellow_alpha_high: "rgba(255, 205, 86,0.7)",
 	green: 'rgb(75, 192, 192)',
     green_alpha: "rgba(75, 192, 192,0.5)",
+    green_alpha_low: "rgba(75, 192, 192,0.2)",
     green_alpha_high: "rgba(75, 192, 192,0.7)",
 	blue: 'rgb(54, 162, 235)',
     blue_alpha:"rgba(54, 162, 235,0.5)",
+    blue_alpha_low:"rgba(54, 162, 235,0.2)",
     blue_alpha_high:"rgba(54, 162, 235,0.7)",
 	purple: 'rgb(153, 102, 255)',
     purple_alpha: "rgba(153, 102, 255,0.5)",
+    purple_alpha_low: "rgba(153, 102, 255,0.2)",
     purple_alpha_high: "rgba(153, 102, 255,0.7)",
 	grey: 'rgb(231,233,237)',
     grey_alpha: "rgba(231,233,237,0.5)",
+    grey_alpha_low: "rgba(231,233,237,0.2)",
     grey_alpha_high: "rgba(231,233,237,0.7)",
     transparent: "rgba(231,233,237,0.0)"
 };
@@ -63,7 +70,6 @@ window.time_config = { type: 'doughnut',
                         layout: {
                         padding: 23
                         },
-                        
                         animation: {
                             animateScale: true,
                             animateRotate: true
@@ -185,7 +191,6 @@ window.system_chart_config = {
     }
 };
 
-
 window.line_config_vars =  {
         type: 'bar',
         data: {
@@ -258,7 +263,7 @@ window.doughnut_config = {
 };
 
 window.doughnut_config_runtime = {
-    type: 'doughnut',
+    type: 'pie',
     data: {
         datasets: [{
             data: [
@@ -293,7 +298,7 @@ window.doughnut_config_runtime = {
 };
 
 window.doughnut_config_vars = {
-    type: 'doughnut',
+    type: 'pie',
     data: {
         datasets: [{
             data: [
@@ -362,135 +367,43 @@ window.doughnut_config_ifs = {
     }
 };
 
-var bubbleChartData = {
-    animation: {
-        duration: 10000
+
+window.doughnut_config_loops = {
+    type: 'doughnut',
+    data: {
+        datasets: [{
+            data: [
+                1,
+                2,
+            ],
+            backgroundColor: [
+                window.chartColors.red,
+                window.chartColors.orange,
+            ],
+            label: 'Variables'
+        }],
+        labels: [
+            "Block1",
+            "Block2",
+        ]
     },
-    datasets: [{
-        label: "Block1",
-        backgroundColor: window.chartColors.red_alpha,
-        borderColor: window.chartColors.red,
-        borderWidth: 2,
-        data: [{
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }]
-    }, {
-        label: "Block2",
-        backgroundColor: window.chartColors.blue_alpha,
-        borderColor: window.chartColors.blue,
-        borderWidth: 2,
-        data: [{
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }]
-    }, {
-        label: "Block3",
-        backgroundColor: window.chartColors.green_alpha,
-        borderColor: window.chartColors.green,
-        borderWidth: 2,
-        data: [{
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }, {
-            x: randomScalingFactor(),
-            y: randomScalingFactor(),
-            r: Math.abs(randomScalingFactor()) / 5,
-        }]
-    }]
+    options: {
+        responsive: true,
+        legend: {
+            position: 'right',
+            fullWidth: false,
+            labels: {
+                        boxWidth: 15
+                    }
+        },
+        animation: {
+            animateScale: true,
+            animateRotate: true
+        }
+    }
 };
 
-var bubble_config = { type: 'bubble',
-                    data: bubbleChartData,
-                    options: {
-                        layout: {
-                        padding: 10,
-                        },
-                        responsive: true,
-                        legend: {
-                        position: 'right',
-                        fullWidth: false,
-                        labels: {
-                            boxWidth: 15
-                        }
-                        },
-                        tooltips: {
-                            mode: 'point'
-                        }
-                    }
-                };
-var polar_config = {
+window.polar_config = {
         data: {
             datasets: [{
                 data: [
@@ -553,58 +466,129 @@ var polar_config = {
         }
     };
 
-var stacked_config = {
+window.bar_elements_config =  {
+        type: 'bar',
+        data: {
+            labels: ["Block1", "Block2"],
+            datasets: [
+            {
+                label: "Variables",
+                backgroundColor: [
+                    window.chartColors.red_alpha,
+                    window.chartColors.orange_alpha,
+                ],
+                borderColor: [
+                    window.chartColors.red,
+                    window.chartColors.orange,
+                ],
+                borderWidth: 1,
+                data: [10, 15],
+            },
+            {
+                label: "Branches",
+                backgroundColor: [
+                    window.chartColors.red,
+                    window.chartColors.orange,
+                ],
+                borderColor: [
+                    window.chartColors.red,
+                    window.chartColors.orange,
+                ],
+                borderWidth: 1,
+                data: [20, 25],
+            },
+            {
+                label: "Loops",
+                backgroundColor: [
+                    window.chartColors.red,
+                    window.chartColors.orange,
+                ],
+                borderColor: [
+                    window.chartColors.red,
+                    window.chartColors.orange,
+                ],
+                borderWidth: 1,
+                data: [20, 25],
+            }
+        ]
+        },
+        options: {
+                responsive: true,
+                legend:{
+                    display: false,
+                },
+                scales: {
+                    xAxes: [{
+                        stacked: true
+                    }],
+                    yAxes: [{
+                        stacked: true
+                    }]
+                    }
+                }
+    };
+
+window.polar_calls_config = {
+    type: 'pie',
+    data: {
+        datasets: [{
+            data: [
+                1,
+            ],
+            backgroundColor: [
+                chartColors.red,
+            ],
+        }],
+        labels: [
+            "Total Runtime",
+        ]
+    },
+    options: {
+        responsive: true,
+        legend:{
+        display: false
+        },
+        layout: {
+        padding: 23
+        },
+        animation: {
+            animateScale: true,
+            animateRotate: true
+        }
+    }
+};
+        
+
+window.line_runs_config = {
     type: 'line',
     data: {
-        labels: ["January", "February", "March", "April", "May", "June", "July"],
-        datasets: [{
-        label: "Block1",
-        borderColor: window.chartColors.red,
-        backgroundColor: window.chartColors.red,
+        labels: ["0", "1", "2", "3", "4", "5", "6","7","8","9","10", "11", "12", "13","14", "15", "15", "17",],
+        datasets: [ {
+        label: "System Usage",
+        borderColor: window.chartColors.purple,
+        backgroundColor: window.chartColors.purple_alpha,
         data: [
-                        20, 
-                        120, 
-                        0, 
-                        -30, 
-                        -90, 
-                        33, 
-                        149
-                    ],
-        }, {
-        label: "Block2",
-        borderColor: window.chartColors.blue,
-        backgroundColor: window.chartColors.blue,
-        data: [
-                        -20, 
-                        20, 
                         10, 
-                        0, 
-                        90, 
-                        133, 
-                        9
-                    ],
-        }, {
-        label: "Block3",
-        borderColor: window.chartColors.green,
-        backgroundColor: window.chartColors.green,
-        data: [
-                        -110, 
-                        -66, 
-                        -122, 
+                        66, 
+                        122, 
                         100, 
-                        0, 
                         11, 
-                        39
+                        11, 
+                        39,
+                        8,
+                        12,
+                        2,1,3,4,5,5,3,5,4
                     ],
         }]
     },
     options: {
         responsive: true,
         title:{
-        display:false,
-        text:"Chart.js Line Chart - Stacked Area"
+        display: false,
+        text:"Runtime per block Stacked Area"
         },
         legend: {
+            display: false,
             position: 'right',
             fullWidth: false,
             labels: {
@@ -618,17 +602,18 @@ var stacked_config = {
         mode: 'index'
         },
         scales: {
-        xAxes: [{
-        }],
-        yAxes: [{
-            stacked: true,
-        }]
+            yAxes: [{
+                stacked: true,
+            }]
         }
     }
 };
 
 $(document).ready(function(){ 
+    $('[data-toggle="popover"]').popover();  
+
     $("#recompile").click(function(){
+
         $(".alert").alert("close");
         //clear output
         var a = document.getElementById('output-text');
@@ -655,6 +640,27 @@ $(document).ready(function(){
         offset: 200,                 
         callbackFunction: function(elem){
            create_system_chart(0);
+        }
+    });
+
+    $('#myBarChart').viewportChecker({
+        offset: 200,                 
+        callbackFunction: function(elem){
+           create_bar_elements_chart(0);
+        }
+    });
+
+    $('#myCallsChart').viewportChecker({
+        offset: 200,                 
+        callbackFunction: function(elem){
+           create_polar_calls_chart(0);
+        }
+    });
+
+    $('#myRuntimeChart').viewportChecker({
+        offset: 200,                 
+        callbackFunction: function(elem){
+           create_line_runs_chart(0);
         }
     });
     
@@ -686,10 +692,10 @@ $(document).ready(function(){
         }
     });
 
-    $('#myStackedChart').viewportChecker({
+    $('#myDoughnutChart_loops').viewportChecker({
         offset: 200,                 
         callbackFunction: function(elem){
-           create_stacked_chart(0);
+           create_doughnut_chart_loops(0);
         }
     });
 
@@ -697,13 +703,6 @@ $(document).ready(function(){
         offset: 200,                 
         callbackFunction: function(elem){
            create_polar_chart(0);
-        }
-    });
-
-    $('#myBubbleChart').viewportChecker({
-        offset: 200,                 
-        callbackFunction: function(elem){
-           create_bubble_chart(0);
         }
     });
 
@@ -947,6 +946,16 @@ function get_request_ajax(uri){
                 update_system_chart_config(jsonResponse.result[10], jsonResponse.result[11]);
                 //update num ifs
                 update_doughnut_chart_ifs(jsonResponse.result[5], jsonResponse.result[12]);
+                //update num loops
+                update_doughnut_chart_loops(jsonResponse.result[5], jsonResponse.result[13]);
+                //update cycles
+                update_polar_chart(jsonResponse.result[14], jsonResponse.result[15]);
+                //update elements
+                update_bar_elements_chart(jsonResponse.result[5], jsonResponse.result[8],jsonResponse.result[12],jsonResponse.result[13]);
+                //update calls to blocks
+                update_polar_calls_chart(jsonResponse.result[5], jsonResponse.result[19]);
+                //update calls to blocks
+                update_line_runs_config(jsonResponse.result[5], jsonResponse.result[20]);
                 //wait for user to see runtime
                 var t = setTimeout(function() {
                     $(".alert").alert("close");
@@ -1076,6 +1085,75 @@ function generate_colors_alpha(amount_blocks){
     return colors;
 }
 
+function generate_colors_alpha_low(amount_blocks){
+    colors = [];
+
+    for(var i = 0; i < amount_blocks; i++){
+        var indexer = i%7;
+        if(indexer == 0){
+           colors[i]=window.chartColors.red_alpha_low; 
+        }
+        else if(indexer == 1){
+           colors[i]=window.chartColors.orange_alpha_low; 
+        }
+        else if(indexer == 2){
+           colors[i]=window.chartColors.yellow_alpha_low; 
+        }
+        else if(indexer == 3){
+           colors[i]=window.chartColors.blue_alpha_low; 
+        }
+        else if(indexer == 4){
+           colors[i]=window.chartColors.green_alpha_low; 
+        }
+        else if(indexer == 5){
+           colors[i]=window.chartColors.purple_alpha_low; 
+        }
+        else{
+           colors[i]=window.chartColors.grey_alpha_low; 
+        }
+    }
+    return colors;
+}
+
+function generate_colors_transparent(amount_blocks){
+    colors = [];
+
+    for(var i = 0; i < amount_blocks; i++){
+        colors[i]=window.chartColors.transparent; 
+    }
+    return colors;
+}
+
+function generate_colors_alpha_high(amount_blocks){
+    colors = [];
+
+    for(var i = 0; i < amount_blocks; i++){
+        var indexer = i%7;
+        if(indexer == 0){
+           colors[i]=window.chartColors.red_alpha_high; 
+        }
+        else if(indexer == 1){
+           colors[i]=window.chartColors.orange_alpha_high; 
+        }
+        else if(indexer == 2){
+           colors[i]=window.chartColors.yellow_alpha_high; 
+        }
+        else if(indexer == 3){
+           colors[i]=window.chartColors.blue_alpha_high; 
+        }
+        else if(indexer == 4){
+           colors[i]=window.chartColors.green_alpha_high; 
+        }
+        else if(indexer == 5){
+           colors[i]=window.chartColors.purple_alpha_high; 
+        }
+        else{
+           colors[i]=window.chartColors.grey_alpha_high; 
+        }
+    }
+    return colors;
+}
+
 function update_line_config(blocks, compilation_steps, runtime_steps){
     amount_blocks = blocks.length;
 
@@ -1125,11 +1203,14 @@ function generate_label_system(size){
 }
 
 function update_system_chart_config(num_ar, num_ar_records){
-    var show_points, borderColor, label_data;
+    var show_points, borderColor, label_data, fixed;
+    max_ar = (num_ar/500*100)+0.2;
+    fixed = Math.floor(num_ar_records.length/6);
 
     if(num_ar == 1){
+        max_ar = 1;
         label_data = ["0","1"];
-        num_ar_records = [1,1];
+        num_ar_records = [0.2,0.2];
         var a = document.getElementById("memory-use-description");
         a.textContent = memory_use_no_ar;
     }
@@ -1194,22 +1275,24 @@ function update_system_chart_config(num_ar, num_ar_records){
         },
         scales: {
             xAxes: [{
-                afterTickToLabelConversion: function(data){
-                    var xLabels = data.ticks;
-
-                    xLabels.forEach(function (labels, i, xLabels) {
-                        var size_data = xLabels.length;
-                        var fixed = Math.floor(size_data/5);
-
-                        if (i % fixed != 0){
-                            xLabels[i] = '';
-                        }
-                    });
-                } 
+                autoSkip: true,
+                ticks: {
+                    maxTicksLimit: 15,
+                    suggestedMax: num_ar_records.length,
+                    min: 0,
+                    stepSize: fixed
+                }
             }],
             yAxes: [{
+                afterTickToLabelConversion: function(data){
+                    var ylabels = data.ticks;
+
+                    ylabels.forEach(function (labels, i, ylabels) {
+                        ylabels[i] = ylabels[i]+'%';
+                    });
+                },
                 ticks: {
-                        max: num_ar+1
+                        suggestedMax: max_ar
                        },
                 stacked: true,
             }]
@@ -1256,7 +1339,6 @@ function update_line_config_vars(blocks, num_vars){
     update_doughnut_chart_vars(blocks, num_vars, colors);
 }
 
-
 function update_doughnut_chart(blocks, compilation_steps, colors){
     window.doughnut_config = {
     type: 'doughnut',
@@ -1287,7 +1369,7 @@ function update_doughnut_chart(blocks, compilation_steps, colors){
 
 function update_doughnut_chart_vars(blocks, num_vars, colors){
     window.doughnut_config_vars = {
-    type: 'doughnut',
+    type: 'pie',
     data: {
         datasets: [{
             data: num_vars,
@@ -1344,9 +1426,90 @@ function update_doughnut_chart_ifs(blocks, num_ifs){
     };
 }
 
+function update_polar_chart(blocks_loops, num_cycles){
+    amount_blocks = blocks_loops.length;
+    var colors = generate_colors_alpha_high(amount_blocks);
+    var borders = generate_colors_alpha_low(amount_blocks);
+
+    window.polar_config = {
+        data: {
+            datasets: [{
+                data: num_cycles,
+                backgroundColor: colors,
+                borderColor: borders,
+                borderWidth: 7
+            }],
+            labels: blocks_loops
+        },
+        options: {
+            layout: {
+                padding: 20
+            },
+            responsive: true,
+            title:{
+            display: true,
+            padding: 15,
+            position: "bottom",
+            text:"Hover over areas to see details",
+            fontSize:10,
+            fontStyle: "normal"
+            },
+            legend: {
+                position: 'right',
+                display:false,
+                fullWidth: false,
+                labels: {
+                    boxWidth: 15
+                }
+            },
+            scale: {
+            ticks: {
+                beginAtZero: true
+            },
+            reverse: false
+            },
+            animation: {
+                animateRotate: false,
+                animateScale: true
+            }
+        }
+    };
+}
+
+function update_doughnut_chart_loops(blocks, num_loops){
+    amount_blocks = blocks.length;
+    var colors = generate_colors(amount_blocks);
+    
+    window.doughnut_config_loops = {
+    type: 'doughnut',
+    data: {
+        datasets: [{
+            data: num_loops,
+            backgroundColor: colors,
+            label: 'Variables'
+        }],
+        labels: blocks
+    },
+    options: {
+        responsive: true,
+        legend: {
+            position: 'right',
+            fullWidth: false,
+            labels: {
+                        boxWidth: 15
+                    }
+        },
+        animation: {
+            animateScale: true,
+            animateRotate: true
+        }
+    }
+    };
+}
+
 function update_doughnut_chart_runtime(blocks, runtime_steps, colors){
     window.doughnut_config_runtime = {
-    type: 'doughnut',
+    type: 'pie',
     data: {
         datasets: [{
             data: runtime_steps,
@@ -1371,6 +1534,148 @@ function update_doughnut_chart_runtime(blocks, runtime_steps, colors){
     }
     };
 }
+
+function update_bar_elements_chart(blocks, num_vars, num_ifs, num_loops){
+    amount_blocks = blocks.length;
+    var colors = generate_colors(amount_blocks);
+    var colors_alpha_low = generate_colors_alpha_low(amount_blocks);
+    var colors_alpha_high = generate_colors_alpha_high(amount_blocks);
+
+    window.bar_elements_config =  {
+        type: 'bar',
+        data: {
+            labels: blocks,
+            datasets: [
+            {
+                label: "Variables",
+                backgroundColor: colors,
+                borderColor: colors,
+                borderWidth: 1,
+                data: num_vars,
+            },
+            {
+                label: "Branches",
+                backgroundColor: colors_alpha_high,
+                borderColor: colors,
+                borderWidth: 1,
+                data: num_ifs,
+            },
+            {
+                label: "Loops",
+                backgroundColor: colors_alpha_low,
+                borderColor: colors,
+                borderWidth: 1,
+                data: num_loops,
+            }
+        ]
+        },
+        options: {
+                responsive: true,
+                legend:{
+                    display: false,
+                },
+                scales: {
+                    xAxes: [{
+                        stacked: true
+                    }],
+                    yAxes: [{
+                        stacked: true
+                    }]
+                    }
+                }
+    };
+
+}
+
+function update_polar_calls_chart(blocks, num_calls){
+     amount_blocks = blocks.length;
+    var colors = generate_colors(amount_blocks);
+
+    window.polar_calls_config = {
+    type: 'pie',
+    data: {
+        datasets: [{
+            data: num_calls,
+            backgroundColor: colors,
+            label: 'Calls to Block'
+        }],
+        labels: blocks
+    },
+    options: {
+        responsive: true,
+        legend: {
+            position: 'right',
+            fullWidth: false,
+            labels: {
+                        boxWidth: 15
+                    }
+        },
+        animation: {
+            animateScale: true,
+            animateRotate: true
+        }
+    }
+    };
+}
+
+function update_line_runs_config (blocks, runtimes){
+    var max = Math.max(runtimes);
+
+    window.line_runs_config =  {
+        type: 'line',
+    data: {
+        labels: blocks,
+        datasets: [ {
+        label: "Runtime per block",
+        borderColor: window.chartColors.green,
+        backgroundColor: window.chartColors.green_alpha,
+        data: runtimes,
+        pointBorderColor: window.chartColors.green,
+        pointBackgroundColor: window.chartColors.green,
+        }
+    ]
+    },
+    options: {
+        elements: {
+                    point:{
+                        radius: 3
+                    },
+                    line:{
+                        borderWidth: 2
+                    }
+        },
+        responsive: true,
+        title:{
+        display: false,
+        text:"System Usage Stacked Area"
+        },
+        legend: {
+            display: false,
+            position: 'right',
+            fullWidth: false,
+            labels: {
+                boxWidth: 15
+            }
+        },
+        tooltips: {
+        mode: 'index',
+        },
+        hover: {
+        mode: 'index'
+        },
+        scales: {
+            xAxes: [{
+                autoSkip: true
+            }],
+            yAxes: [{
+                stacked: true,
+            }]
+        }
+    }
+};
+}
+
+
 
 //custom alert
 function create_bootstrap_success_alert(strong_t, normal_t){
@@ -1518,6 +1823,33 @@ function create_system_chart(offset){
     }, offset);
 }
 
+function create_bar_elements_chart(offset){
+    var t = setTimeout(function() {
+            var ctx = document.getElementById("myBarChart").getContext("2d");
+            ctx.canvas.width = 20;
+            ctx.canvas.height = 20;
+            window.myBarChart = new Chart(ctx, window.bar_elements_config);
+    }, offset);
+}
+
+function create_polar_calls_chart(offset){
+    var t = setTimeout(function() {
+            var ctx = document.getElementById("myCallsChart").getContext("2d");
+            ctx.canvas.width = 20;
+            ctx.canvas.height = 20;
+            window.myCallsChart = new Chart(ctx, window.polar_calls_config);
+    }, offset);
+}
+
+function create_line_runs_chart(offset){
+    var t = setTimeout(function() {
+            var ctx = document.getElementById("myRuntimeChart").getContext("2d");
+            ctx.canvas.width = 20;
+            ctx.canvas.height = 20;
+            window.myRuntimeChart = new Chart(ctx, window.line_runs_config);
+    }, offset);
+}
+
 function create_line_chart_vars(offset){
     var t = setTimeout(function() {
             var ctx = document.getElementById("myLineChart_vars").getContext("2d");
@@ -1527,17 +1859,10 @@ function create_line_chart_vars(offset){
     }, offset);
 }
 
-function create_bubble_chart(offset){
-    var t = setTimeout(function() {   
-        var ctx = document.getElementById("myBubbleChart").getContext("2d");
-        window.myBubbleChart = new Chart(ctx, bubble_config);   
-    }, offset);
-}
-
 function create_polar_chart(offset){
     var t = setTimeout(function() {   
         var ctx = document.getElementById("myPolarChart");
-        window.myPolarChart = Chart.PolarArea(ctx, polar_config); 
+        window.myPolarChart = Chart.PolarArea(ctx, window.polar_config); 
     }, offset);
 }
 
@@ -1568,12 +1893,12 @@ function create_doughnut_chart_runtime(offset){
     }, offset);
 }
 
-function create_stacked_chart(offset){
+function create_doughnut_chart_loops(offset){
     var t = setTimeout(function() {   
-        var ctx = document.getElementById("myStackedChart").getContext("2d");
+        var ctx = document.getElementById("myDoughnutChart_loops").getContext("2d");
         ctx.canvas.width = 20;
         ctx.canvas.height = 20;
-        window.myStackedChart = new Chart(ctx, stacked_config);
+        window.myDoughnutChart_loops = new Chart(ctx, window.doughnut_config_loops);
     }, offset);
 }
 

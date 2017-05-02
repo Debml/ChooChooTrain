@@ -20,7 +20,7 @@
     </style>
 </head>
 <body onload="load_code()" style="margin-bottom: 30px;">
-<div class="jumbotron text-center" style="margin-bottom: 0px; padding-bottom:17px;">
+<div class="jumbotron text-center" style="margin-bottom: 0px; padding-bottom:17px;" id= "top_container">
   <h1>Choo Choo Train</h1>
   <p style="margin-bottom:12px;">Write and review code like an expert!</p> 
   <button class="btn btn-med" id="restart-button" href="#" role="button" onclick="restart()">Start again</button>
@@ -116,13 +116,14 @@
 
       <div class="row featurette">
         <div class="col-md-5">
-          <h2 class="featurette-heading">Runtime.</h2>
+          <h2 class="featurette-heading">Runtime</h2>
           <p class="lead" id="runtime-info">Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.</p>
+          <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
         </div>
         <div class="col-md-7">
           <div class="panel panel-default" style="max-width:500px; max-height:600;margin-left:auto; margin-right:auto;">
                 <div class="panel-body">
-                  <div class="container" >
+                  <div class="container" style="padding-left: 45px; max-width:100%; max-height:100%;">
                       <p>
                         <p>
                           <div class="chart-demo1">
@@ -141,17 +142,18 @@
 
       <div class="row featurette">
         <div class="col-md-5 col-md-push-7">
-          <h2 class="featurette-heading">Operations per block.</h2>
+          <h2 class="featurette-heading">Operations per block</h2>
           <p class="lead">
             Each block generates a number of operations or machine level instructions that are then
             read by the Choo Choo Train compiler to be executed. If a block has large amount of 
             statements, loops, branches, or list manipulations then the number of operations will be higher.
           </p>
+          <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
         </div>
         <div class="col-md-7 col-md-pull-5">
           <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
                 <div class="panel-body" style="width: 400px; height:430px;">
-                  <div class="container" style="padding-left: 45px;">
+                  <div class="container" style="padding-left: 45px; max-width:100%; max-height:100%;">
                       <p>
                         <p>
                         <div class="chart-demo">
@@ -169,16 +171,17 @@
 
       <div class="row featurette">
         <div class="col-md-5">
-          <h2 class="featurette-heading">Total operations.</h2>
+          <h2 class="featurette-heading">Total operations</h2>
           <p class="lead">Each block has its own weight on the entire program. How
             many operations each block has compared to others can help visualize just how much work 
             each block is responsible for during runtime.
           </p>
+          <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
         </div>
         <div class="col-md-7">
           <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
                 <div class="panel-body" style="width: 400px; height:430px;">
-                  <div class="container" style="padding-left: 45px;">
+                  <div class="container" style="padding-left: 45px; max-width:100%; max-height:100%;">
                       <p>
                         <p>
                         <div class="chart-demo">
@@ -196,18 +199,19 @@
 
       <div class="row featurette">
         <div class="col-md-5 col-md-push-7">
-          <h2 class="featurette-heading">Variables per block.</h2>
+          <h2 class="featurette-heading">Variables per block</h2>
           <p class="lead">
             Each block has a total amount of variables including
             simple data types, parameters, and lists. Some blocks contain more variables
             than we expect, these variables take up memory space and can sometimes saturate
             the available memory. 
           </p>
+          <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
         </div>
         <div class="col-md-7 col-md-pull-5">
           <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
                 <div class="panel-body" style="width: 400px; height:430px;">
-                  <div class="container" style="padding-left: 45px;">
+                  <div class="container" style="padding-left: 45px; max-width:100%; max-height:100%;">
                       <p>
                         <p>
                         <div class="chart-demo">
@@ -225,16 +229,17 @@
 
       <div class="row featurette">
         <div class="col-md-5">
-          <h2 class="featurette-heading">Total variables.</h2>
+          <h2 class="featurette-heading">Total variables</h2>
           <p class="lead">Each block has its own weight on the program's memory. Comparing how
             many variables each block has compared to others can help visualize just how much memory space
             each block is taking.
           </p>
+          <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
         </div>
         <div class="col-md-7">
           <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
                 <div class="panel-body" style="width: 400px; height:430px;">
-                  <div class="container" style="padding-left: 45px;">
+                  <div class="container" style="padding-left: 45px; max-width:100%; max-height:100%;">
                       <p>
                         <p>
                         <div class="chart-demo">
@@ -252,16 +257,17 @@
 
       <div class="row featurette">
         <div class="col-md-5 col-md-push-7">
-          <h2 class="featurette-heading">Block Memory Performance.</h2>
+          <h2 class="featurette-heading">Block Memory Performance</h2>
           <p class="lead" id="memory-use-description">Some blocks can take up a lot of memory 
             if they are called numerous times within each other or recursively. If there are
              many calls within blocks before finishing execution, memory usage can stack up. 
              See how well your code performs with increasing amount of block calls.</p>
+             <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
         </div>
         <div class="col-md-7 col-md-pull-5">
             <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
                 <div class="panel-body" style="width: 400px; height:430px;">
-                  <div class="container" style="padding-left: 45px;">
+                  <div class="container" style="padding-left: 45px; max-width:100%; max-height:100%;">
                       <p>
                         <p>
                         <div class="chart-demo">
@@ -279,17 +285,18 @@
 
       <div class="row featurette">
         <div class="col-md-5">
-          <h2 class="featurette-heading">Total branches.</h2>
+          <h2 class="featurette-heading">Total branches</h2>
           <p class="lead">Branches are sections of code where a conditional statement is 
             used and the program must choose what to execute according to the evaluated condition.
             These branches define the direction the program execution takes, just as train tracks branch
             out and direct trains.
           </p>
+          <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
         </div>
         <div class="col-md-7">
           <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
                 <div class="panel-body" style="width: 400px; height:430px;">
-                  <div class="container" style="padding-left: 45px;">
+                  <div class="container" style="padding-left: 45px; max-width:100%; max-height:100%;">
                       <p>
                         <p>
                         <div class="chart-demo">
@@ -307,13 +314,42 @@
 
       <div class="row featurette">
         <div class="col-md-5 col-md-push-7">
-          <h2 class="featurette-heading">Polar Chart</h2>
-          <p class="lead">Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.</p>
+          <h2 class="featurette-heading">Total loops</h2>
+          <p class="lead">About loops.
+          </p>
+          <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
         </div>
         <div class="col-md-7 col-md-pull-5">
+          <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px; height:430px;">
+                  <div class="container" style="padding-left: 45px; max-width:100%; max-height:100%;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myDoughnutChart_loops" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5">
+          <h2 class="featurette-heading">Cycles per loops</h2>
+          <p class="lead">
+            How many times each cicle went in.
+          </p>
+          <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+        </div>
+        <div class="col-md-7">
             <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
                 <div class="panel-body" style="width: 400px; height:430px;">
-                  <div class="container" style="padding-left: 45px;">
+                  <div class="container" style="padding-left: 45px; max-width:100%;">
                       <p>
                         <p>
                         <div class="chart-demo">
@@ -327,37 +363,125 @@
         </div>
       </div>
 
+      
       <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5 col-md-push-7">
+          <h2 class="featurette-heading">Total Block Elements</h2>
+          <p class="lead">
+            Total elements in a block.
+          </p>
+          <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+        </div>
+        <div class="col-md-7 col-md-pull-5">
+            <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px; height:430px;">
+                  <div class="container" style="padding-left: 45px; max-width:100%; max-height:100%;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myBarChart" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5">
+          <h2 class="featurette-heading">Calls to Blocks</h2>
+          <p class="lead">
+            How many times each block was called.
+            </p>
+            <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+        </div>
+        <div class="col-md-7">
+            <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px; height:430px;">
+                  <div class="container" style="padding-left: 45px; max-width:100%; max-height:100%;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myCallsChart" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-7">
+          <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+            <div class="panel-body" style="width: 400px; height:430px;">
+                  <div class="container" style="padding-left: 45px; max-width:100%; max-height:100%;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="myRuntimeChart" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <h2 class="featurette-heading">Runtime per Block</h2>
+          <p class="lead">Total runtime per block.</p>
+          <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+      </div>
+
+      
+
     </div>
   </div>
 </div>
 
-<hr class="featurette-divider2">
 
-<footer style="text-align:center;">
-        <p>&copy; 2017  &middot; Paulina Escalante &middot; David Benitez &middot; <a data-toggle="modal" data-target="#about-modal">About</a> </p>
-</footer>
 
-<div class="modal fade" id="about-modal" role="dialog">
-        <div class="modal-dialog modal-sm">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h4 class="modal-title">Choo Choo Train</h4>
-            </div>
-            <div class="modal-body">
-              <p>Choo Choo Train was created by <b>Paulina Escalante</b> and <b>David Benitez</b> for Tecnologico
-                de Monterrey's Compiler Design course project.
-              </p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+</div>
+
+<p class = "container">
+  <hr class="featurette-divider2">
+
+  <footer style="text-align:center;">
+          <p>&copy; 2017 &middot; Paulina Escalante &middot; David Benitez &middot; <a data-toggle="modal" data-target="#about-modal">About</a> </p>
+  </footer>
+
+  <div class="modal fade" id="about-modal" role="dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Choo Choo Train</h4>
+              </div>
+              <div class="modal-body text-center">
+                <p>Choo Choo Train was created by <b>Paulina Escalante</b> and <b>David Benitez</b> for Tecnologico
+                  de Monterrey's Compiler Design course project.
+                </p>
+                <img src="media/full_train.png" alt="Graph1" width="100%" height="auto">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+  </div>
+</p>
 
-<hr class="featurette-divider2">
 
 </body>
 </html>

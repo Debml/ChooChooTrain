@@ -14,7 +14,7 @@ returns whole
 starting block main
 {
 	variable n of type whole;
-	n = 15;
+	n = 23;
 
 	print(recursiveFibonacci(n));
 }

@@ -421,10 +421,6 @@ class Code_Review_Data:
         #public variable for total number of ifs
         self.total_if_counter = 0
 
-        #Run-time data
-        #public variable for number of ifs (not counting loop conditions) in the program
-        self.program_branches = 0
-
         #public variable for the counter of AR in the stack segment at a given time (function call)
         self.num_ar_on_call = []
 
@@ -528,7 +524,7 @@ class Code_Review_Data:
     #Appends a counter of AR in the stack segment at the moment of a function call
     def add_num_ar_on_call(self, ar_count = None):
         if ar_count is not None:
-            self.num_ar_on_call.append(float(ar_count)/constants.Memory_Limits.STACK_SEGMENT_SIZE)
+            self.num_ar_on_call.append('{:0.4f}'.format((float(ar_count)/constants.Memory_Limits.STACK_SEGMENT_SIZE)*100))
             #takes into account the AR about to be added
             self._increase_max_num_activation_records(ar_count + 1)
 

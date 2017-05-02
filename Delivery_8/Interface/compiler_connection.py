@@ -7,19 +7,23 @@ import random
 
 class Compiler_Handler:
     def __init__(self):
-        self.runtime = 0
-        self.compilation_time = 0
         self.result = []
-        self.output = ""
+        #index 0
         self.code_js = ""
-        # if 1 compilation successful, 2 comp error, 3 runtime error
+        #index 1
+        self.runtime = 0
+        #index 2
+        self.compilation_time = 0
+        #index 3
+        self.output = ""
+        # index 4, if 1 compilation successful, 2 comp error, 3 runtime error
         self.compilation_status = 0
         #index 5
         self.block_names = []
         #index 6
-        self.runtime_steps = []
-        #index 7
         self.compilation_steps = []
+        #index 7
+        self.runtime_steps = []      
         #index 8
         self.num_vars = []
         #index 9 last output in case of error
@@ -30,6 +34,22 @@ class Compiler_Handler:
         self.records = []
         #index 12 number of ifs per block
         self.num_ifs = []
+        #index 13 number of loops per block
+        self.num_loops = []
+        #index 14
+        names_loops_blocks = []
+        #index 15 for cycles in runtime per loops
+        self.cycles = []
+        #index 16
+        self.total_vars = 0
+        #index 17
+        self.total_loops = 0
+        #index 18
+        self.total_ifs = 0
+        #index 19
+        self.num_calls_block = []
+        #index 20
+        self.runtime_per_block = []
 
 
     def compile(self, code_js):
@@ -90,6 +110,30 @@ class Compiler_Handler:
         #get num ifs
         self.num_ifs = choo_choo_train.attributes.num_ifs
 
+        #get num ifs 
+        self.num_loops = choo_choo_train.attributes.num_loops
+
+        #get names of loops
+        self.names_loops_blocks = choo_choo_train.attributes.names_loops_blocks
+
+        #get loops executed
+        self.cycles = choo_choo_train.attributes.cycles
+
+        #get num ifs 
+        self.total_vars = choo_choo_train.attributes.total_vars
+
+        #get names of loops
+        self.total_loops = choo_choo_train.attributes.total_loops
+
+        #get loops executed
+        self.total_ifs = choo_choo_train.attributes.total_ifs
+
+        #get num of calls
+        self.num_calls_block = choo_choo_train.attributes.num_calls_block
+
+        #get loops executed
+        self.runtime_per_block = choo_choo_train.attributes.runtime_per_block
+
         self.result.append(self.code_js)
         self.result.append(self.runtime)
         self.result.append(self.compilation_time)
@@ -99,10 +143,23 @@ class Compiler_Handler:
         self.result.append(self.compilation_steps)
         self.result.append(self.runtime_steps)
         self.result.append(self.num_vars)
+        #index 9
         self.result.append(self.last_output)
+
         self.result.append(self.num_ar)
         self.result.append(self.records)
         self.result.append(self.num_ifs)
+        self.result.append(self.num_loops)
+        self.result.append(self.names_loops_blocks)
+        self.result.append(self.cycles)
+        self.result.append(self.total_vars)
+        #index 17
+        self.result.append(self.total_loops)
+        self.result.append(self.total_ifs)
+        self.result.append(self.num_calls_block)
+        self.result.append(self.runtime_per_block)
+
+        print self.result
 
         return self.result
 
