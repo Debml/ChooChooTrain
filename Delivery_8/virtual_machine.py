@@ -16,15 +16,15 @@ def execute_code():
     #Increase block call counter for the current block
     start_data_timer = time.time()
     global_scope.code_review.increase_num_call_to_block(global_scope.starting_block)
-    global_scope.timer_counter = time.time() - start_data_timer
+    global_scope.block_run_time = global_scope.block_run_time + (time.time() - start_data_timer)
 
     #Loops until break (end_proc is in charge of breaking)
     while True:
         #If all functions have finished executing (including starting), end program
         if global_scope.program_memory.stack_segment_is_empty() or error_flag:
-            #start_data_timer = time.time()
-            #global_scope.code_review.print_data()
-            #global_scope.timer_counter = time.time() - start_data_timer
+            start_data_timer = time.time()
+            global_scope.code_review.print_data()
+            global_scope.block_run_time = global_scope.block_run_time + (time.time() - start_data_timer)
 
             if (error_flag == True):
                 return 0
@@ -40,7 +40,7 @@ def execute_code():
             #Increase quad counter for the current block
             start_data_timer = time.time()
             global_scope.code_review.increase_executed_quad_counter(current_block)
-            global_scope.timer_counter = time.time() - start_data_timer
+            global_scope.block_run_time = global_scope.block_run_time + (time.time() - start_data_timer)
 
         if operator == constants.Operators.OP_ADDITION:
             #print "addition"
@@ -160,7 +160,7 @@ def execute_code():
             ar_count = global_scope.program_memory.get_stack_segment_size()
             start_data_timer = time.time()
             global_scope.code_review.add_num_ar_on_call(ar_count)
-            global_scope.timer_counter = time.time() - start_data_timer
+            global_scope.block_run_time = global_scope.block_run_time + (time.time() - start_data_timer)
 
             increase_run_time()
 
@@ -170,7 +170,7 @@ def execute_code():
             current_block = global_scope.program_memory.get_current_activation_record().get_block_name()
             start_data_timer = time.time()
             global_scope.code_review.increase_num_call_to_block(current_block)
-            global_scope.timer_counter = time.time() - start_data_timer
+            global_scope.block_run_time = global_scope.block_run_time + (time.time() - start_data_timer)
 
             if (status_code == 0):
                 error_flag = True
@@ -518,7 +518,7 @@ def increase_go_to_counter(current_block, current_instruction):
     if jump_to_position < global_scope.instruction_pointer:
         start_data_timer = time.time()
         global_scope.code_review.increase_block_executed_loop_counter(current_block, global_scope.instruction_pointer)
-        global_scope.timer_counter = time.time() - start_data_timer
+        global_scope.block_run_time = global_scope.block_run_time + (time.time() - start_data_timer)
 
 #Update the run time for the current block before going to the next one
 def increase_run_time():

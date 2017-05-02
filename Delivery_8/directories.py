@@ -565,8 +565,8 @@ class Code_Review_Data:
         print(self.total_run_time)
         print("max AR")
         print(self.max_num_ar)
-        print("AR/calls")
-        print(self.num_ar_on_call)
+        #print("AR/calls")
+        #print(self.num_ar_on_call)
 
 #for testing purposes
 if __name__ == '__main__':
