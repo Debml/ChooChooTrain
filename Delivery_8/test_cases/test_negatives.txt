@@ -1,0 +1,7 @@
+starting block main
+{
+	variable a of type whole;
+	a = +1 + +1;
+
+	print(a);
+}
