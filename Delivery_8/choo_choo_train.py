@@ -46,9 +46,9 @@ class attributes:
     #index 18
     total_ifs = 0
     #index 19
-    num_calls_block = 0
+    num_calls_block = []
     #index 20
-    runtime_per_block = 0
+    runtime_per_block = []
 
 def set_code(code):
     attributes.code = code
@@ -112,29 +112,76 @@ def compile_and_run():
     """
     #get block data
     block_data = Dictionary()
-    block_data = global_scope.code_review.block_data
+    block_data = global_scope.code_review.block_data.get_instance()
 
+    print block_data.keys()
+
+    #get attributes for index 5/block names
+    for key, block_values in block_data.items():
+        #found one block
+        attributes.block_names.append(key)
+        #value 0 is quads in compilation
+        attributes.compilation_steps.append(block_values[0])
+        #value 1 is variable counter
+        attributes.num_vars.append(block_values[1])
+        #value 2 is compiled loops (num of loops)
+        attributes.num_loops.append(block_values[2])
+        #value 3 is executed quead counter
+        attributes.runtime_steps.append(block_values[3])
+        #value 4 is num calls to block
+        attributes.num_calls_block.append(block_values[4])
+        #value 5 is for executed loops
+        for loop, cycle_num in block_values[5].get_instance().items():
+            attributes.names_loops_blocks.append(key + " Loop " + str(loop))
+            attributes.cycles.append(cycle_num)
+
+        #value 6 is for if counter
+        attributes.num_ifs.append(block_values[6])
+        #value 7 is for runtime of block
+        attributes.runtime_per_block.append(block_values[7])
+
+    """DUMMY VALUES FOR TESTING PAGE
+            
     #get attributes for index 5
     attributes.block_names = ["Block1","Block2","Block3","Block4"]
+    CHECK
+
     #get attributes for index 6
     attributes.compilation_steps = [10, 23, 14, 37]
+    CHECK
+
     #get attributes for index 7
     attributes.runtime_steps = [13, 23, 44, 17]
+    CHECK
+
     #get attributes for index 8
     attributes.num_vars = [2, 2, 7, 1]
+    CHECK
+
     #get attrbiutes for index 12
     attributes.num_ifs = [2,2,0,1]
+    CHECK
+
     #get attrbiutes for index 13
     attributes.num_loops = [1,2,2,3]
+    CHECK
+
     #get attributes for index 14
     attributes.names_loops_blocks = ["Block12 - Loop1","Block13 - Loop1","BlockHello - Loop1","BlockHello - Loop2", "BlockHello - Loop3"]
+
     #get attributes for index 15
     attributes.cycles = [5,7,12,10,3]
+
     #get attributes for index 19
     attributes.num_calls_block = [1304,1200,1231,2345]
+    CHECK
+
     #get attributes for index 20
-    attributes.runtime_per_block = [0.003,0.0012,0.0045, 0.002]
+    attributes.runtime_per_block = [.0031,.0132,.000453,.00134]
+    CHECK
+    """
 
     print compilation_time, "seconds"
     print execution_time, "seconds"
     print attributes.runtime, "seconds"
+

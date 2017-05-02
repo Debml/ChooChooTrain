@@ -1618,21 +1618,46 @@ function update_polar_calls_chart(blocks, num_calls){
     };
 }
 
+function accumulate_runtimes(runtimes){
+    var counter = 0;
+    var accums = [];
+
+    for(var i = 0; i < runtimes.length; i++){
+        counter = counter + runtimes[i];
+        accums[i]= counter;
+    }
+    return accums;
+}
+
 function update_line_runs_config (blocks, runtimes){
     var max = Math.max(runtimes);
+
+    //accumulate runtimes
+    accum = accumulate_runtimes(runtimes);
 
     window.line_runs_config =  {
         type: 'line',
     data: {
         labels: blocks,
-        datasets: [ {
-        label: "Runtime per block",
+        datasets: [ 
+        {
+        fill:true,
+        label: "Runtime per Block",
         borderColor: window.chartColors.green,
         backgroundColor: window.chartColors.green_alpha,
         data: runtimes,
         pointBorderColor: window.chartColors.green,
         pointBackgroundColor: window.chartColors.green,
-        }
+        },
+        {
+        fill: false,
+        label: "Accumulated Runtime",
+        borderColor: window.chartColors.red,
+        backgroundColor: window.chartColors.red_alpha,
+        data: accum,
+        pointBorderColor: window.chartColors.red,
+        pointBackgroundColor: window.chartColors.red,
+        },
     ]
     },
     options: {
@@ -1647,7 +1672,7 @@ function update_line_runs_config (blocks, runtimes){
         responsive: true,
         title:{
         display: false,
-        text:"System Usage Stacked Area"
+        text:"Runtimes"
         },
         legend: {
             display: false,
@@ -1658,17 +1683,27 @@ function update_line_runs_config (blocks, runtimes){
             }
         },
         tooltips: {
-        mode: 'index',
-        },
-        hover: {
-        mode: 'index'
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
         },
         scales: {
             xAxes: [{
-                autoSkip: true
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Month'
+                }
             }],
             yAxes: [{
-                stacked: true,
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Value'
+                }
             }]
         }
     }
