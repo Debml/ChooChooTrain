@@ -12,6 +12,7 @@ def execute_code():
     global_scope.instruction_pointer = 0
     status_code = 1
     error_flag = False
+    input_flag = False
 
     #Increase block call counter for the current block
     start_data_timer = time.time()
@@ -21,13 +22,15 @@ def execute_code():
     #Loops until break (end_proc is in charge of breaking)
     while True:
         #If all functions have finished executing (including starting), end program
-        if global_scope.program_memory.stack_segment_is_empty() or error_flag:
+        if global_scope.program_memory.stack_segment_is_empty() or error_flag or input_flag:
             start_data_timer = time.time()
             global_scope.code_review.print_data()
             global_scope.block_run_time = global_scope.block_run_time + (time.time() - start_data_timer)
 
             if (error_flag == True):
                 return 0
+            elif (input_flag == True):
+                return 3
             else:
                 return 1
 
@@ -144,6 +147,8 @@ def execute_code():
             status_code = input_operation(current_instruction)
             if (status_code == 0):
                 error_flag = True
+            elif (status_code == 3):
+                input_flag = True
         elif operator == constants.Operators.OP_ERA:
             #print "era"
             status_code = era_operation(current_instruction)
@@ -357,7 +362,17 @@ def input_operation(current_instruction):
 
     #counts time for input
     start_input_timer = time.time()
-    input_value = raw_input()
+
+    #raise input error
+    #raise constants.ChooChooSyntaxError(global_scope.output_builder)
+    print "****"
+    print"INPUT EXPECTED"
+    return stop_exec("INPUT")  
+    print "****"  
+    print"INPUT RECEIVED"
+
+    #input_value = raw_input()
+
     global_scope.timer_counter = time.time() - start_input_timer
 
     validated_input = validate_input(input_value, input_type)
@@ -532,12 +547,15 @@ def increase_run_time():
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message
 def stop_exec(message = "Unknown operation"):
-    global_scope.last_output =  "Runtime error: " + message + "\n"
-    global_scope.output_builder = global_scope.output_builder + "Runtime error: " + message + "\n"
-
-    #sys.exit("Runtime error: %s" % message)
-    #stop execution
-    return 0
+    if (message == "INPUT"):
+        return 3
+        
+    else:
+        global_scope.last_output =  "Runtime error: " + message + "\n"
+        global_scope.output_builder = global_scope.output_builder + "Runtime error: " + message + "\n"
+        #sys.exit("Runtime error: %s" % message)
+        #stop execution
+        return 0
 
 #Entry method to start the intermediate code execution
 def start_execution():

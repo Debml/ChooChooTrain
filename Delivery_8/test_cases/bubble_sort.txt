@@ -1,8 +1,9 @@
 starting block main
 {
-    variable i, j, val, temp of type whole;
+    variable i, j, val, temp, count of type whole;
     list a[10] of type whole;
     val = 9;
+    count = 0;
 
     i = 0;
     do {
@@ -21,6 +22,7 @@ starting block main
     do {
         j = 0;
         do {
+	    count = count + 1;
             if (a[j] > a[j + 1]) {
                 temp = a[j];
                 a[j] = a[j + 1];
@@ -36,4 +38,6 @@ starting block main
         print(a[i]);
         i = i + 1;
     } until(i > 9)
+
+    print(count);
 }

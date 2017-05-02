@@ -10,9 +10,9 @@ var branch_description = "Branches are sections of code where a conditional stat
 var no_branch_description = "There are no branches used in your code. Write some conditional statements in your code to see how this makes your program behaves.";
 var no_loop_description = "There are no loops used in your code. Write some loop statements (do - until) in your code to see how this makes your program behaves.";;
 var no_elements_description = "There are no elements in your entire code. Try writing variables, conditional statements, or loop statements to see how this makes your program behaves.";
-var elements_description = "Total elements in a block.";
-var cycles_description = "How many times each cicle went in.";
-var loop_description = "About loops.";
+var elements_description = "Total elements in a block include variables, loops, and branches. These are some of the elements Choo Choo Train provides.";
+var cycles_description = "Loop statements allow us to execute a statement or group of statements multiple times. Check how many times the statement inside the loop is executed for each loop. Loops are sequentially numbered for each block.";
+var loop_description = "Choo Choo Train provides a simple loop statement, called a do until loop. These are defined inside block code and can execute a statement multiple times. Check how many loops each block has.";
 var summary_description = "Total elements of program.";
 var quote_counter = 0;
 var addedCount = 0;
@@ -882,16 +882,36 @@ function load_code() {
 }
 
 function send_input(){
-    //compiler receives input
-    disable_input();
-    show_output(text);
-    //runtime_end();
+    //get input value
+    var a = document.getElementById('input-text');
+    var user_input = a.value;
+
+    //build json from code
+    var data_js = JSON.stringify({"user_input":user_input});
+
+    //post input to API
+    var postUserInputURI = "http://127.0.0.1:5000/post_input";
+    post_request_ajax_input(postUserInputURI, data_js);
 }
 
 function show_output(text){
     //compiler sent output
     var a = document.getElementById('output-text');
     a.focus();
+    a.value = "";
+    a.value = text;
+    //in case not in scroll view
+    if(a.scrollHeight>0){
+        a.style.height = a.scrollHeight+'px';
+    }
+    else {
+        a.style.height = 72+'px';
+    }
+}
+
+function show_output_input(text){
+    //compiler sent output
+    var a = document.getElementById('output-text');
     a.value = "";
     a.value = text;
     //in case not in scroll view
@@ -919,6 +939,16 @@ function runtime_fail(message){
     create_bootstrap_danger_alert(message+ ". ","Try editing code or recompiling");
 }
 
+function ask_input(message){
+    
+    $(".alert").alert("close");
+    //alert user, enable review button
+    finished_running = false;
+    //time interval to let user see alert appearing
+    create_bootstrap_input_alert(message+ ". ","Click send after writing input");
+    enable_input();
+}
+
 /*function create_review_button(){
     var node_p = document.createElement("P"); 
     var node_button = document.createElement("BUTTON");
@@ -943,9 +973,11 @@ function enable_input(){
 
     a.disabled = false;
     b.disabled = false;
+    a.focus();
 }
 
 function disable_input(){
+    $(".alert").alert("close");
     var a = document.getElementById('input-text');
     var b = document.getElementById('send-input-button');
 
@@ -968,6 +1000,40 @@ function compile_code(){
     //compiler needs input
     //enable_input();
 }
+
+//ajax post request
+function post_request_ajax_input(uri,data_js){
+  $.ajax({
+            url: uri,
+            type: "POST",
+            data: data_js,
+            dataType: "json",
+            contentType: "application/json",
+            success: function (jsonResponse) {
+                response_post_ajax(jsonResponse);
+            },
+            error: function (errorMessage) {
+                //alert user
+                create_bootstrap_alert("ERROR",": Not connected to compiler");
+            }
+            
+        });
+}
+
+//ajax response callback
+function response_post_ajax(jsonResponse){
+    result_code = jsonResponse.result;
+    if(result_code == 1) {
+        //input was posted
+        disable_input();
+    }
+    else {
+        //bootstrap alert
+        create_bootstrap_alert("ERROR " + result_code,": User input not sent");
+    }
+}
+
+
 function get_request_ajax_code(uri){
     $.ajax({
             url: uri,
@@ -991,6 +1057,7 @@ function get_request_ajax_code(uri){
             }
         });
 }
+
 
 function get_request_ajax(uri){
     $.ajax({
@@ -1041,14 +1108,29 @@ function get_request_ajax(uri){
                 //wait for user to see runtime
                 var t = setTimeout(function() {
                     $(".alert").alert("close");
-                    show_output(jsonResponse.result[3])
                     //no error in compilation or runtime
                     if (jsonResponse.result[4] == 1){
                         runtime_end();
+                        show_output(jsonResponse.result[3])
                     }
-                    //error in compilation or runtime
+                    //error in compilation or runtime, or input
                     else {
-                        runtime_fail(jsonResponse.result[9]);
+                        //asks for input
+                        if(jsonResponse.result[4] == 3){
+                            ask_input("User input needed to continue running");
+                            //show all previous output
+                            show_output_input(jsonResponse.result[3])
+                        }
+                        //compilation error
+                        else if(jsonResponse.result[4] == 2){
+                            runtime_fail(jsonResponse.result[9]);
+                            show_output(jsonResponse.result[9])
+                        }
+                        //runtime error
+                        else {
+                            runtime_fail(jsonResponse.result[9]);
+                            show_output(jsonResponse.result[3])
+                        }
                     }
 
                     var but = document.getElementById('recompile');
@@ -1974,6 +2056,11 @@ function update_line_runs_config (blocks, runtimes){
             }
         },
         tooltips: {
+                callbacks: {
+                    label: function (tooltipItems, data) {
+                        return tooltipItems.yLabel.toFixed(8)
+                    }
+                },
                 mode: 'index',
                 intersect: false,
             },
@@ -2031,6 +2118,76 @@ function create_bootstrap_success_alert(strong_t, normal_t){
   var strong_text = document.createTextNode(strong_t);
 
   var other_text = document.createTextNode(normal_t);
+
+  node_strong_text.appendChild(strong_text);
+
+  node_alert.appendChild(node_strong_text);
+  node_alert.appendChild(other_text);
+
+  document.getElementById("code-container").prepend(node_alert);
+}
+
+//custom alert
+function create_bootstrap_alert(strong_t, normal_t){
+  var node_alert = document.createElement("DIV"); 
+  var node_dismiss_alert = document.createElement("A");
+  var node_strong_text = document.createElement("STRONG"); 
+  var node_span = document.createElement("SPAN");
+  
+  //has two children: dismiss and text
+  node_alert.setAttribute("class","alert alert-danger alert-dismissable fade in");
+
+  node_dismiss_alert.setAttribute("href","#");
+  node_dismiss_alert.setAttribute("class","close");
+  node_dismiss_alert.setAttribute("data-dismiss","alert");
+  node_dismiss_alert.setAttribute("aria-label","close");
+
+  var span_text = document.createTextNode("x");
+  node_span.appendChild(span_text);
+
+  node_dismiss_alert.appendChild(node_span);
+  node_alert.appendChild(node_dismiss_alert);
+
+  var strong_text = document.createTextNode(strong_t);
+
+  var other_text = document.createTextNode(normal_t);
+
+  node_strong_text.appendChild(strong_text);
+
+  node_alert.appendChild(node_strong_text);
+  node_alert.appendChild(other_text);
+
+  document.getElementById("code-column").prepend(node_alert);
+}
+
+//input alert
+function create_bootstrap_input_alert(strong_t, normal_t){
+  alert_counter = alert_counter + 1;
+
+  var node_alert = document.createElement("DIV"); 
+  var node_dismiss_alert = document.createElement("A");
+  var node_strong_text = document.createElement("STRONG"); 
+  var node_span = document.createElement("SPAN");
+  
+  //has two children: dismiss and text
+  node_alert.setAttribute("class","alert alert-warning alert-dismissable fade in");
+  node_alert.setAttribute("style","margin-bottom:10px");
+  node_alert.setAttribute("id","alert" + alert_counter);
+
+  node_dismiss_alert.setAttribute("href","#");
+  node_dismiss_alert.setAttribute("class","close");
+  node_dismiss_alert.setAttribute("data-dismiss","alert");
+  node_dismiss_alert.setAttribute("aria-label","close");
+
+  var span_text = document.createTextNode("x");
+  node_span.appendChild(span_text);
+
+  node_dismiss_alert.appendChild(node_span);
+  node_alert.appendChild(node_dismiss_alert);
+
+  var strong_text = document.createTextNode(strong_t);
+
+  var other_text = document.createTextNode(normal_t + "  ");
 
   node_strong_text.appendChild(strong_text);
 

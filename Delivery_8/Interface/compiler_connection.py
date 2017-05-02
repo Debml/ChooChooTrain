@@ -51,22 +51,23 @@ class Compiler_Handler:
         #index 20
         self.runtime_per_block = []
 
+        #input vars for sending input
+        self.input = ""
 
-    def compile(self, code_js):
+    def send_input(self, user_input):
+        choo_choo_train.set_input(user_input)
+        return 1
+
+    def build_program_result(self):
+        #clear result array
         if self.result:
             while self.result:
                 print self.result.pop()
-
-        self.code_js = code_js
-
-        #set code to compiler
-        choo_choo_train.set_code(self.code_js)
 
         #compile and run
         choo_choo_train.compile_and_run()
 
         # get runtime and format
-        
         if (choo_choo_train.attributes.runtime > 0.00001):
             self.runtime = '{:0.5f}'.format(choo_choo_train.attributes.runtime)
         
@@ -134,6 +135,7 @@ class Compiler_Handler:
         #get loops executed
         self.runtime_per_block = choo_choo_train.attributes.runtime_per_block
 
+        #set result array values
         self.result.append(self.code_js)
         self.result.append(self.runtime)
         self.result.append(self.compilation_time)
@@ -159,9 +161,18 @@ class Compiler_Handler:
         self.result.append(self.num_calls_block)
         self.result.append(self.runtime_per_block)
 
+        #clear attribtues for new program run
         choo_choo_train.clear_attributes()
+        
+    def compile(self, code_js):
+        #set code value
+        self.code_js = code_js
 
-        print self.result
+        #set code to compiler
+        choo_choo_train.set_code(self.code_js)
+
+        #build result array
+        self.build_program_result()
 
         return self.result
 

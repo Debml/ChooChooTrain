@@ -14,6 +14,10 @@ CORS(app)
 
 code_js = []
 result = []
+user_input = []
+
+#compiler handler
+compiler_handler = Compiler_Handler()
 
 @app.route('/post_code', methods=['POST'])
 def post_code():
@@ -33,6 +37,23 @@ def post_code():
 
     return jsonify({'result': result_code}), 201
 
+@app.route('/post_input', methods=['POST'])
+def post_user_input():
+    #json error
+    if not request.json or not 'user_input' in request.json:
+        #abort(400)
+        result_code = 400;
+
+    else:
+        #reset code stored and store new
+        if user_input:
+            user_input.pop()
+
+        user_input.append(request.json['user_input']);
+        #send input to handler and receive result
+        result_code = compiler_handler.send_input(user_input[0])
+
+    return jsonify({'result': result_code}), 201
 
 @app.route('/get_code', methods=['GET'])
 def get_code():
@@ -48,9 +69,6 @@ def compile():
         return jsonify({'code': "EMPTY"})
 
     else:
-        #compiler handler
-        compiler_handler = Compiler_Handler()
-
         #compile and update data in class
         result = compiler_handler.compile(code_js[0])
         return jsonify({'result': result})

@@ -89,3 +89,11 @@ class ChooChooSyntaxError(Error):
 class ChooChooExecutionError(Error):
     def __init__(self, message):
         self.message = message
+
+class ChooChooInput(Error):
+    def __init__(self, output_builder):
+        self.accum_output = output_builder
+
+class ChooChooExecutionError(Error):
+    def __init__(self, message):
+        self.message = message
