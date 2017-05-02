@@ -6,6 +6,7 @@ import global_scope
 import time
 from structures import Dictionary
 
+
 class attributes:  
     #index 0*
     code = ""
@@ -49,6 +50,50 @@ class attributes:
     num_calls_block = []
     #index 20
     runtime_per_block = []
+
+def clear_attributes():
+    #index 0*
+    attributes.code = ""
+    #index 1*
+    attributes.runtime = 0
+    #index 2*
+    attributes.compilationtime = 0
+    #index 3*
+    attributes.output = ""
+    #index 4*
+    attributes.compilationstatus = 0
+    #index 5*
+    attributes.block_names = []
+    #index 6*
+    attributes.compilation_steps = []
+    #index 7*
+    attributes.runtime_steps = []
+    #index 8*
+    attributes.num_vars = []
+    #index 9*
+    attributes.last_output = ""
+    #index 10*
+    attributes.num_ar = 0
+    #index 11*
+    attributes.records = []
+    #index 12*
+    attributes.num_ifs = []
+    #index 13*
+    attributes.num_loops = []
+    #index 14*
+    attributes.names_loops_blocks = []
+    #index 15*
+    attributes.cycles = []
+    #index 16
+    attributes.total_vars = 0
+    #index 17
+    attributes.total_loops = 0
+    #index 18
+    attributes.total_ifs = 0
+    #index 19
+    attributes.num_calls_block = []
+    #index 20
+    attributes.runtime_per_block = []   
 
 def set_code(code):
     attributes.code = code
@@ -132,9 +177,8 @@ def compile_and_run():
         attributes.num_calls_block.append(block_values[4])
         #value 5 is for executed loops
         for loop, cycle_num in block_values[5].get_instance().items():
-            attributes.names_loops_blocks.append(key + " Loop " + str(loop))
+            attributes.names_loops_blocks.append(key + " Line " + str(loop))
             attributes.cycles.append(cycle_num)
-
         #value 6 is for if counter
         attributes.num_ifs.append(block_values[6])
         #value 7 is for runtime of block

@@ -3,6 +3,17 @@ var alert_counter = 0;
 var runtime_description = "Your program runtime is calculated in seconds. Time taken while waiting for input is not included in total runtime calculation.";
 var memory_use_ar = "Some blocks can take up a lot of memory if they are called numerous times within each other or recursively. If there are many calls within blocks before finishing execution, memory usage can stack up. See how well your code performs with increasing amount of block calls.";
 var memory_use_no_ar = "There were no calls to other blocks except the starting block. Choo Choo Train makes a hidden block call to the starting block in order to start execution of the program.";
+var vars_description = "Each block has a total amount of variables including simple data types, parameters, and lists. Some blocks contain more variables than we expect, these variables take up memory space and can sometimes saturate the available memory.";
+var no_vars_description = "There are no variables declared in your code. Try including variable declarations in order to store values and constants.";
+var total_vars_description = "Each block has its own weight on the program's memory. Comparing how many variables each block has compared to others can help visualize just how much memory space each block is taking.";
+var branch_description = "Branches are sections of code where a conditional statement is used and the program must choose what to execute according to the evaluated condition.These branches define the direction the program execution takes,just as train tracks branch out and direct trains.";
+var no_branch_description = "There are no branches used in your code. Write some conditional statements in your code to see how this makes your program behaves.";
+var no_loop_description = "There are no loops used in your code. Write some loop statements (do - until) in your code to see how this makes your program behaves.";;
+var no_elements_description = "There are no elements in your entire code. Try writing variables, conditional statements, or loop statements to see how this makes your program behaves.";
+var elements_description = "Total elements in a block.";
+var cycles_description = "How many times each cicle went in.";
+var loop_description = "About loops.";
+var summary_description = "Total elements of program.";
 var quote_counter = 0;
 var addedCount = 0;
 var code = "Code not loaded";
@@ -10,6 +21,7 @@ var DEFAULT_DATASET_SIZE = 7;
 var finished_running = false;
 var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 var view_code = -1;
+
 
 var randomScalingFactor = function() {
         return Math.round(Math.random() * 100);
@@ -556,8 +568,7 @@ window.polar_calls_config = {
             animateRotate: true
         }
     }
-};
-        
+};   
 
 window.line_runs_config = {
     type: 'line',
@@ -609,6 +620,68 @@ window.line_runs_config = {
     }
 };
 
+window.bar_summary_config =  {
+        type: 'horizontalBar',
+        data: {
+            labels: ["Summary"],
+            datasets: [
+            {
+                label: "Variables",
+                backgroundColor: [
+                    window.chartColors.red_alpha,
+                    window.chartColors.orange_alpha,
+                ],
+                borderColor: [
+                    window.chartColors.red,
+                    window.chartColors.orange,
+                ],
+                borderWidth: 1,
+                data: [10],
+            },
+            {
+                label: "Branches",
+                backgroundColor: [
+                    window.chartColors.red,
+                    window.chartColors.orange,
+                ],
+                borderColor: [
+                    window.chartColors.red,
+                    window.chartColors.orange,
+                ],
+                borderWidth: 1,
+                data: [20],
+            },
+            {
+                label: "Loops",
+                backgroundColor: [
+                    window.chartColors.red,
+                    window.chartColors.orange,
+                ],
+                borderColor: [
+                    window.chartColors.red,
+                    window.chartColors.orange,
+                ],
+                borderWidth: 1,
+                data: [22],
+            }
+        ]
+        },
+        options: {
+                responsive: true,
+                legend:{
+                    display: false,
+                },
+                scales: {
+                    xAxes: [{
+                        stacked: true
+                    }],
+                    yAxes: [{
+                        stacked: true
+                    }]
+                    }
+                }
+    };
+
 $(document).ready(function(){ 
     $('[data-toggle="popover"]').popover();  
 
@@ -647,6 +720,13 @@ $(document).ready(function(){
         offset: 200,                 
         callbackFunction: function(elem){
            create_bar_elements_chart(0);
+        }
+    });
+
+    $('#mySummary').viewportChecker({
+        offset: 200,                 
+        callbackFunction: function(elem){
+           create_bar_summary(0);
         }
     });
 
@@ -956,6 +1036,8 @@ function get_request_ajax(uri){
                 update_polar_calls_chart(jsonResponse.result[5], jsonResponse.result[19]);
                 //update calls to blocks
                 update_line_runs_config(jsonResponse.result[5], jsonResponse.result[20]);
+                //update summary
+                update_bar_summary(jsonResponse.result[8], jsonResponse.result[13], jsonResponse.result[12]);
                 //wait for user to see runtime
                 var t = setTimeout(function() {
                     $(".alert").alert("close");
@@ -1203,6 +1285,9 @@ function generate_label_system(size){
 }
 
 function update_system_chart_config(num_ar, num_ar_records){
+    //main
+    var aux = ["0.2"];
+    var records = aux.concat(num_ar_records);
     var show_points, borderColor, label_data, fixed;
     max_ar = (num_ar/500*100)+0.2;
     fixed = Math.floor(num_ar_records.length/6);
@@ -1210,13 +1295,15 @@ function update_system_chart_config(num_ar, num_ar_records){
     if(num_ar == 1){
         max_ar = 1;
         label_data = ["0","1"];
-        num_ar_records = [0.2,0.2];
+        records = [0.2,0.2];
         var a = document.getElementById("memory-use-description");
         a.textContent = memory_use_no_ar;
     }
 
     else {
-        label_data = generate_label_system(num_ar_records.length);
+        var aux_label = ["0"];
+        var label_data = aux_label;
+        label_data = aux_label.concat(generate_label_system(num_ar_records.length));
         var a = document.getElementById("memory-use-description");
         a.textContent = memory_use_ar;
     }
@@ -1239,7 +1326,7 @@ function update_system_chart_config(num_ar, num_ar_records){
         label: "System Usage",
         borderColor: borderColor,
         backgroundColor: window.chartColors.purple_alpha,
-        data: num_ar_records,
+        data: records,
         pointBorderColor: window.chartColors.purple,
         pointBackgroundColor: window.chartColors.purple,
         }
@@ -1301,7 +1388,28 @@ function update_system_chart_config(num_ar, num_ar_records){
 };
 }
 
+function are_all_zero(array){
+    var flag = true;
+
+    for(var i=0;i < array.length; i++){
+        if(array[i]!= 0){
+            flag = false;
+        }
+    }
+
+    return flag;
+}
+
 function update_line_config_vars(blocks, num_vars){
+    if(are_all_zero(num_vars)){
+        var a = document.getElementById("vars-description");
+        a.textContent = no_vars_description;
+    }
+    else {
+        var b = document.getElementById("vars-description");
+        b.textContent = vars_description;
+    }
+
     amount_blocks = blocks.length;
 
     var colors = generate_colors(amount_blocks);
@@ -1330,7 +1438,10 @@ function update_line_config_vars(blocks, num_vars){
                         stacked: true
                     }],
                     yAxes: [{
-                        stacked: true
+                        stacked: true,
+                        ticks: {
+                            beginAtZero:true
+                        }
                     }]
                     }
                 }
@@ -1368,6 +1479,19 @@ function update_doughnut_chart(blocks, compilation_steps, colors){
 }
 
 function update_doughnut_chart_vars(blocks, num_vars, colors){
+    var visible_legend;
+
+    if(are_all_zero(num_vars)){
+        var a = document.getElementById("total-vars-description");
+        a.textContent = no_vars_description;
+        visible_legend = false;
+    }
+    else {
+        var b = document.getElementById("total-vars-description");
+        b.textContent = total_vars_description;
+        visible_legend = true;
+    }
+
     window.doughnut_config_vars = {
     type: 'pie',
     data: {
@@ -1381,6 +1505,7 @@ function update_doughnut_chart_vars(blocks, num_vars, colors){
     options: {
         responsive: true,
         legend: {
+            display: visible_legend,
             position: 'right',
             fullWidth: false,
             labels: {
@@ -1396,9 +1521,21 @@ function update_doughnut_chart_vars(blocks, num_vars, colors){
 }
 
 function update_doughnut_chart_ifs(blocks, num_ifs){
+    var visible_legend;
     amount_blocks = blocks.length;
     var colors = generate_colors(amount_blocks);
-    
+
+    if(are_all_zero(num_ifs)){
+        var a = document.getElementById("branch-description");
+        a.textContent = no_branch_description;
+        visible_legend = false;
+    }
+    else {
+        var b = document.getElementById("branch-description");
+        b.textContent = branch_description;
+        visible_legend = true;
+    }
+
     window.doughnut_config_ifs = {
     type: 'doughnut',
     data: {
@@ -1412,6 +1549,7 @@ function update_doughnut_chart_ifs(blocks, num_ifs){
     options: {
         responsive: true,
         legend: {
+            display: visible_legend,
             position: 'right',
             fullWidth: false,
             labels: {
@@ -1431,13 +1569,22 @@ function update_polar_chart(blocks_loops, num_cycles){
     var colors = generate_colors_alpha_high(amount_blocks);
     var borders = generate_colors_alpha_low(amount_blocks);
 
+    if(are_all_zero(num_cycles)){
+        var a = document.getElementById("cycles-description");
+        a.textContent = no_loop_description;
+    }
+    else {
+        var b = document.getElementById("cycles-description");
+        b.textContent = cycles_description;
+    }
+
     window.polar_config = {
         data: {
             datasets: [{
                 data: num_cycles,
                 backgroundColor: colors,
                 borderColor: borders,
-                borderWidth: 7
+                borderWidth: 1
             }],
             labels: blocks_loops
         },
@@ -1477,8 +1624,20 @@ function update_polar_chart(blocks_loops, num_cycles){
 }
 
 function update_doughnut_chart_loops(blocks, num_loops){
+    var visible_legend;
     amount_blocks = blocks.length;
     var colors = generate_colors(amount_blocks);
+
+    if(are_all_zero(num_loops)){
+        var a = document.getElementById("loop-description");
+        a.textContent = no_loop_description;
+        visible_legend = false;
+    }
+    else {
+        var b = document.getElementById("loop-description");
+        b.textContent = loop_description;
+        visible_legend = true;
+    }
     
     window.doughnut_config_loops = {
     type: 'doughnut',
@@ -1493,6 +1652,7 @@ function update_doughnut_chart_loops(blocks, num_loops){
     options: {
         responsive: true,
         legend: {
+            display: visible_legend,
             position: 'right',
             fullWidth: false,
             labels: {
@@ -1536,6 +1696,15 @@ function update_doughnut_chart_runtime(blocks, runtime_steps, colors){
 }
 
 function update_bar_elements_chart(blocks, num_vars, num_ifs, num_loops){
+    if(are_all_zero(num_vars) && are_all_zero(num_ifs) && are_all_zero(num_loops)){
+        var a = document.getElementById("elements-description");
+        a.textContent = no_elements_description;
+    }
+    else {
+        var b = document.getElementById("elements-description");
+        b.textContent = elements_description;
+    }
+    
     amount_blocks = blocks.length;
     var colors = generate_colors(amount_blocks);
     var colors_alpha_low = generate_colors_alpha_low(amount_blocks);
@@ -1579,7 +1748,10 @@ function update_bar_elements_chart(blocks, num_vars, num_ifs, num_loops){
                         stacked: true
                     }],
                     yAxes: [{
-                        stacked: true
+                        stacked: true,
+                        ticks: {
+                            beginAtZero:true
+                        }
                     }]
                     }
                 }
@@ -1629,34 +1801,153 @@ function accumulate_runtimes(runtimes){
     return accums;
 }
 
-function update_line_runs_config (blocks, runtimes){
-    var max = Math.max(runtimes);
+function calc(array){
+    var newarray = [];
+    var counter = 0;
 
+    for(var i=0;i < array.length;i++){
+        counter = counter + array[i];
+    }
+
+    newarray[0] = counter;
+
+    return newarray;
+}
+
+function update_bar_summary(num_vars,num_loops, num_ifs){
+    var legend_show;
+    if(are_all_zero(num_vars) && are_all_zero(num_ifs) && are_all_zero(num_loops)){
+        var a = document.getElementById("summary-description");
+        a.textContent = no_elements_description;
+        legend_show = false;
+    }
+    else {
+        var b = document.getElementById("summary-description");
+        b.textContent = summary_description;
+        legend_show = true;
+    }
+    
+    var nvars = calc(num_vars);
+    var nloops = calc(num_loops);
+    var nifs = calc(num_ifs);
+
+    window.bar_summary_config =  {
+        type: 'bar',
+        data: {
+            labels: ["Summary"],
+            datasets: [
+            {
+                label: "Variables",
+                backgroundColor: [
+                    window.chartColors.red,
+                ],
+                borderColor: [
+                    window.chartColors.red,
+                ],
+                borderWidth: 1,
+                data: nvars,
+            },
+            {
+                label: "Branches",
+                backgroundColor: [
+                    window.chartColors.green,
+                ],
+                borderColor: [
+                    window.chartColors.green,
+                ],
+                borderWidth: 1,
+                data: nifs,
+            },
+            {
+                label: "Loops",
+                backgroundColor: [
+                    window.chartColors.yellow,
+                ],
+                borderColor: [
+                    window.chartColors.yellow,
+                ],
+                borderWidth: 1,
+                data: nloops,
+            }
+        ]
+        },
+        options: {
+                    // Elements options apply to all of the options unless overridden in a dataset
+                    // In this case, we are setting the border of each horizontal bar to be 2px wide
+                    elements: {
+                        rectangle: {
+                            borderWidth: 2,
+                        }
+                    },
+                    responsive: true,
+                    legend: {
+                        display:legend_show,
+                        fontSize:10,
+                        position: 'right',
+                    },
+                    title: {
+                        display: false,
+                        text: 'Chart.js Horizontal Bar Chart'
+                    },
+
+                    scales: {
+                    xAxes: [{
+                        stacked: true
+                    }],
+                    yAxes: [{
+                        stacked: true,
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                    }
+                    
+                }
+    };
+}
+
+function update_line_runs_config (blocks, runtimes){
+    var newlabels, newruntimes;
+
+    if(runtimes.length == 1){
+        newlabels = ["Start Execution",blocks[0]];
+        newruntimes = [0,runtimes[0]];
+    }
+
+    else {
+        newlabels = blocks;
+        newruntimes = runtimes;
+    }
+
+    var max = Math.max(runtimes);
     //accumulate runtimes
-    accum = accumulate_runtimes(runtimes);
+    accum = accumulate_runtimes(newruntimes);
 
     window.line_runs_config =  {
         type: 'line',
     data: {
-        labels: blocks,
+        labels: newlabels,
         datasets: [ 
         {
-        fill:true,
+        pointRadius: 8,
+        pointHoverRadius:10,
+        pointHitRadius:10,
+        showLine: false,
         label: "Runtime per Block",
-        borderColor: window.chartColors.green,
-        backgroundColor: window.chartColors.green_alpha,
-        data: runtimes,
-        pointBorderColor: window.chartColors.green,
-        pointBackgroundColor: window.chartColors.green,
-        },
-        {
-        fill: false,
-        label: "Accumulated Runtime",
         borderColor: window.chartColors.red,
         backgroundColor: window.chartColors.red_alpha,
-        data: accum,
+        data: newruntimes,
         pointBorderColor: window.chartColors.red,
         pointBackgroundColor: window.chartColors.red,
+        },
+        {
+        fill: true,
+        label: "Accumulated Runtime",
+        borderColor: window.chartColors.yellow,
+        backgroundColor: window.chartColors.yellow_alpha,
+        data: accum,
+        pointBorderColor: window.chartColors.yellow,
+        pointBackgroundColor: window.chartColors.yellow,
         },
     ]
     },
@@ -1864,6 +2155,15 @@ function create_bar_elements_chart(offset){
             ctx.canvas.width = 20;
             ctx.canvas.height = 20;
             window.myBarChart = new Chart(ctx, window.bar_elements_config);
+    }, offset);
+}
+
+function create_bar_summary(offset){
+    var t = setTimeout(function() {
+            var ctx = document.getElementById("mySummary").getContext("2d");
+            ctx.canvas.width = 20;
+            ctx.canvas.height = 20;
+            window.mySummary = new Chart(ctx, window.bar_summary_config);
     }, offset);
 }
 

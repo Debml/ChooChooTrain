@@ -55,7 +55,7 @@ class Compiler_Handler:
     def compile(self, code_js):
         if self.result:
             while self.result:
-                self.result.pop()
+                print self.result.pop()
 
         self.code_js = code_js
 
@@ -158,6 +158,8 @@ class Compiler_Handler:
         self.result.append(self.total_ifs)
         self.result.append(self.num_calls_block)
         self.result.append(self.runtime_per_block)
+
+        choo_choo_train.clear_attributes()
 
         print self.result
 

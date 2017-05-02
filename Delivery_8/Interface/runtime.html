@@ -200,8 +200,7 @@
       <div class="row featurette">
         <div class="col-md-5 col-md-push-7">
           <h2 class="featurette-heading">Variables per block</h2>
-          <p class="lead">
-            Each block has a total amount of variables including
+          <p class="lead" id="vars-description">Each block has a total amount of variables including
             simple data types, parameters, and lists. Some blocks contain more variables
             than we expect, these variables take up memory space and can sometimes saturate
             the available memory. 
@@ -230,7 +229,7 @@
       <div class="row featurette">
         <div class="col-md-5">
           <h2 class="featurette-heading">Total variables</h2>
-          <p class="lead">Each block has its own weight on the program's memory. Comparing how
+          <p class="lead" id="total-vars-description">Each block has its own weight on the program's memory. Comparing how
             many variables each block has compared to others can help visualize just how much memory space
             each block is taking.
           </p>
@@ -286,7 +285,7 @@
       <div class="row featurette">
         <div class="col-md-5">
           <h2 class="featurette-heading">Total branches</h2>
-          <p class="lead">Branches are sections of code where a conditional statement is 
+          <p class="lead" id="branch-description">Branches are sections of code where a conditional statement is 
             used and the program must choose what to execute according to the evaluated condition.
             These branches define the direction the program execution takes, just as train tracks branch
             out and direct trains.
@@ -315,7 +314,7 @@
       <div class="row featurette">
         <div class="col-md-5 col-md-push-7">
           <h2 class="featurette-heading">Total loops</h2>
-          <p class="lead">About loops.
+          <p class="lead" id="loop-description">About loops.
           </p>
           <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
         </div>
@@ -341,7 +340,7 @@
       <div class="row featurette">
         <div class="col-md-5">
           <h2 class="featurette-heading">Cycles per loops</h2>
-          <p class="lead">
+          <p class="lead" id="cycles-description">
             How many times each cicle went in.
           </p>
           <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
@@ -369,8 +368,7 @@
       <div class="row featurette">
         <div class="col-md-5 col-md-push-7">
           <h2 class="featurette-heading">Total Block Elements</h2>
-          <p class="lead">
-            Total elements in a block.
+          <p class="lead" id="elements-description">Total elements in a block.
           </p>
           <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
         </div>
@@ -441,10 +439,32 @@
           <p class="lead">Total runtime per block.</p>
           <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
       </div>
-
-      
-
     </div>
+
+      <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-5">
+          <h2 class="featurette-heading">Program Summary</h2>
+           <p class="lead" id="summary-description">Total elements of program.</p>
+            <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+        </div>
+        <div class="col-md-7">
+            <div class="panel panel-default" style="max-width:500px;margin-left:auto; margin-right:auto;">
+                <div class="panel-body" style="width: 400px; height:430px;">
+                  <div class="container" style="padding-left: 45px; max-width:100%; max-height:100%;">
+                      <p>
+                        <p>
+                        <div class="chart-demo">
+                          <canvas id="mySummary" width="500" height="500"></canvas>
+                        </div>
+                        </p>
+                      </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
   </div>
 </div>
 
