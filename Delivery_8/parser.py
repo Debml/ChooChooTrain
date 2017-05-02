@@ -184,14 +184,7 @@ def p_EXP_AUX(p):
 def p_FACTOR(p):
 	'''
 	FACTOR : parenthesis_open EC_SEEN_FACT_LP EXPRESSION parenthesis_close EC_SEEN_FACT_RP
-			 | FACTOR_AUX
-	'''
-
-def p_FACTOR_AUX(p):
-	'''
-	FACTOR_AUX : op_addition CONSTANT
-				 | op_subtraction CONSTANT
-				 | CONSTANT
+			 | CONSTANT
 	'''
 
 def p_ITEM(p):
