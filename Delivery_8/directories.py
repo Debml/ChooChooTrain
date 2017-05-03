@@ -50,9 +50,6 @@ class Function_Directory:
             #public variable for temporary variable type counter
             temporary_type_counter = [0,0,0,0]
 
-            #public variable that holds the quad count for each block
-            quad_count = 0
-
             #declare block_data
             block_data = [return_type, [primitives, lists], parameters, quad_position, local_type_counter, temporary_type_counter]
 
@@ -434,6 +431,7 @@ class Code_Review_Data:
         #public variable that holds the total run time
         self.total_run_time = 0
 
+    #Creates a new entry about a block
     def add_entry(self, block_name = None):
         if block_name is not None:
             #Compile-time data
@@ -508,7 +506,8 @@ class Code_Review_Data:
         if current_block is not None:
             self.block_data[current_block][6] += 1
             self.total_if_counter += 1
-
+    
+    #Increases the run time of the current block and the total
     def increase_run_time(self, current_block = None, run_time = None):
         if current_block is not None:
             if run_time is not None:
