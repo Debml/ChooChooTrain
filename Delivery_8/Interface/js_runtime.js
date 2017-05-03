@@ -6,11 +6,11 @@ var memory_use_no_ar = "There were no calls to other blocks except the starting 
 var vars_description = "Each block has a total amount of variables including simple data types, parameters, and lists. Some blocks contain more variables than we expect, these variables take up memory space and can sometimes saturate the available memory.";
 var no_vars_description = "There are no variables declared in your code. Try including variable declarations in order to store values and constants.";
 var total_vars_description = "Each block has its own weight on the program's memory. Comparing how many variables each block has compared to others can help visualize just how much memory space each block is taking.";
-var branch_description = "Branches are sections of code where a conditional statement is used and the program must choose what to execute according to the evaluated condition.These branches define the direction the program execution takes,just as train tracks branch out and direct trains.";
-var no_branch_description = "There are no branches used in your code. Write some conditional statements in your code to see how this makes your program behaves.";
+var branch_description = "Conditional statements are sections of code where a conditional statement is used and the program must choose what to execute according to the evaluated condition.These statements define the direction the program execution takes,just as train tracks branch out and direct trains.";
+var no_branch_description = "There are no conditional statements used in your code. Write some conditionals in your code to see how this makes your program behaves.";
 var no_loop_description = "There are no loops used in your code. Write some loop statements (do - until) in your code to see how this makes your program behaves.";;
 var no_elements_description = "There are no elements in your entire code. Try writing variables, conditional statements, or loop statements to see how this makes your program behaves.";
-var elements_description = "Total elements in a block include variables, loops, and branches. These are some of the elements Choo Choo Train provides.";
+var elements_description = "Total elements in a block include variables, loops, and conditional statements. These are some of the elements Choo Choo Train provides.";
 var cycles_description = "Loop statements allow us to execute a statement or group of statements multiple times. Check how many times the statement inside the loop is executed for each loop. Loops are sequentially numbered for each block.";
 var loop_description = "Choo Choo Train provides a simple loop statement, called a do until loop. These are defined inside block code and can execute a statement multiple times. Check how many loops each block has.";
 var summary_description = "Total elements of program.";
@@ -497,7 +497,7 @@ window.bar_elements_config =  {
                 data: [10, 15],
             },
             {
-                label: "Branches",
+                label: "Conditionals",
                 backgroundColor: [
                     window.chartColors.red,
                     window.chartColors.orange,
@@ -639,7 +639,7 @@ window.bar_summary_config =  {
                 data: [10],
             },
             {
-                label: "Branches",
+                label: "Conditionals",
                 backgroundColor: [
                     window.chartColors.red,
                     window.chartColors.orange,
@@ -945,7 +945,7 @@ function runtime_end(){
     //alert user, enable review button
     finished_running = true;
     //time interval to let user see alert appearing
-    create_bootstrap_success_alert("Code finished running. ","You can now review your code");
+    create_bootstrap_success_alert("Code finished running. ","Review your code by changing tabs");
 }
 
 function runtime_fail(message){
@@ -1543,6 +1543,10 @@ function update_system_chart_config(num_ar, num_ar_records){
                 ticks: {
                         suggestedMax: max_ar
                        },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Percentage of system use'
+                },
                 stacked: true,
             }]
         }
@@ -1625,6 +1629,14 @@ function update_doughnut_chart(blocks, compilation_steps, colors){
     },
     options: {
         responsive: true,
+        title:{
+                display: true,
+                padding: 7,
+                position: "bottom",
+                text:"Click on labels to minimize",
+                fontSize:10,
+                fontStyle: "normal"
+        },
         legend: {
             position: 'right',
             fullWidth: false,
@@ -1666,6 +1678,14 @@ function update_doughnut_chart_vars(blocks, num_vars, colors){
     },
     options: {
         responsive: true,
+        title:{
+                display: true,
+                padding: 7,
+                position: "bottom",
+                text:"Click on labels to minimize",
+                fontSize:10,
+                fontStyle: "normal"
+        },
         legend: {
             display: visible_legend,
             position: 'right',
@@ -1718,6 +1738,14 @@ function update_doughnut_chart_ifs(blocks, num_ifs){
                         boxWidth: 15
                     }
         },
+        title:{
+                display: true,
+                padding: 7,
+                position: "bottom",
+                text:"Click on labels to minimize",
+                fontSize:10,
+                fontStyle: "normal"
+        },
         animation: {
             animateScale: true,
             animateRotate: true
@@ -1758,12 +1786,12 @@ function update_polar_chart(blocks_loops, num_cycles){
             },
             responsive: true,
             title:{
-            display: true,
-            padding: 7,
-            position: "bottom",
-            text:"Hover over areas to see details",
-            fontSize:10,
-            fontStyle: "normal"
+                display: true,
+                padding: 7,
+                position: "bottom",
+                text:"Click on labels to minimize",
+                fontSize:10,
+                fontStyle: "normal"
             },
             legend: {
                 position: 'right',
@@ -1827,6 +1855,14 @@ function update_doughnut_chart_loops(blocks, num_loops){
                         boxWidth: 15
                     }
         },
+        title:{
+                display: true,
+                padding: 7,
+                position: "bottom",
+                text:"Click on labels to minimize",
+                fontSize:10,
+                fontStyle: "normal"
+        },
         animation: {
             animateScale: true,
             animateRotate: true
@@ -1854,6 +1890,14 @@ function update_doughnut_chart_runtime(blocks, runtime_steps, colors){
             labels: {
                         boxWidth: 15
                     }
+        },
+        title:{
+                display: true,
+                padding: 7,
+                position: "bottom",
+                text:"Click on labels to minimize",
+                fontSize:10,
+                fontStyle: "normal"
         },
         animation: {
             animateScale: true,
@@ -1891,7 +1935,7 @@ function update_bar_elements_chart(blocks, num_vars, num_ifs, num_loops){
                 data: num_vars,
             },
             {
-                label: "Branches",
+                label: "Conditionals",
                 backgroundColor: colors_alpha_high,
                 borderColor: colors,
                 borderWidth: 1,
@@ -1949,6 +1993,14 @@ function update_polar_calls_chart(blocks, num_calls){
             labels: {
                         boxWidth: 15
                     }
+        },
+        title:{
+                display: true,
+                padding: 7,
+                position: "bottom",
+                text:"Click on labels to minimize",
+                fontSize:10,
+                fontStyle: "normal"
         },
         animation: {
             animateScale: true,
@@ -2016,7 +2068,7 @@ function update_bar_summary(num_vars,num_loops, num_ifs){
                 data: nvars,
             },
             {
-                label: "Branches",
+                label: "Conditionals",
                 backgroundColor: [
                     window.chartColors.green,
                 ],
@@ -2163,7 +2215,7 @@ function update_line_runs_config (blocks, runtimes){
             xAxes: [{
                 display: true,
                 scaleLabel: {
-                    display: true,
+                    display: false,
                     labelString: 'Month'
                 }
             }],
@@ -2171,15 +2223,13 @@ function update_line_runs_config (blocks, runtimes){
                 display: true,
                 scaleLabel: {
                     display: true,
-                    labelString: 'Value'
+                    labelString: 'Runtime'
                 }
             }]
         }
     }
 };
 }
-
-
 
 //custom alert
 function create_bootstrap_success_alert(strong_t, normal_t){
