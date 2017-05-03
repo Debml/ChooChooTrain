@@ -1,0 +1,62 @@
+block recursiveFibonacci4
+receives:
+n of type whole
+returns whole
+{
+	if(n == 1 or n == 2){
+		return 1;
+	}
+	else{
+		return recursiveFibonacci4(n-1) + recursiveFibonacci4(n-2);
+	}
+}
+
+block recursiveFibonacci3
+receives:
+n of type whole
+returns whole
+{
+	if(n == 1 or n == 2){
+		return 1;
+	}
+	else{
+		return recursiveFibonacci3(n-1) + recursiveFibonacci3(n-2);
+	}
+}
+
+block recursiveFibonacci2
+receives:
+n of type whole
+returns whole
+{
+	if(n == 1 or n == 2){
+		return 1;
+	}
+	else{
+		return recursiveFibonacci2(n-1) + recursiveFibonacci2(n-2);
+	}
+}
+
+block recursiveFibonacci1
+receives:
+n of type whole
+returns whole
+{
+	if(n == 1 or n == 2){
+		return 1;
+	}
+	else{
+		return recursiveFibonacci1(n-1) + recursiveFibonacci1(n-2);
+	}
+}
+
+starting block main
+{
+	variable n of type whole;
+	n = 2;
+
+	print(recursiveFibonacci1(n));
+	print(recursiveFibonacci2(n+1));
+	print(recursiveFibonacci3(n+4));
+	print(recursiveFibonacci4(n+6));
+}
