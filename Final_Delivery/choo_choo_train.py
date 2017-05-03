@@ -278,7 +278,3 @@ def compile_and_run():
             attributes.num_ifs.append(block_values[6])
             #value 7 is for runtime of block
             attributes.runtime_per_block.append(block_values[7])
-
-        print compilation_time, "seconds"
-        print attributes.runtime, "seconds"
-

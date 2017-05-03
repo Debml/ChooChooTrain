@@ -817,21 +817,6 @@ function restart(){
     window.location.href = "index.html";
 }
 
-// resize block code
-function resizeTextarea (id) {
-  var a = document.getElementById(id);
-  a.style.height = a.scrollHeight+'px';
-}
-
-//resize block code
-function init() {
-  var a = document.getElementsByTagName('textarea');
-  for(var i=0,inb=a.length;i<inb;i++) {
-     if(a[i].getAttribute('data-resizable')=='true')
-      resizeTextarea(a[i].id);
-  }
-}
-
 function random_patience_quote(){
     current_quote = quote_counter%7;
 
@@ -917,13 +902,6 @@ function show_output(text){
     a.focus();
     a.value = "";
     a.value = text;
-    //in case not in scroll view
-    if(a.scrollHeight>0){
-        a.style.height = a.scrollHeight+'px';
-    }
-    else {
-        a.style.height = 72+'px';
-    }
 }
 
 function show_output_input(text){
@@ -2534,9 +2512,6 @@ function create_doughnut_chart_loops(offset){
         window.myDoughnutChart_loops = new Chart(ctx, window.doughnut_config_loops);
     }, offset);
 }
-
-//resize block code
-addEventListener('DOMContentLoaded', init);
 
 /*
 function registerToDatabase() {

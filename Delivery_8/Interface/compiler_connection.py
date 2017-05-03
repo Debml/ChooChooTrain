@@ -66,7 +66,7 @@ class Compiler_Handler:
         #restart result array
         if self.result:
             while self.result:
-                print self.result.pop()
+                self.result.pop()
 
         # get runtime and format
         if (choo_choo_train.attributes.runtime > 0.00001):
@@ -171,7 +171,7 @@ class Compiler_Handler:
         #clear result array
         if self.result:
             while self.result:
-                print self.result.pop()
+                self.result.pop()
 
         #compile and run
         choo_choo_train.compile_and_run()

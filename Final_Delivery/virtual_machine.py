@@ -58,7 +58,6 @@ def execute_code():
         elif operator == constants.Operators.OP_DIVISION:
             #print "division"
             status_code = binary_arithmetic_operation(operator, current_instruction)
-            print status_code
             if (status_code == 0):
                 error_flag = True
         elif operator == constants.Operators.OP_ASSIGN:
@@ -554,7 +553,6 @@ def stop_exec(message = "Unknown operation"):
 
 #Entry method to start the intermediate code execution
 def start_execution():
-    print global_scope.quad_list
     initialize_memory()
     initialize_execution()
 
