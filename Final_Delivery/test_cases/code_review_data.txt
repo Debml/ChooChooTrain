@@ -1,0 +1,41 @@
+block block1{
+	variable a, b, aux, n, i of type whole;
+	a = 0;
+	b = 1;
+	n = 20;
+	i = 1;
+
+	do {
+		aux = a;
+		a = b;
+		b = aux + b;
+		i = i + 1;
+	} until(i > n - 1)
+
+	print(b);
+}
+
+starting block main
+{
+	variable a, b, aux, n, i of type whole;
+	a = 0;
+	b = 1;
+	n = 30;
+	i = 1;
+
+	do {
+		aux = a;
+		a = b;
+		b = aux + b;
+		i = i + 1;
+	} until(i > n - 1)
+
+    i = 0;
+    do {
+        i = i + 1;
+
+    }until(i >= 30)
+
+	print(b);
+    call block1();
+}

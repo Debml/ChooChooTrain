@@ -1,0 +1,43 @@
+starting block main
+{
+    variable i, j, val, temp, count of type whole;
+    list a[10] of type whole;
+    val = 9;
+    count = 0;
+
+    i = 0;
+    do {
+        a[i] = val;
+        i = i + 1;
+        val = val - 1;
+    } until(i > 9)
+
+    i = 0;
+    do {
+        print(a[i]);
+        i = i + 1;
+    } until(i > 9)
+
+    i = 1;
+    do {
+        j = 0;
+        do {
+	    count = count + 1;
+            if (a[j] > a[j + 1]) {
+                temp = a[j];
+                a[j] = a[j + 1];
+                a[j + 1] = temp;
+            }
+            j = j + 1;
+        } until (j > (9 - i))
+        i = i + 1;
+    } until (i > 9)
+
+    i = 0;
+    do {
+        print(a[i]);
+        i = i + 1;
+    } until(i > 9)
+
+    print(count);
+}

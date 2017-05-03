@@ -1,0 +1,47 @@
+starting block main
+{
+    list a[300] of type whole;
+    variable i, mid, low, high, value, val of type whole;
+    variable found of type boolean;
+
+    found = False;
+    low = 0;
+    high = 299;
+    val = 0;
+    i = 0;
+    value = 60;
+
+    do {
+        a[i] = val;
+        val = val + 1;
+        i = i + 1;
+    } until(i > high)
+
+    i = 0;
+    do {
+        i = i + 1;
+    } until(i > high)
+
+    do {
+        mid = (low + high) / 2;
+
+        if (a[mid] > value){
+			high = mid - 1;
+        }
+		else {
+            if (a[mid] < value){
+                low = mid + 1;
+            }
+            else {
+                found = True;
+            }
+        }    
+    } until(low > high or found == True)
+
+    if(found == True){
+        print("found a", value, "at index", mid);
+    }
+    else{
+        print(value, "not found");
+    }
+}

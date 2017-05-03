@@ -1,0 +1,35 @@
+block Block15
+{
+    variable a of type decimal;
+    a = 10;
+
+    print("en block 15, a vale ", a);
+}
+
+starting block Block14
+{
+	variable a, b, c, d, e of type decimal;
+	variable g of type whole;
+	variable h, i of type words;
+	a = 1;
+	b = 2;
+	c = 5;
+	d = 0;
+	g = 1;
+	
+	if(not g != g and not g < g or a > b){
+		g = 5;
+		call Block15();
+        print("en block 14 pero en el if, a vale ", a);
+	}
+
+    print("en block 14 fuera del if, a vale ", a);
+
+	h = ", como estas?";
+	print(h);
+
+	input(i);
+	print(i);
+    
+	print("custom greeting: " + i + h);
+}

@@ -1,0 +1,12 @@
+block PrintNum
+receives:
+num of type whole
+{
+	print(num);
+	call PrintNum(num+1);
+}
+
+starting block Block14
+{    
+    call PrintNum(1);
+}

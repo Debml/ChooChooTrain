@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Choo Choo Manual</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="media/train.ico"/>
+  <link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link href="css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+  <script src="js/jquery.min.js"></script>
+  <script src="js/fileinput.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js_index.js"></script>
+</head>
+<body>
+
+<div class="jumbotron text-center" id="top_container">
+  <h1>Choo Choo Train Compiler</h1>
+  <p>Write and review code like an expert!</p> 
+</div>
+  
+<div class="container">
+  <div class="well">
+    <h3>Choo Choo Train User Manual</h3>
+  </div>
+
+  <div class="container" style="margin-top:0px; width:100%;">
+             
+            <div class="row featurette">
+              <div class="col-md-12">
+                <h4>Getting Started</h4>
+                <p> This reference manual describes the syntax and “core semantics”
+                  of the Choo Choo Train language. The language is friendly to new programmers.
+                  Programs are built block by block, where each block is a function or procedure
+                  that contains a body of code.</p>
+                <p>
+                  The main objective of Choo Choo Train language is to be understandable, visual, 
+                  and easy to use so that people are be motivated to learn how to program. The 
+                  programmer first codes with blocks, then runs the code with the Choo Choo Train Compiler
+                  and finally can review how the code behaves as if it were a train ride.
+                </p>
+                <p>
+                  By mapping the 
+                  elements of a language (such as loops, statements, etc.) to a specific type of train 
+                  track section or element, we can help people understand the logic and data flow of their
+                  program.
+                </p>
+                <h4 style="margin-top:25px;">Language Elements</h4>
+                <ol class="list-unstyled">
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <a href="#manual_1"> First Choo Choo Train Program</a>
+                  </li>
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <a href="#manual_2"> Indentifiers</a>
+                  </li>
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <a href="#manual_3"> Reserved Words</a>
+                  </li>
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <a href="#manual_4"> Data Types</a>
+                  </li>
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <a href="#manual_5"> Operators</a>
+                  </li>
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <a href="#manual_6"> Variable Declaration</a>
+                  </li>
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <a href="#manual_7"> List Declarations</a>
+                  </li>
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <a href="#manual_8"> Assigning Values</a>
+                  </li>
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <a href="#manual_9"> Conditional Statements</a>
+                  </li>
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <a href="#manual_10"> Loop Statements</a>
+                  </li>
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <a href="#manual_11"> Input and Output</a>
+                  </li>
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <a href="#manual_12"> Operations with Blocks</a>
+                  </li>
+                </ol>
+              </div>
+            </div>
+
+            <hr class="featurette-divider2">
+
+            <div class="row featurette" id="manual_1">
+              <div class="col-md-12">
+                <h4>First Choo Choo Train Program</h4>
+                <p> The Choo Choo Train language is similar to most programming languages.
+                  The basic principle of the language is to code by blocks. These blocks are
+                  sections of code and can receive and send information to other blocks.</p>
+                <p> To code your first Choo Choo Train program you can either add a text 
+                  file with code or click on the Add Block button. The following prompts will appear.</p>
+                 <p>
+                   <img src="media/manual1.1.png" alt="Add Block" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                 </p>
+                 <p> To start coding a block, write the block name on the first section as:
+                    "starting block &#60;block-name&#62;"</p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      The first block/main block must always have the keywork <strong>"starting"</strong>
+                      at the beginning of the block name. Any other block must not contain this keyword. The starting
+                      block is the first block to be executed.
+                    
+                  </div>
+                </div>
+                 <p> To write code inside the block, start typing on the second block. Block code must be inside
+                   two { } (curly braces). A simple block with no parameters and no return values with only one print statement looks like this.
+                 </p>
+                 <img src="media/manual1.2.png" alt="Code Block" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                 <p> After the code is written or uploaded in a text file, the next step is to click
+                    on the compile code button and your code will start compiling and running.
+                 </p>
+                 <p>
+                   The previous example produces the following result.
+                 </p>
+                 <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      Hello World
+                  </div>
+                </div>
+                 <p> More details on how to code blocks are seen in the next sections. 
+                 </p>
+                <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+              </div>
+            </div>
+
+            <hr class="featurette-divider2">
+
+            <div class="row featurette" id="manual_2">
+              <div class="col-md-12">
+                <h4>Identifiers</h4>
+                <p> A Choo Choo Train identifier is a name used to identify a variable, list, block, or any other object. 
+                  An identifier starts with a letter A to Z or a to z or an underscore (_) followed 
+                  by zero or more letters, underscores and digits (0 to 9).</p>
+                <p> Choo Choo Train does not allow special characters such as @, $, and % within identifiers.</p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      Choo Choo Train is a case sensitive programming language. Thus, <strong>Apple</strong> and 
+                      <strong>apple</strong> are two different identifiers.
+                  </div>
+                </div>
+                <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+              </div>
+            </div>
+
+            <hr class="featurette-divider2">
+
+            <div class="row featurette" id="manual_3">
+              <div class="col-md-12">
+                <h4>Reserved Words</h4>
+                <p>The following list shows the Choo Choo Train keywords. These are reserved words and 
+                  you cannot use them as constant or variable or any other identifier names.
+                   All the Choo Choo Train keywords contain lowercase letters only.</p>
+                <p>A line containing only whitespace, to separate statements for visual effect, is known as a blank line 
+                  and Choo Choo Train totally ignores it.</p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      <table class="table table-striped text-center">
+                        <thead>
+                          <tr>
+                            <th>Reserved</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>block</td>
+                            <td>starting</td>
+                            <td>receives</td>
+                            <td>returns</td>
+                            <td>return</td>
+                          </tr>
+                          <tr>
+                            <td>call</td>
+                            <td>variable</td>
+                            <td>list</td>
+                            <td>of</td>
+                            <td>type</td>                     
+                          </tr>
+                          <tr>
+                            <td>do</td>
+                            <td>until</td>
+                            <td>if</td>
+                            <td>else</td>
+                            <td>input</td>
+                          </tr>
+                          <tr>
+                            <td>print</td>
+                            <td>whole</td>
+                            <td>decimal</td>
+                            <td>words</td>
+                            <td>boolean</td>
+                          </tr>
+                          <tr>
+                            <td>and</td>
+                            <td>or</td>
+                            <td>not</td>
+                            <td>True</td>
+                            <td>False</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                  </div>
+                </div>
+                <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+              </div>
+            </div>
+
+            <hr class="featurette-divider2">
+
+            <div class="row featurette" id="manual_4">
+              <div class="col-md-12">
+                <h4>Data Types</h4>
+                <p>The data stored in memory can be of many types. For example, a person's age is stored 
+                  as a whole value and his or her address is stored as alphanumeric characters. Choo Choo Train 
+                  has various standard data types that are used to define the operations possible on them 
+                  and the storage method for each of them. Choo Choo Train has four standard data types.</p>
+                <ol class="list-unstyled">
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <h5>Whole</h5>
+                    <p>Whole data types store numeric values that are whole numbers or integers.</p>
+                  </li>
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <h5>Decimal</h5>
+                    <p>Decimal data types store numeric values that are decimal numbers.</p>
+                  </li>
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <h5>Words</h5>
+                    <p>Words are identified as a continuous set of characters represented in quotation marks.</p>
+                  </li>
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <h5>Boolean</h5>
+                    <p>Boolean data types store values that are either True or False.</p>
+                  </li>
+                </ol>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>Data Type</th>
+                            <th>Example</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Whole</td>
+                            <td>10, 1000, 234, 0, -3</td>
+                          </tr>
+                          <tr>
+                            <td>Decimal</td>
+                            <td>3.3, 3.000, 32.3+e18, 7.2-E12</td>
+                          </tr>
+                          <tr>
+                            <td>Words</td>
+                            <td>"Hello", "123", "a", "This is a sentence.", "1+2"</td>
+                          </tr>
+                          <tr>
+                            <td>Boolean</td>
+                            <td>True, False</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                  </div>
+                </div>
+                <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+              </div>
+            </div>
+
+            <hr class="featurette-divider2">
+
+            <div class="row featurette" id="manual_5">
+              <div class="col-md-12">
+                <h4>Operators</h4>
+                <p> Operators are the constructs which can manipulate the value of operands. Consider the expression
+                   1 + 2 = 3. Here, 1 and 2 are called operands and + is called operator.</p>
+                <p> There are different types of operators that can handle different types of operands. Choo Choo 
+                  Train can handle several operators: Arithmetic, Comparison, Assignment, and Logical.</p>
+                <p> Operators behave differently with different data types.</p>
+                <ol class="list-unstyled">
+
+                  <hr class="featurette-divider3">
+
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <h4>Arithmetic</h4>
+                    <p> Arithmetic operators are the ones that can manipulate the value of operands that are whole or decimal. They
+                      are interchangeable and can be used between the two data types, if the operation contains a decimal, the result
+                      will be decimal.
+                    </p>
+                    <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                      <div class="panel-heading" style="width:100%;background-color:#eee;">
+                          <h5>+ Addition	</h5>
+                      </div>
+                      <div class="panel-body" style="width:100%;">
+                          Adds values on either side of the operator.
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                      <div class="panel-heading" style="width:100%;background-color:#eee;">
+                          <h5>- Subtraction</h5>
+                      </div>
+                      <div class="panel-body" style="width:100%;">
+                          Subtracts right hand operand from left hand operand.
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                      <div class="panel-heading" style="width:100%;background-color:#eee;">
+                          <h5>* Multiplication</h5>
+                      </div>
+                      <div class="panel-body" style="width:100%;">
+                          Multiplies values on either side of the operator
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                      <div class="panel-heading" style="width:100%;background-color:#eee;">
+                          <h5>/ Division</h5>
+                      </div>
+                      <div class="panel-body" style="width:100%;">
+                          Divides left hand operand by right hand operand
+                      </div>
+                    </div>
+
+                  <hr class="featurette-divider3">
+
+                  </li>
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <h4>Comparison</h4>
+                    <p> Comparison operators are the ones that compare the values on either sides of them
+                       and decide the relation among them. Decimal and whole can use all operators interchangeably
+                        and the result will always be boolean. Words data types can only use equal to and not equal to.
+                    </p>
+
+                    <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                      <div class="panel-heading" style="width:100%;background-color:#eee;">
+                          <h5>== Equal to	</h5>
+                      </div>
+                      <div class="panel-body" style="width:100%;">
+                          If the values of two operands are equal, then the condition becomes true.
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                      <div class="panel-heading" style="width:100%;background-color:#eee;">
+                          <h5><strong>!=</strong> Not equal to</h5>
+                      </div>
+                      <div class="panel-body" style="width:100%;">
+                          	If values of two operands are not equal, then condition becomes true.
+                      </div>
+                    </div>
+
+                     <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                      <div class="panel-heading" style="width:100%;background-color:#eee;">
+                          <h5><strong> &#60; </strong> Less than</h5>
+                      </div>
+                      <div class="panel-body" style="width:100%;">
+                          If the value of left operand is less than the value of right operand, then condition becomes true.
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                      <div class="panel-heading" style="width:100%;background-color:#eee;">
+                          <h5><strong> &#62; </strong> Greater than</h5>
+                      </div>
+                      <div class="panel-body" style="width:100%;">
+                          If the value of left operand is greater than the value of right operand, then condition becomes true.
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                      <div class="panel-heading" style="width:100%;background-color:#eee;">
+                          <h5><strong> &#62;=</strong> Less than or equal to</h5>
+                      </div>
+                      <div class="panel-body" style="width:100%;">
+                          If the value of left operand is less than or equal to the value of right operand, then condition becomes true.
+                      </div>
+                    </div>
+
+                     <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                      <div class="panel-heading" style="width:100%;background-color:#eee;">
+                          <h5><h5> &#62;=</strong> Greater than or equal to</h5>
+                      </div>
+                      <div class="panel-body" style="width:100%;">
+                          If the value of left operand is greater than or equal to the value of right operand, then condition becomes true.
+                      </div>
+                    </div>
+
+                  </li>
+
+                  <hr class="featurette-divider3">
+
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <h4>Assignment</h4>
+                    <p> Assignment operators are the ones that can assign values of the right
+                       operand to the left operand of the operation, they must be the same type. Decimal
+                       data types can accept whole data types as an exception to the rule.
+                    </p>
+
+                    <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                      <div class="panel-heading" style="width:100%;background-color:#eee;">
+                          <h5>= Assign	</h5>
+                      </div>
+                      <div class="panel-body" style="width:100%;">
+                          Assigns values from right side operands to left side operand, they must be of the same type.
+                      </div>
+                    </div>
+
+                  </li>
+
+                  <hr class="featurette-divider3">
+
+                  <li style="margin-top:20px; margin-bottom:20px; margin-left:15px;">
+                    <h4>Logical</h4>
+                    <p> Logical operators are the ones which can relate the value of operands that are boolean, both 
+                      operands are of type boolean and the result is also boolean.
+                    </p>
+
+                    <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                      <div class="panel-heading" style="width:100%;background-color:#eee;">
+                          <h5>and</h5>
+                      </div>
+                      <div class="panel-body" style="width:100%;">
+                          If both the operands are true then condition becomes true.
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                      <div class="panel-heading" style="width:100%;background-color:#eee;">
+                          <h5>or</h5>
+                      </div>
+                      <div class="panel-body" style="width:100%;">
+                          If any of the two operands are true then condition becomes true.
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                      <div class="panel-heading" style="width:100%;background-color:#eee;">
+                          <h5>not</h5>
+                      </div>
+                      <div class="panel-body" style="width:100%;">
+                          Used to reverse the logical state of its operand.
+                      </div>
+                    </div>
+
+                  </li>
+                </ol>
+                <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+              </div>
+            </div>
+
+            <hr class="featurette-divider2">
+
+            <div class="row featurette" id="manual_6">
+              <div class="col-md-12">
+                <h4>Variable Declaration</h4>
+                <p> Variables are nothing but reserved memory locations to store values.
+                   This means that when you create a variable you reserve some space in memory.</p>
+                <p> 
+                  Based on the data type of a variable, Choo Choo Train reserves memory and decides 
+                  what can be stored in the reserved memory. Therefore, by assigning different data 
+                  types to variables, you can store wholes, decimals, words, or booleans in these variables.
+                </p>
+                <p>
+                  Variables need to be explicitly declared with their type. The variable declaration happens
+                  on the top of the block body, which happens inside the two { } (curly braces).
+                  Variables are not assigned any value at this point. The variable declaration has the following syntax.
+                </p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      <strong>variable</strong> &#60;variable-name&#62; <strong>of type</strong> &#60;variable-type&#62;;
+                  </div>
+                </div>
+
+                <p>
+                  Variables can also be declared as groups of the same type as follows.
+                </p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      <strong>variable</strong> &#60;variable-name&#62;, &#60;variable-name&#62;, &#60;variable-name&#62; <strong>of type</strong> &#60;variable-type&#62;;
+                  </div>
+                </div>
+                <p>
+                  An example of how to code variable declarations of multiple data types is as follows.
+                </p>
+                 <p>
+                   <img src="media/manual6.1.png" alt="Declarations" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                 </p>
+                <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+              </div>
+            </div>
+
+            <hr class="featurette-divider2">
+
+            <div class="row featurette" id="manual_7">
+              <div class="col-md-12">
+                <h4>List Declaration</h4>
+                <p> Lists declarations are very similar to variable declarations.</p>
+                <p>
+                  The list is a very useful datatype which can be
+                   decalred as a variable with a fixed size defined between square brackets.
+                    The important thing about a list is that items in a list need to be of the same type.
+                </p>
+                <p>
+                  The list declaration is also on the top of the block body. The list declaration has the following syntax.
+                </p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      <strong>list</strong> &#60;list-name&#62; <strong>[</strong> &#60;list-size&#62; <strong>]</strong> <strong>of type</strong> &#60;variable-type&#62;;
+                  </div>
+                </div>
+
+                <p>
+                  An example of how to code a simple list declaration is as follows.
+                </p>
+                 <p>
+                   <img src="media/manual7.1.png" alt="List declarations" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                 </p>
+                <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+              </div>
+            </div>
+
+            <hr class="featurette-divider2">
+
+            <div class="row featurette" id="manual_8">
+              <div class="col-md-12">
+                <h4>Assigning Values</h4>
+                <p> The equal sign (=) is used to assign values to variables. Variables must be previously declared.
+                  More information on how to declare variables can be found <a href="#manual_6">here</a>.
+                </p>
+                <p>
+                  The operand to the left of the = operator is the name of the variable and 
+                  the operand to the right of the = operator is the value stored in the variable. For list assignment,
+                  each element of the list must be accessed as follows.
+                </p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      &#60;list-name&#62; <strong>[</strong> &#60;list-index&#62; <strong>]</strong> <strong>= </strong> &#60;any value&#62;;
+                  </div>
+                </div>
+                <p>
+                  The value to be assigned can be a constant, another variable, a list element, a block call that returns a value, or an expression. 
+                  An example of how to code assignments with only constants is as follows.
+                </p>
+                <p>
+                   <img src="media/manual8.1.png" alt="assign" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                </p>
+                <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+              </div>
+            </div>
+
+            <hr class="featurette-divider2">
+
+            <div class="row featurette" id="manual_9">
+              <div class="col-md-12">
+                <h4>Conditional Statements</h4>
+                <p> What makes Choo Choo Train so much more powerful are conditional statements.
+                  This is the ability to test a variable against a value and act in one way if 
+                  the condition is met by the variable or another way if not.
+                </p>
+                <p>
+                  The condition can be anything that evaluates as True or False. Comparisons always return True or False.
+                  The else part is optional. If you leave it off, nothing will happen if the conditional evaluates to ‘False’.
+                </p>
+                <p>An <strong>if </strong>statement consists of a boolean expression followed by one or more statements. The structure of a simple if statement is as follows.</p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      <strong> if (</strong> &#60;some-expression&#62; <strong>)</strong> <strong> { </strong> &#60;some-code&#62; <strong> }</strong>
+                  </div>
+                </div>
+                <p>The use of a simple if statement is shown below.</p>
+                <p>
+                  <img src="media/manual9.1.png" alt="if_statement" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                </p>
+                <p>An <strong>if </strong> statement can be followed by an optional <strong>else </strong> statement, 
+                      which executes when the boolean expression is False. The structure of a simple if else statement is as follows.</p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                     <strong> if (</strong> &#60;some-expression&#62; <strong>)</strong> <strong> { </strong> &#60;some-code&#62; <strong> } else { </strong>  &#60;some-code&#62; <strong> } </strong>
+                  </div>
+                </div>
+                <p> You can use one <strong>if </strong> or  <strong>else </strong> statement inside another  <strong>if </strong> 
+                  or  <strong>else </strong>  statement(s). The use of a simple if else statement is shown below.</p>
+                <p>
+                  <img src="media/manual9.2.png" alt="else_if_statement" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                </p>
+                <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+              </div>
+            </div>
+
+            <hr class="featurette-divider2">
+
+            <div class="row featurette" id="manual_10">
+              <div class="col-md-12">
+                <h4>Loop Statements</h4>
+                <p>In general, statements are executed sequentially: The first statement in a 
+                  function is executed first, followed by the second, and so on. There may be 
+                  a situation when you need to execute a block of code several number of times.
+                </p>
+                <p>Programming languages provide various control structures that allow for more
+                   complicated execution paths.</p>
+                <p> A loop statement allows us to execute a statement or group of statements multiple times.</p>
+                <p> Choo Choo Train provides a simple loop statement, called a do until loop. It repeats a statement 
+                  or group of statements until a given condition is True. It tests the condition after
+                   executing the loop body. So the loop body is executed at least once.</p>
+                <p>The structure of a simple do until loop is as follows.</p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                     <strong> do {</strong> &#60;some-code&#62; <strong> } until (</strong> 
+                     &#60;some-expression&#62; <strong> )</strong>
+                  </div>
+                </div>
+                <p> The use of a simple do until loop is shown below.</p>
+                <p>
+                  <img src="media/manual10.1.png" alt="Loops" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                </p>
+
+                <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+              </div>
+            </div>
+
+            <hr class="featurette-divider2">
+
+            <div class="row featurette" id="manual_11">
+              <div class="col-md-12">
+                <h4>Input and Output</h4>
+                <p>Choo Choo Train provides a way to produce output by using the print statement where you can pass 
+                  zero or more expressions separated by commas. This function converts the 
+                  expressions you pass into a word data type and writes the result to standard
+                   output as follows.</p>
+                 <p>
+                 <img src="media/manual1.2.png" alt="Output Block" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                 </p>
+                 <p>
+                   The previous example produces the following result.
+                 </p>
+                 <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      Hello World
+                  </div>
+                </div>
+                <p>Choo Choo provides a way to read a line of text from standard input. The function <strong>input( </strong> &#60;some-variable-name&#62; 
+                  <strong> );</strong> reads one line from standard input and assigns it to the words data type variable specified.
+                </p>
+                <p>
+                 <img src="media/manual11.1.png" alt="Output Block" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                 </p>
+                <p>
+                  This prompts you to enter any string and it would display that same string on the screen with an added "Hello " 
+                  When typed "World", its output is like this.
+                </p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      Hello World
+                  </div>
+                </div>
+                <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+              </div>
+            </div>
+
+            <hr class="featurette-divider2">
+
+            <div class="row featurette" id="manual_12">
+              <div class="col-md-12">
+                <h4>Operations with Blocks</h4>
+                <p> A Choo Choo Train block is a block of organized, 
+                  reusable code that is used to perform a single, related action. Blocks provide
+                   better modularity for your program and a high degree of code reusing. Blocks have to
+                   be called in order to be executed. A block call has a simple syntax using the keyword 
+                   <strong> call </strong>. Blocks can receive parameters separated by commas, these
+                   parameters can be variables, constants, expressions, or anything that holds a value. We will
+                   review parameters further down.
+                </p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      <p><strong> call </strong>  &#60;block-name&#62; <strong>( </strong> &#60;some-parameter&#62; <strong> );</strong></p> 
+                  </div>
+                </div>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      <p><strong> call </strong>  &#60;block-name&#62; <strong>( </strong> &#60;some-parameter&#62;, &#60;some-parameter&#62;  <strong> );</strong></p> 
+                  </div>
+                </div>
+                <p> You can define blocks as simple as naming them and adding code using the following syntax.</p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      <p><strong> block </strong>  &#60;block-name&#62; </p>
+                      <p><strong>{ </strong> &#60;some-code&#62; <strong> } </strong> </p>
+                  </div>
+                </div>
+                <p> The previous syntax is the simplest block one can create with Choo Choo Train.</p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      The first block/main block must always have the keywork <strong>"starting"</strong>
+                      at the beginning of the block name. Any other block must not contain this keyword. The starting
+                      block is the first block to be executed.
+                  </div>
+                </div>
+                <p> Blocks have optional syntax elements that boost their functionality. Blocks can either have <strong>parameters</strong> and/or
+                    <strong> return statements</strong>. Parameters are variables that can be sent to blocks and are used within the block's scope.
+                    Parameters are local to the block's scope and are disposed of after finished the block execution. If a block receives parameters,
+                    the parameter names and types must be specified separated by commas (if more than one) as follows.
+                </p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      <p><strong> block </strong>  &#60;block-name&#62; <strong>receives : 
+                      </strong> &#60;variable-name&#62; <strong>of type</strong> &#60;variable-type&#62;</p>
+                      <p><strong>{ </strong> &#60;some-code&#62; <strong> } </strong> </p>
+                  </div>
+                </div>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      <p><strong> block </strong>  &#60;block-name&#62; <strong>receives : 
+                      </strong> &#60;variable-name&#62; <strong>of type</strong> &#60;variable-type&#62;
+                      , &#60;variable-name&#62; <strong>of type</strong> &#60;variable-type&#62;</p>
+                      <p><strong>{ </strong> &#60;some-code&#62; <strong> } </strong> </p>
+                  </div>
+                </div>
+                <p>    
+                    A return statement specifies the passing back an expression to the caller 
+                    block, and can only exist once in the code block. If the block contains a return 
+                    statement, the type must be specified as follows.
+                </p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      <p><strong> block </strong>  &#60;block-name&#62; <strong>returns  
+                      </strong> &#60;variable-type&#62;</p>
+                      <p><strong>{ </strong> &#60;some-code&#62; <strong> } </strong> </p>
+                  </div>
+                </div>
+
+                <p>    
+                    If a block receives parameters and contains a return statement, the parameter definition
+                    must be stated first, followed by the return data type as follows.
+                </p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      <p><strong> block </strong>  &#60;block-name&#62; 
+                      <strong>receives : 
+                      </strong> &#60;variable-name&#62; <strong>of type</strong> &#60;variable-type&#62;
+                      <strong>returns </strong> &#60;variable-type&#62;</p>
+                      <p> <strong>{ </strong> &#60;some-code&#62; <strong> } </strong> </p>
+                  </div>
+                </div>
+                <p>    
+                    The use of the last block definition mentioned would look as follows.
+                </p>
+                <p>
+                 <img src="media/manual12.1.png" alt="Output Block" width="50%" height="auto" style="padding-top:15px; padding-bottom:15px;">
+                 </p>
+                 <p>    
+                    The previous has both parameters and a return statement. The return value is then used in a print function.
+                    The following output is generated.
+                </p>
+                <div class="panel panel-default" style="width:90%;margin-top:20px; margin-bottom:20px;">
+                  <div class="panel-body" style="width:100%;background-color:#eee;">
+                      <p>Hello World</p>
+                      <p>Hello Earth</p>
+                  </div>
+                </div>
+                <a href="#top_container" class="btn btn-link btn-med" role="button">Back to top</a>
+              </div>
+            </div>
+          </div>
+</div>
+
+<hr class="featurette-divider2">
+
+<footer style="text-align:center;">
+        <p>&copy; 2017 &middot; Paulina Escalante &middot; David Benitez &middot; <a data-toggle="modal" data-target="#about-modal">About</a> </p>
+</footer>
+
+  <div class="modal fade" id="about-modal" role="dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Choo Choo Train</h4>
+              </div>
+              <div class="modal-body text-center">
+                <p>Choo Choo Train was created by <b>Paulina Escalante</b> and <b>David Benitez</b> for Tecnologico
+                  de Monterrey's Compiler Design course project.
+                </p>
+                  <p style="font-size:80%;">Project can be run as command line interface without charts. Both interfaces can be found online.</p>
+                  <a href="https://github.com/Debml/ChooChooTrain" target="_blank" class="btn btn-primary btn-sm">
+                    <i class="fa fa-github" aria-hidden="true"></i> Github
+                  </a>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+  </div>
+
+  <hr class="featurette-divider2" style="margin-bottom:0px;">
+
+</body>
+</html>

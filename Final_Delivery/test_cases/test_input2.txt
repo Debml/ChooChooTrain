@@ -1,0 +1,17 @@
+starting block Block14
+{
+	variable h, i, g of type words;
+	variable a, b of type whole;
+	h = "Hello ";
+	i = "World";
+    
+	print(h + i);
+
+	input(g);
+
+	print(h + g);
+
+	input(g);
+
+	print(h + g);
+}

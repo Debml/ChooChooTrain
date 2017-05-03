@@ -1,0 +1,39 @@
+block iterativeFibonacci
+receives: n of type whole
+returns whole
+{
+	variable a, b, aux, i of type whole;
+	a = 0;
+	b = 1;
+	i = 1;
+
+	do {
+		aux = a;
+		a = b;
+		b = aux + b;
+		i = i + 1;
+	} until(i > n - 1)
+
+	return b;
+}
+
+block recursiveFibonacci
+receives: n of type whole
+returns whole
+{
+	if (n == 1 or n == 2) {
+		return 1;
+	}
+	else {
+		return recursiveFibonacci(n - 1) + recursiveFibonacci(n - 2);
+	}
+}
+
+starting block main
+{
+	variable n of type whole;
+	n = 20;
+
+    print(iterativeFibonacci(n));
+    print(recursiveFibonacci(n));
+}

@@ -1,0 +1,39 @@
+starting block main
+{
+    list a[300] of type whole;
+    variable i, size, value, val of type whole;
+    variable found of type boolean;
+
+    size = 299;
+    value = 60;
+
+    val = 0;
+    i = 0;
+    do {
+        a[i] = val;
+        val = val + 1;
+        i = i + 1;
+    } until(i > size)
+
+    i = 0;
+    do {
+        i = i + 1;
+    } until(i > size)
+
+    found = False;
+    i = 0;
+    do {
+        if(a[i] == value){
+            found = True;
+        }
+
+        i = i + 1;
+    } until(i > size or found == True)
+
+    if(found == True){
+        print("found a", value, "at index", i);
+    }
+    else{
+        print(value, "not found");
+    }
+}

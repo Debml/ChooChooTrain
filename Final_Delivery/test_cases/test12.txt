@@ -1,0 +1,40 @@
+block dos
+receives :
+a of type whole,
+b of type whole,
+g of type decimal,
+c of type words,
+hola of type boolean,
+c2 of type words,
+hola2 of type boolean
+{
+	variable i, j, k of type whole;
+    variable l, m, n of type words;
+    print(1 + 1);
+}
+
+block tres
+receives :
+a of type whole,
+b of type whole,
+g of type decimal,
+c of type words,
+hola of type boolean,
+c2 of type words,
+hola2 of type boolean
+{
+	variable i, j, k of type whole;
+    variable l, m, n of type words;
+    print(1+1);
+}
+
+starting block main
+{
+	variable a, b of type whole;
+	variable f of type decimal;
+
+	call dos(a, b+1, f, "hola", True, "hola", True);
+    call tres(a, b+1, f, "hola", True, "hola", True);
+
+}
+

@@ -1,0 +1,23 @@
+starting block Block14
+{
+	variable h, i of type words;
+	variable a, b, c of type whole;
+	h = "Hello";
+	a = " World";
+
+	a = 1;
+	b = 3;
+	c = 0;
+
+	if (a > 0) 
+	{
+	 print(a);
+	}
+
+	a = a/c;
+    
+	print(h + i);
+	print(a);
+	print(b);
+	print(a+b);
+}
