@@ -438,7 +438,7 @@ class Program_Memory:
 			for k, v in constant_table.get_instance().items():
 				self.write_to_memory(k, v[1])
 
-	#Reads a value from  memory
+	#Reads a value from memory
 	def read_from_memory(self, address = None):
 		#address must not be empty
 		if address is not None:

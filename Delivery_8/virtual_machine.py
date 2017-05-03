@@ -7,6 +7,7 @@ from structures import Activation_Record
 from memory import Program_Memory
 
 #Reads the current instruction (Quad) operation and executes it
+#Returns 0 when there is an error, 1 for success and 3 for waiting for input
 def execute_code():
     global_scope.block_run_time = time.time()
     status_code = 1
@@ -198,12 +199,14 @@ def execute_code():
 
 #Initializes memory for Run-Time 
 def initialize_memory():
+    #Reads all of the necessary info from the FRT
     global_scope.starting_block = global_scope.function_directory.starting_block_key
     starting_local_type_counter = global_scope.function_directory.get_local_type_counter(global_scope.starting_block)
     starting_temporary_type_counter = global_scope.function_directory.get_temporary_type_counter(global_scope.starting_block)
     starting_activation_record = Activation_Record(global_scope.starting_block, starting_local_type_counter, starting_temporary_type_counter, 0)
     cc = global_scope.function_directory.memory_handler.get_constant_counter()
 
+    #Creates the program memory
     aux_program_memory = Program_Memory(global_scope.quad_list, starting_activation_record, cc, global_scope.function_directory.constant_table)
     global_scope.program_memory = aux_program_memory
 
@@ -227,6 +230,7 @@ def binary_arithmetic_operation(operator, current_instruction):
     elif operator == constants.Operators.OP_MULTIPLICATION:
         result_value = left_operand_value * right_operand_value
     elif operator == constants.Operators.OP_DIVISION:
+        #Error: Division by 0
         if right_operand_value == 0:
             return stop_exec("Cannot divide by 0")
         else:
@@ -254,6 +258,7 @@ def assign_operation(current_instruction):
         #reset value for next functions
         global_scope.current_return_value = None
     else:
+        #Normalize array addresses
         if str(assignee_address)[0] == '*':
             assignee_address = global_scope.program_memory.read_from_memory(int(assignee_address[1:]))
 
@@ -328,6 +333,7 @@ def verify_index_operation(current_instruction):
     if index_value == None:
         return stop_exec("Variable does not have a value")
 
+    #Verifies that the index is within 0 and the array size
     if index_value >= 0 and index_value < array_size:
         global_scope.instruction_pointer += 1
     else:
@@ -340,7 +346,6 @@ def print_operation(current_instruction):
 
     if expression_to_print_value == None:
         return stop_exec("Variable does not have a value")
-    
 
     global_scope.output_builder = global_scope.output_builder + str(expression_to_print_value) + "\n"
     global_scope.last_output = str(expression_to_print_value) + "\n"
@@ -352,19 +357,21 @@ def input_operation(current_instruction):
     input_address = current_instruction.get_result()
     input_type = current_instruction.get_left_operand()
 
+    #If there is no input from the user
     if (global_scope.user_input == ""):
         increase_run_time()
-        #raise input error
+        #raise input error to stop execution until there is an input
         raise constants.ChooChooInput()
 
-    #user sent input
+    #if the function did not raise an error, the user sent an input
     input_value = global_scope.user_input
 
-    #reset input value
+    #reset input value for future input operations
     global_scope.user_input = ""
 
     validated_input = validate_input(input_value, input_type)
 
+    #validate that the input is the expected data type
     if validated_input is not None:
         global_scope.program_memory.write_to_memory(validated_input, input_address)
         global_scope.instruction_pointer += 1
@@ -412,7 +419,7 @@ def era_operation(current_instruction):
     local_counter_for_block = global_scope.function_directory.get_local_type_counter(block_name)
     temporary_counter_for_block = global_scope.function_directory.get_temporary_type_counter(block_name)
 
-    #Leaving the return address pending for when the go_to_sub operation is called
+    #Creates a new AR, leaving the return address pending for when the go_to_sub operation is called
     global_scope.temp_activation_record = Activation_Record(block_name, local_counter_for_block, temporary_counter_for_block, -1)
 
     global_scope.instruction_pointer += 1
@@ -553,6 +560,7 @@ def start_execution():
 
     return execute_code()
 
+#Initializes global variables for the first time the virtual machine is ran per program
 def initialize_execution():
     #start program pointer
     global_scope.instruction_pointer = 0

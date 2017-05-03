@@ -341,7 +341,6 @@ def p_EC_SEEN_BLOCK_ID(p):
 	else:
 		stop_exec("Block named '%s' is already defined" % global_scope.current_block_id)
 
-
 #BLOCK action 3 - Gets the current parameter being analyzed
 def p_EC_SEEN_PARAM_ID(p):
 	"EC_SEEN_PARAM_ID : "
@@ -1029,7 +1028,7 @@ def get_parameter_address(parameter_type):
 
 	if parameter_type == constants.Data_Types.WHOLE:
 		index = 0
-	elif parameter_type == constants.Data_Types.DECIMAL:		
+	elif parameter_type == constants.Data_Types.DECIMAL:
 		index = 1
 	elif parameter_type == constants.Data_Types.WORDS:
 		index = 2
