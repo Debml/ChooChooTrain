@@ -1,5 +1,0 @@
-starting block Block14
-{
- print("hi");
-
-}

@@ -203,7 +203,7 @@ class Quad:
                         self._result = result
 
     def __str__(self):
-    	return ('%s\t\t%s\t%s\t%s' % (self._operator, self._left_operand, self._right_operand, self._result))
+    	return ('%s\t%s\t%s\t%s' % (self._operator, self._left_operand, self._right_operand, self._result))
 
     #Returns the quad operator code
     def get_operator(self):

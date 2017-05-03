@@ -1044,6 +1044,7 @@ def get_parameter_address(parameter_type):
 #Prints an error message and stops the program execution
 #message is a string with an appropriate error message
 def stop_exec(message):
+	print global_scope.quad_list
 	global_scope.output_builder = global_scope.output_builder + ("Compilation error in line %d: %s" % (global_scope.line_count, message)) + "\n"
 	global_scope.last_output = ("Compilation error in line %d: %s" % (global_scope.line_count, message)) + "\n"
 	#global_scope.function_directory.print_table()

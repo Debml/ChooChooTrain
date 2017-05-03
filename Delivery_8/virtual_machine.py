@@ -18,7 +18,7 @@ def execute_code():
         #If all functions have finished executing (including starting), end program
         if global_scope.program_memory.stack_segment_is_empty() or error_flag or input_flag:
             start_data_timer = time.time()
-            global_scope.code_review.print_data()
+            #global_scope.code_review.print_data()
             global_scope.block_run_time = global_scope.block_run_time + (time.time() - start_data_timer)
 
             if (error_flag == True):
@@ -345,8 +345,6 @@ def print_operation(current_instruction):
     global_scope.output_builder = global_scope.output_builder + str(expression_to_print_value) + "\n"
     global_scope.last_output = str(expression_to_print_value) + "\n"
 
-    print expression_to_print_value
-
     global_scope.instruction_pointer += 1
 
 #Reads from console
@@ -356,8 +354,6 @@ def input_operation(current_instruction):
 
     if (global_scope.user_input == ""):
         increase_run_time()
-        print "****"
-        print"INPUT EXPECTED"
         #raise input error
         raise constants.ChooChooInput()
 
@@ -551,6 +547,7 @@ def stop_exec(message = "Unknown operation"):
 
 #Entry method to start the intermediate code execution
 def start_execution():
+    print global_scope.quad_list
     initialize_memory()
     initialize_execution()
 
