@@ -1,0 +1,10 @@
+starting block Block14
+{
+    variable a, b of type whole;
+
+    a = -5;
+    b = 10;
+
+    print(a);
+    print(b);
+}

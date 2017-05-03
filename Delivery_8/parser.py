@@ -98,8 +98,8 @@ def p_CONDITION_AUX(p):
 def p_CONSTANT(p):
 	'''
 	CONSTANT : id CONSTANT_AUX
-			   | cst_whole  EC_SEEN_CONST EC_SEEN_CONST_WHOLE
-	   		   | cst_decimal  EC_SEEN_CONST EC_SEEN_CONST_DECIMAL
+			   | CONSTANT_AUX3 cst_whole  EC_SEEN_CONST EC_SEEN_CONST_WHOLE
+	   		   | CONSTANT_AUX3 cst_decimal  EC_SEEN_CONST EC_SEEN_CONST_DECIMAL
 		 	   | cst_words  EC_SEEN_CONST EC_SEEN_CONST_WORDS
 			   | cst_boolean  EC_SEEN_CONST EC_SEEN_CONST_BOOLEAN
 	'''
@@ -122,6 +122,12 @@ def p_CONSTANT_AUX1(p):
 def p_CONSTANT_AUX2(p):
 	'''
 	CONSTANT_AUX2 : comma EXPRESSION EC_SEEN_PARAM CONSTANT_AUX2
+			    | empty
+	'''	
+
+def p_CONSTANT_AUX3(p):
+	'''
+	CONSTANT_AUX3 : op_subtraction EC_SEEN_NEGATIVE
 			    | empty
 	'''	
 
@@ -181,12 +187,6 @@ def p_EXP_AUX(p):
 			  | empty
 	'''
 
-def p_FACTOR(p):
-	'''
-	FACTOR : parenthesis_open EC_SEEN_FACT_LP EXPRESSION parenthesis_close EC_SEEN_FACT_RP
-			 | CONSTANT
-	'''
-
 def p_ITEM(p):
 	'''
 	ITEM : TERM EC_SEEN_TERM ITEM_AUX
@@ -211,6 +211,12 @@ def p_TERM_AUX(p):
 			   | empty
 	'''
 
+def p_FACTOR(p):
+	'''
+	FACTOR : parenthesis_open EC_SEEN_FACT_LP EXPRESSION parenthesis_close EC_SEEN_FACT_RP
+			 | CONSTANT
+	'''
+
 def p_STATEMENT(p):
 	'''
 	STATEMENT : ASSIGN
@@ -231,7 +237,6 @@ def p_CALL_AUX(p):
 	'''
 	CALL_AUX : EXPRESSION EC_SEEN_PARAM CALL_AUX2
 			   | empty
-
 	'''	
 
 def p_CALL_AUX2(p):
@@ -288,6 +293,25 @@ def p_empty(p):
     pass
 
 #Embedded Actions
+#PROGRAM action 1 - Generates jump to starting block and pushes to pending jumps stack
+def p_EC_SEEN_START_PROG(p):
+	"EC_SEEN_START_PROG : "
+	if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "pending"):
+		stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+
+	#DO NOT increase quad counter since the initial go to belongs to the program and not a block
+	#global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
+
+	global_scope.pending_jumps.push(global_scope.quad_list.get_quad_count() - 1)
+
+#PROGRAM action 2 - Validates that there is a starting block
+def p_EC_SEEN_END_PROG(p):
+	"EC_SEEN_END_PROG : "
+	starting_block_key = global_scope.function_directory.starting_block_key
+
+	if starting_block_key == "-1":
+		stop_exec("No starting block found")
+
 #BLOCK action 1 - Sets starting block
 def p_EC_SEEN_STARTING(p):
 	"EC_SEEN_STARTING : "
@@ -317,7 +341,13 @@ def p_EC_SEEN_BLOCK_ID(p):
 	else:
 		stop_exec("Block named '%s' is already defined" % global_scope.current_block_id)
 
-#BLOCK action 3 - Creates the block signature and adds parameters to the block's primitives list
+
+#BLOCK action 3 - Gets the current parameter being analyzed
+def p_EC_SEEN_PARAM_ID(p):
+	"EC_SEEN_PARAM_ID : "
+	global_scope.current_var_id = p[-1]
+
+#BLOCK action 4 - Creates the block signature and adds parameters to the block's primitives list
 def p_EC_SEEN_TYPE(p):
 	"EC_SEEN_TYPE : "
 	#Variable name should not be duplicate (in the current block)
@@ -326,7 +356,6 @@ def p_EC_SEEN_TYPE(p):
 		global_scope.function_directory.add_parameter_type(global_scope.current_block_id, parameter_type)
 		could_add = global_scope.function_directory.add_primitive(global_scope.current_block_id, global_scope.current_var_id, parameter_type)
 
-		start_data_timer = time.time()
 		global_scope.code_review.increase_variable_counter(global_scope.current_block_id)
 
 		if not could_add:
@@ -334,16 +363,11 @@ def p_EC_SEEN_TYPE(p):
 	else:
 		stop_exec("Parameter named '%s' is already defined" % global_scope.current_var_id)
 
-#BLOCK action 4 - Sets the block return type
+#BLOCK action 5 - Sets the block return type
 def p_EC_SEEN_RETURN_TYPE(p):
 	"EC_SEEN_RETURN_TYPE : "
 	block_return_type = p[-1]
 	global_scope.function_directory.add_block_return_type(global_scope.current_block_id, block_return_type)
-
-#BLOCK action 5 - Gets the current parameter being analyzed
-def p_EC_SEEN_PARAM_ID(p):
-	"EC_SEEN_PARAM_ID : "
-	global_scope.current_var_id = p[-1]
 
 #BLOCK action 6 - Sets block's first quad in the FRT, validates parameter count for starting block
 def p_EC_SEEN_BLOCK_SIGNATURE(p):
@@ -366,11 +390,8 @@ def p_EC_SEEN_BLOCK_BODY_END(p):
 	if (global_scope.block_returns and block_return_type != constants.Data_Types.VOID) or (not global_scope.block_returns and block_return_type == constants.Data_Types.VOID):
 		if not global_scope.quad_list.append_quad(constants.Operators.OP_END_PROC, "-1", "-1", "-1"):
 			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
-		#global_scope.function_directory.print_variable_list(global_scope.current_block_id)
-		#global_scope.function_directory.clear_variable_list(global_scope.current_block_id)
 
 		#increase the quad count of the block by one
-		start_data_timer = time.time()
 		global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
 
 		#Reset local variable type counter for new blocks to begin at 0 and add it to FRT (to create the execution context's memory)
@@ -383,278 +404,6 @@ def p_EC_SEEN_BLOCK_BODY_END(p):
 
 	else:
 		stop_exec("Block '%s' should return a '%s' value" % (global_scope.current_block_id, block_return_type))
-
-#VAR_DECLARATION action 1 - Resets the list of primitives for the current type
-def p_EC_SEEN_VAR_KEYWORD(p):
-	"EC_SEEN_VAR_KEYWORD : "
-	global_scope.primitive_names = []
-
-#VAR_DECLARATION action 2 - Adds the previously seen primitive to the primitives list for the current type
-def p_EC_SEEN_VAR_ID(p):
-	"EC_SEEN_VAR_ID : "
-	primitive_name = p[-1]
-	global_scope.primitive_names.append(primitive_name)
-
-#VAR_DECLARATION action 3 - Adds the list of primitives for the current type into the FRT for the current block
-def p_EC_SEEN_VAR_TYPE(p):
-	"EC_SEEN_VAR_TYPE : "
-	for var_name in global_scope.primitive_names:
-		#Primitive id should not be a duplicate
-		if not global_scope.function_directory.id_exists(var_name, global_scope.current_block_id):
-			primitive_type = p[-1]
-			could_add = global_scope.function_directory.add_primitive(global_scope.current_block_id, var_name, primitive_type)
-
-			start_data_timer = time.time()
-			global_scope.code_review.increase_variable_counter(global_scope.current_block_id)
-
-			if not could_add:
-				stop_exec("Memory is full for Data Type '%s'" % primitive_type)
-		else:
-			stop_exec("Name '%s' is already in use in block '%s'" % (var_name, global_scope.current_block_id))
-
-#LIST_DECLARATION action 1 - Sets the current list id being analyzed
-def p_EC_SEEN_LIST_ID(p):
-	"EC_SEEN_LIST_ID : "
-	global_scope.current_list_id = p[-1]
-
-#LIST_DECLARATION action 2 - Sets the current list size being analyzed
-def p_EC_SEEN_LIST_SIZE(p):
-	"EC_SEEN_LIST_SIZE : "
-	global_scope.current_list_size = p[-1]
-
-	#Lists shouldn't be empty
-	if global_scope.current_list_size == 0:
-		stop_exec("List '%s' has a size of '0'" % global_scope.current_list_id)
-
-#LIST_DECLARATION action 3 - Sets the current list type being analyzed
-def p_EC_SEEN_LIST_TYPE(p):
-	"EC_SEEN_LIST_TYPE : "
-	global_scope.current_list_type = p[-1]
-
-#LIST_DECLARATION action 4 - Adds a list to the FRT for the current block
-def p_EC_SEEN_LIST(p):
-	"EC_SEEN_LIST : "
-	#List id should not be a duplicate
-	if not global_scope.function_directory.id_exists(global_scope.current_list_id, global_scope.current_block_id):
-		could_add = global_scope.function_directory.add_list(global_scope.current_block_id, global_scope.current_list_id, global_scope.current_list_size, global_scope.current_list_type)
-		
-		start_data_timer = time.time()
-		global_scope.code_review.increase_variable_counter(global_scope.current_block_id)
-
-		if not could_add:
-			stop_exec("Memory is full for Data Type '%s'" % global_scope.current_list_type)
-	else:
-		stop_exec("Name '%s' is already in use in block '%s'" % (global_scope.current_list_id, global_scope.current_block_id))
-
-#FACTOR action 1 - Adds a false bottom mark to the operators stack
-def p_EC_SEEN_FACT_LP(p):	
-	"EC_SEEN_FACT_LP : "
-	global_scope.pending_operators.push(constants.Misc.FALSE_BOTTOM)
-
-#FACTOR action 2 - Removes the false bottom mark of the operators stack
-def p_EC_SEEN_FACT_RP(p):	
-	"EC_SEEN_FACT_RP : "
-	global_scope.pending_operators.pop()
-
-#CONSTANT action 1 - Adds the just read constant to the operands stack
-def p_EC_SEEN_CONST(p):
-	"EC_SEEN_CONST : "
-	operand = p[-1]
-	global_scope.pending_operands.push(operand)
-
-#CONSTANT action 2 - Adds the id type of the just read id to the operand types stack
-def p_EC_SEEN_CONST_ID(p):
-	"EC_SEEN_CONST_ID : "
-	primitive_id = global_scope.pending_operands.pop()
-
-	#Primitive should exist in the current block
-	if global_scope.function_directory.primitive_id_exists(primitive_id, global_scope.current_block_id):
-		global_scope.pending_operand_types.push(global_scope.function_directory.get_variable_type_for_block(primitive_id, global_scope.current_block_id))
-		global_scope.pending_operands.push(global_scope.function_directory.get_primitive_address_for_block(primitive_id, global_scope.current_block_id))
-	else:
-		stop_exec("Variable '%s' is not declared in block '%s'" % (primitive_id, global_scope.current_block_id))
-
-#CONSTANT action 3 - Adds the type whole to the operand types stack
-def p_EC_SEEN_CONST_WHOLE(p):
-	"EC_SEEN_CONST_WHOLE : "
-	push_constant_address(constants.Data_Types.WHOLE)
-
-#CONSTANT action 4 - Adds the type decimal to the operand types stack
-def p_EC_SEEN_CONST_DECIMAL(p):
-	"EC_SEEN_CONST_DECIMAL : "
-	push_constant_address(constants.Data_Types.DECIMAL)
-
-#CONSTANT action 5 - Adds the type words to the operand types stack
-def p_EC_SEEN_CONST_WORDS(p):
-	"EC_SEEN_CONST_WORDS : "
-	push_constant_address(constants.Data_Types.WORDS)
-
-#CONSTANT action 6 - Adds the type boolean to the operand types stack
-def p_EC_SEEN_CONST_BOOLEAN(p):
-	"EC_SEEN_CONST_BOOLEAN : "
-	push_constant_address(constants.Data_Types.BOOLEAN)
-
-#CONSTANT action 7 - Validates block return type with a return value
-def p_EC_SEEN_CALL_VAL_BLOCK_ID(p):
-	"EC_SEEN_CALL_VAL_BLOCK_ID : "
-	abstract_seen_block_id(p, True)
-
-#CONSTANT action 8 - Generate block call quads for blocks with a return value
-def p_EC_SEEN_BLOCK_CALL_VAL(p):
-	"EC_SEEN_BLOCK_CALL_VAL : "
-	abstract_seen_block_call(p, True)
-
-#CONSTANT action 9 - Adds the just read list to the pending lists stack
-def p_EC_SEEN_CONST_LIST_ID(p):
-	"EC_SEEN_CONST_LIST_ID : "
-	list_id = p[-1]
-
-	#ID should belong to a list
-	if global_scope.function_directory.list_id_exists(list_id, global_scope.current_block_id):
-		global_scope.pending_lists.push(list_id)
-		global_scope.pending_operators.push(constants.Misc.FALSE_BOTTOM)
-	else:
-		stop_exec("List '%s' does not exist" % list_id)
-
-#CONSTANT action 10 - Generates quads to access list index
-def p_EC_SEEN_CONST_LIST(p):
-	"EC_SEEN_CONST_LIST : "
-	list_index_type = global_scope.pending_operand_types.pop()
-
-	#List index type should resolve to whole
-	if list_index_type == constants.Data_Types.WHOLE:
-		list_id = global_scope.pending_lists.pop()
-		list_address = constants.Misc.ADDRESS + str(global_scope.function_directory.get_list_address_for_block(list_id, global_scope.current_block_id))
-		list_index = global_scope.pending_operands.pop()
-		list_size = global_scope.function_directory.get_list_size_for_block(list_id, global_scope.current_block_id)
-		list_type = global_scope.function_directory.get_list_type_for_block(list_id, global_scope.current_block_id)	
-
-		if not global_scope.quad_list.append_quad(constants.Operators.OP_VERIFY_INDEX, list_index, list_size, "-1"):
-			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
-
-		#increase the quad count of the block by one
-		start_data_timer = time.time()
-		global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
-
-		result = global_scope.function_directory.get_temporary_address(constants.Data_Types.WHOLE)
-
-		#Stop execution if there is no space for temporary variables
-		if result == -1:
-			stop_exec("Temporary memory is full for Data Type '%s'" % constants.Data_Types.WHOLE)
-
-		#Value in result is an address
-		result = constants.Misc.POINTER + str(result)
-
-		if not global_scope.quad_list.append_quad(constants.Operators.OP_ADDITION, list_index, list_address, result):
-			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
-
-		#increase the quad count of the block by one
-		start_data_timer = time.time()
-		global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
-		
-		global_scope.pending_operands.push(result)
-		global_scope.pending_operand_types.push(list_type)
-		global_scope.pending_operators.pop()
-	else:
-		stop_exec("List index must be a 'whole' value, found a '%s' value instead" % list_index_type)
-
-#ITEM action 1 - Pushes the appropriate operator into the operators stack
-def p_EC_SEEN_ITEM_OP(p):
-	"EC_SEEN_ITEM_OP : "
-	operator = p[-1]
-
-	if operator == "+":
-		global_scope.pending_operators.push(constants.Operators.OP_ADDITION)
-	elif operator == "-":
-		global_scope.pending_operators.push(constants.Operators.OP_SUBTRACTION)
-
-#ITEM action 2 - Generates quad for the addition or subtraction operation
-def p_EC_SEEN_TERM(p):
-	"EC_SEEN_TERM : "
-	#Checks that the next operator is an addition or subtraction to respect order of operations
-	if not global_scope.pending_operators.empty() and (global_scope.pending_operators.peek() == constants.Operators.OP_ADDITION or global_scope.pending_operators.peek() == constants.Operators.OP_SUBTRACTION):
-		create_binary_operation_quad()
-
-#TERM action 1 - Pushes the appropriate operator into the operators stack
-def p_EC_SEEN_TERM_OP(p):
-	"EC_SEEN_TERM_OP : "
-	operator = p[-1]
-
-	if operator == "*":
-		global_scope.pending_operators.push(constants.Operators.OP_MULTIPLICATION)
-	elif operator == "/":
-		global_scope.pending_operators.push(constants.Operators.OP_DIVISION)
-
-#TERM action 2 - Generates quad for the multiplication or division operation
-def p_EC_SEEN_FACTOR(p):
-	"EC_SEEN_FACTOR : "
-	#Checks that the next operator is a multplication or division to respect order of operations
-	if not global_scope.pending_operators.empty() and (global_scope.pending_operators.peek() == constants.Operators.OP_MULTIPLICATION or global_scope.pending_operators.peek() == constants.Operators.OP_DIVISION):
-		create_binary_operation_quad()
-
-#EXP action 1 - Pushes the appropriate operator into the operators stack
-def p_EC_SEEN_RELOP(p):
-	"EC_SEEN_RELOP : "
-	operator = p[-1]
-
-	if operator == ">":
-		global_scope.pending_operators.push(constants.Operators.OP_GREATER)
-	elif operator == ">=":
-		global_scope.pending_operators.push(constants.Operators.OP_GREATER_EQUAL)
-	elif operator == "<":
-		global_scope.pending_operators.push(constants.Operators.OP_LESS)
-	elif operator == "<=":
-		global_scope.pending_operators.push(constants.Operators.OP_LESS_EQUAL)
-	elif operator == "==":
-		global_scope.pending_operators.push(constants.Operators.OP_EQUAL)
-	elif operator == "!=":
-		global_scope.pending_operators.push(constants.Operators.OP_NOT_EQUAL)
-
-#EXP action 2 - Generates quad for relational operations
-def p_EC_SEEN_RELOP_ITEM(p):
-	"EC_SEEN_RELOP_ITEM : "
-	#Checks that the next operator is a relational operator to respect order of operations
-	if not global_scope.pending_operators.empty() and (global_scope.pending_operators.peek() == constants.Operators.OP_GREATER
-														or global_scope.pending_operators.peek() == constants.Operators.OP_GREATER_EQUAL
-														or global_scope.pending_operators.peek() == constants.Operators.OP_LESS
-														or global_scope.pending_operators.peek() == constants.Operators.OP_LESS_EQUAL
-														or global_scope.pending_operators.peek() == constants.Operators.OP_EQUAL
-														or global_scope.pending_operators.peek() == constants.Operators.OP_NOT_EQUAL):
-		create_binary_operation_quad()
-
-#ASSIGN action 1 - Pushes the assignment operator to the operators stack
-def p_EC_SEEN_ASSIGN_OP(p):
-	"EC_SEEN_ASSIGN_OP : "
-	global_scope.pending_operators.push(constants.Operators.OP_ASSIGN)
-
-#ASSIGN action 2 - Generates quad for assignment operations
-def p_EC_SEEN_ASSIGN_VALUE(p):
-	"EC_SEEN_ASSIGN_VALUE : "
-	#Checks that the next operator is an assignment operator to respect order of operations
-	if not global_scope.pending_operators.empty() and global_scope.pending_operators.peek() == constants.Operators.OP_ASSIGN:
-			#Value to be assigned
-			right_operand = global_scope.pending_operands.pop()
-			right_type = global_scope.pending_operand_types.pop()
-
-			#Space where value will be assigned
-			left_operand = global_scope.pending_operands.pop()
-			left_type = global_scope.pending_operand_types.pop()
-
-			operator = global_scope.pending_operators.pop()
-
-			#Checks if right_operand can be stored in a left_operand container
-			result_type = global_scope.semantic_cube.validate_operation(operator, left_type, right_type)
-
-			#Assignment should be valid
-			if result_type != -1:
-				if not global_scope.quad_list.append_quad(operator, right_operand, "-1", left_operand):
-					stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
-
-				#increase the quad count of the block by one
-				start_data_timer = time.time()
-				global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
-			else:
-				stop_exec("Expression of type '%s' cannot be assigned to ID of type '%s'" % (right_type, left_type))
 
 #CONDITION action 1 - Generates jump if false quad and pushes it into pending jumps stack
 def p_EC_SEEN_IF_EXP(p):
@@ -700,75 +449,218 @@ def p_EC_SEEN_END_IF(p):
 
 	global_scope.code_review.increase_if_counter(global_scope.current_block_id)
 
-#LOOP action 1 - Pushes starting point of loop to the pending jumps stack
-def p_EC_SEEN_DO(p):
-	"EC_SEEN_DO : "
-	global_scope.pending_jumps.push(global_scope.quad_list.get_quad_count())
+#CONSTANT action 1/ASSIGN action 1/READ action 1 - Adds the just read constant to the operands stack
+def p_EC_SEEN_CONST(p):
+	"EC_SEEN_CONST : "
+	operand = p[-1]
+	global_scope.pending_operands.push(operand)
 
-#LOOP action 2: - Generates quad to go to the beginning of the loop
-def p_EC_SEEN_UNTIL(p):
-	"EC_SEEN_UNTIL : "
-	exp_type = global_scope.pending_operand_types.pop()
+#CONSTANT action 2 - Adds the type whole to the operand types stack
+def p_EC_SEEN_CONST_WHOLE(p):
+	"EC_SEEN_CONST_WHOLE : "
+	push_constant_address(constants.Data_Types.WHOLE)
 
-	#The expression should resolve to a boolean value
-	if exp_type == constants.Data_Types.BOOLEAN:
-		evaluation_result = global_scope.pending_operands.pop()
-		loop_start = global_scope.pending_jumps.pop()
+#CONSTANT action 3 - Adds the type decimal to the operand types stack
+def p_EC_SEEN_CONST_DECIMAL(p):
+	"EC_SEEN_CONST_DECIMAL : "
+	push_constant_address(constants.Data_Types.DECIMAL)
 
-		if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO_F, evaluation_result, "-1", loop_start):
+#CONSTANT action 4 - Adds the type words to the operand types stack
+def p_EC_SEEN_CONST_WORDS(p):
+	"EC_SEEN_CONST_WORDS : "
+	push_constant_address(constants.Data_Types.WORDS)
+
+#CONSTANT action 5 - Adds the type boolean to the operand types stack
+def p_EC_SEEN_CONST_BOOLEAN(p):
+	"EC_SEEN_CONST_BOOLEAN : "
+	push_constant_address(constants.Data_Types.BOOLEAN)
+
+#CONSTANT action 6/Assign action 2/READ action 1 - Adds the id type of the just read id to the operand types stack
+def p_EC_SEEN_CONST_ID(p):
+	"EC_SEEN_CONST_ID : "
+	primitive_id = global_scope.pending_operands.pop()
+
+	#Primitive should exist in the current block
+	if global_scope.function_directory.primitive_id_exists(primitive_id, global_scope.current_block_id):
+		global_scope.pending_operand_types.push(global_scope.function_directory.get_variable_type_for_block(primitive_id, global_scope.current_block_id))
+		global_scope.pending_operands.push(global_scope.function_directory.get_primitive_address_for_block(primitive_id, global_scope.current_block_id))
+	else:
+		stop_exec("Variable '%s' is not declared in block '%s'" % (primitive_id, global_scope.current_block_id))
+
+#CONSTANT action 7/ASSIGN action 3/READ action 3 - Adds the just read list to the pending lists stack
+def p_EC_SEEN_CONST_LIST_ID(p):
+	"EC_SEEN_CONST_LIST_ID : "
+	list_id = p[-1]
+
+	#ID should belong to a list
+	if global_scope.function_directory.list_id_exists(list_id, global_scope.current_block_id):
+		global_scope.pending_lists.push(list_id)
+		global_scope.pending_operators.push(constants.Misc.FALSE_BOTTOM)
+	else:
+		stop_exec("List '%s' does not exist" % list_id)
+
+#CONSTANT action 8/ASSIGN action 4/READ action 4 - Generates quads to access list index
+def p_EC_SEEN_CONST_LIST(p):
+	"EC_SEEN_CONST_LIST : "
+	list_index_type = global_scope.pending_operand_types.pop()
+
+	#List index type should resolve to whole
+	if list_index_type == constants.Data_Types.WHOLE:
+		list_id = global_scope.pending_lists.pop()
+		list_address = constants.Misc.ADDRESS + str(global_scope.function_directory.get_list_address_for_block(list_id, global_scope.current_block_id))
+		list_index = global_scope.pending_operands.pop()
+		list_size = global_scope.function_directory.get_list_size_for_block(list_id, global_scope.current_block_id)
+		list_type = global_scope.function_directory.get_list_type_for_block(list_id, global_scope.current_block_id)	
+
+		if not global_scope.quad_list.append_quad(constants.Operators.OP_VERIFY_INDEX, list_index, list_size, "-1"):
 			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
 		#increase the quad count of the block by one
 		global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
 
-		#increase the loop count of the block by one, and send the number of the just added quad
-		global_scope.code_review.increase_compiled_loop_counter(global_scope.current_block_id, global_scope.quad_list.get_quad_count() - 1)
+		result = global_scope.function_directory.get_temporary_address(constants.Data_Types.WHOLE)
+
+		#Stop execution if there is no space for temporary variables
+		if result == -1:
+			stop_exec("Temporary memory is full for Data Type '%s'" % constants.Data_Types.WHOLE)
+
+		#Value in result is an address
+		result = constants.Misc.POINTER + str(result)
+
+		if not global_scope.quad_list.append_quad(constants.Operators.OP_ADDITION, list_index, list_address, result):
+			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+
+		#increase the quad count of the block by one
+		global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
+		
+		global_scope.pending_operands.push(result)
+		global_scope.pending_operand_types.push(list_type)
+		global_scope.pending_operators.pop()
 	else:
-		stop_exec("Expected a boolean expression, found a '%s' expression instead" % exp_type)
+		stop_exec("List index must be a positive 'whole' value, found a '%s' value instead" % list_index_type)
 
+#CONSTANT action 9 - Validates block return type with a return value
+def p_EC_SEEN_CALL_VAL_BLOCK_ID(p):
+	"EC_SEEN_CALL_VAL_BLOCK_ID : "
+	abstract_seen_block_id(p, True)
 
-#WRITE action 1 - Generates quad for the write action
-def p_EC_SEEN_WRITE_EXP(p):
-	"EC_SEEN_WRITE_EXP : "
-	expression_to_print = global_scope.pending_operands.pop()
+#CONSTANT action 10/CALL action 2 - Generates quad for ERA and initializes argument counter
+def p_EC_SEEN_START_PARAM(p):
+	"EC_SEEN_START_PARAM : "
+	call_block_id = global_scope.pending_blocks.peek()
 
-	if not global_scope.quad_list.append_quad(constants.Operators.OP_PRINT, expression_to_print, "-1", "-1"):
+	if not global_scope.quad_list.append_quad(constants.Operators.OP_ERA, call_block_id, "-1", "-1"):
 		stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
 	#increase the quad count of the block by one
 	global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
 
-#READ action 1 - Generates quad for the read action
-def p_EC_SEEN_READ_ID(p):
-	"EC_SEEN_READ_ID : "
-	#This is an address, so it should've already passed through an existence verification process
-	id_to_read_into = global_scope.pending_operands.pop()
-	input_type = global_scope.pending_operand_types.pop()
+	#adds false bottom mark to solve operations for parameters first
+	global_scope.pending_operators.push(constants.Misc.FALSE_BOTTOM)
+	global_scope.pending_blocks_argument_counter.push(0)
+	global_scope.pending_parameter_type_counter.push([0,0,0,0])
 
-	#The ID that will store whatever is read should exist
-	#if global_scope.function_directory.primitive_id_exists(id_to_read_into, global_scope.current_block_id):
-	if not global_scope.quad_list.append_quad(constants.Operators.OP_INPUT, input_type, "-1", id_to_read_into):
+#CONSTANT action 11/CALL action 3 - Validates argument counter with parameter number
+def p_EC_SEEN_PARAM(p):
+	"EC_SEEN_PARAM : "
+	argument_type = global_scope.pending_operand_types.pop()
+
+	try:
+		call_block_id = global_scope.pending_blocks.peek()
+		block_argument_counter = global_scope.pending_blocks_argument_counter.pop()
+		parameter_type = global_scope.function_directory.get_parameter_type_for_block(call_block_id, block_argument_counter)
+	#If the argument counter is greater than the parameter counter, there is a counter mismatch
+	except IndexError:
+		block_parameter_counter = global_scope.function_directory.get_parameter_count_for_block(call_block_id)
+		stop_exec("Block '%s' receives %d parameter(s), found %d argument(s) instead" % (call_block_id, block_parameter_counter, block_argument_counter + 1))
+
+	block_argument_counter = block_argument_counter + 1
+	global_scope.pending_blocks_argument_counter.push(block_argument_counter)
+
+	#Validates argument type with parameter type
+	if argument_type == parameter_type:
+		argument = global_scope.pending_operands.pop()
+		param_address = get_parameter_address(argument_type)
+
+		if not global_scope.quad_list.append_quad(constants.Operators.OP_PARAM, argument, "-1", param_address):
 			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
-	#increase the quad count of the block by one
-	global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
+		#increase the quad count of the block by one
+		global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
+	else:
+		stop_exec("Argument #%d of block '%s' should be a '%s' value, found a '%s' value instead" % (block_argument_counter, call_block_id, parameter_type, argument_type))
+
+#CONSTANT action 12 - Generate block call quads for blocks with a return value
+def p_EC_SEEN_BLOCK_CALL_VAL(p):
+	"EC_SEEN_BLOCK_CALL_VAL : "
+	abstract_seen_block_call(p, True)
+
+#VAR_DECLARATION action 1 - Resets the list of primitives for the current type
+def p_EC_SEEN_VAR_KEYWORD(p):
+	"EC_SEEN_VAR_KEYWORD : "
+	global_scope.primitive_names = []
+
+#VAR_DECLARATION action 2 - Adds the previously seen primitive to the primitives list for the current type
+def p_EC_SEEN_VAR_ID(p):
+	"EC_SEEN_VAR_ID : "
+	primitive_name = p[-1]
+	global_scope.primitive_names.append(primitive_name)
+
+#VAR_DECLARATION action 3 - Adds the list of primitives for the current type into the FRT for the current block
+def p_EC_SEEN_VAR_TYPE(p):
+	"EC_SEEN_VAR_TYPE : "
+	for var_name in global_scope.primitive_names:
+		#Primitive id should not be a duplicate
+		if not global_scope.function_directory.id_exists(var_name, global_scope.current_block_id):
+			primitive_type = p[-1]
+			could_add = global_scope.function_directory.add_primitive(global_scope.current_block_id, var_name, primitive_type)
+
+			global_scope.code_review.increase_variable_counter(global_scope.current_block_id)
+
+			if not could_add:
+				stop_exec("Memory is full for Data Type '%s'" % primitive_type)
+		else:
+			stop_exec("Name '%s' is already in use in block '%s'" % (var_name, global_scope.current_block_id))
+
+#LIST_DECLARATION action 1 - Sets the current list id being analyzed
+def p_EC_SEEN_LIST_ID(p):
+	"EC_SEEN_LIST_ID : "
+	global_scope.current_list_id = p[-1]
+
+#LIST_DECLARATION action 2 - Sets the current list size being analyzed
+def p_EC_SEEN_LIST_SIZE(p):
+	"EC_SEEN_LIST_SIZE : "
+	global_scope.current_list_size = p[-1]
+
+	#Lists shouldn't be empty
+	if global_scope.current_list_size == 0:
+		stop_exec("List '%s' has a size of '0'" % global_scope.current_list_id)
+
+#LIST_DECLARATION action 3 - Sets the current list type being analyzed
+def p_EC_SEEN_LIST_TYPE(p):
+	"EC_SEEN_LIST_TYPE : "
+	global_scope.current_list_type = p[-1]
+
+#LIST_DECLARATION action 4 - Adds a list to the FRT for the current block
+def p_EC_SEEN_LIST(p):
+	"EC_SEEN_LIST : "
+	#List id should not be a duplicate
+	if not global_scope.function_directory.id_exists(global_scope.current_list_id, global_scope.current_block_id):
+		could_add = global_scope.function_directory.add_list(global_scope.current_block_id, global_scope.current_list_id, global_scope.current_list_size, global_scope.current_list_type)
+		
+		global_scope.code_review.increase_variable_counter(global_scope.current_block_id)
+
+		if not could_add:
+			stop_exec("Memory is full for Data Type '%s'" % global_scope.current_list_type)
+	else:
+		stop_exec("Name '%s' is already in use in block '%s'" % (global_scope.current_list_id, global_scope.current_block_id))
 
 #EXPRESSION action 1 - Pushes the negation operator into the operators stack
 def p_EC_SEEN_NOT(p):
 	"EC_SEEN_NOT : "
 	global_scope.pending_operators.push(constants.Operators.OP_NEGATION)
 
-#EXPRESSION action 2 - Pushes the appropriate operator into the operators stack
-def p_EC_SEEN_AND_OR(p):
-	"EC_SEEN_AND_OR : "
-	operator = p[-1]
-
-	if operator == "and":
-		global_scope.pending_operators.push(constants.Operators.OP_AND)
-	elif operator == "or":
-		global_scope.pending_operators.push(constants.Operators.OP_OR)
-
-#EXPRESSION action 3 - Generates quad for boolean operations
+#EXPRESSION action 2 - Generates quad for boolean operations
 def p_EC_SEEN_EXPRESSION(p):
 	"EC_SEEN_EXPRESSION : "
 	#Checks that the next operator is a negation operator BEFORE checking and/or operators to respect order of operations
@@ -801,26 +693,165 @@ def p_EC_SEEN_EXPRESSION(p):
 	#Checks that the next operator is a relational operator to respect order of operations
 	if not global_scope.pending_operators.empty() and (global_scope.pending_operators.peek() == constants.Operators.OP_AND
 														or global_scope.pending_operators.peek() == constants.Operators.OP_OR):
-		create_binary_operation_quad()	
-	
-#PROGRAM action 1 - Generates jump to starting block and pushes to pending jumps stack
-def p_EC_SEEN_START_PROG(p):
-	"EC_SEEN_START_PROG : "
-	if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO, "-1", "-1", "pending"):
-		stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+		create_binary_operation_quad()
 
-	#DO NOT increase quad counter since the initial go to belongs to the program and not a block
-	#global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
+#EXPRESSION action 3 - Pushes the appropriate operator into the operators stack
+def p_EC_SEEN_AND_OR(p):
+	"EC_SEEN_AND_OR : "
+	operator = p[-1]
 
-	global_scope.pending_jumps.push(global_scope.quad_list.get_quad_count() - 1)
+	if operator == "and":
+		global_scope.pending_operators.push(constants.Operators.OP_AND)
+	elif operator == "or":
+		global_scope.pending_operators.push(constants.Operators.OP_OR)
 
-#PROGRAM action 2 - Validates that there is a starting block
-def p_EC_SEEN_END_PROG(p):
-	"EC_SEEN_END_PROG : "
-	starting_block_key = global_scope.function_directory.starting_block_key
+#EXP action 1 - Pushes the appropriate operator into the operators stack
+def p_EC_SEEN_RELOP(p):
+	"EC_SEEN_RELOP : "
+	operator = p[-1]
 
-	if starting_block_key == "-1":
-		stop_exec("No starting block found")
+	if operator == ">":
+		global_scope.pending_operators.push(constants.Operators.OP_GREATER)
+	elif operator == ">=":
+		global_scope.pending_operators.push(constants.Operators.OP_GREATER_EQUAL)
+	elif operator == "<":
+		global_scope.pending_operators.push(constants.Operators.OP_LESS)
+	elif operator == "<=":
+		global_scope.pending_operators.push(constants.Operators.OP_LESS_EQUAL)
+	elif operator == "==":
+		global_scope.pending_operators.push(constants.Operators.OP_EQUAL)
+	elif operator == "!=":
+		global_scope.pending_operators.push(constants.Operators.OP_NOT_EQUAL)
+
+#EXP action 2 - Generates quad for relational operations
+def p_EC_SEEN_RELOP_ITEM(p):
+	"EC_SEEN_RELOP_ITEM : "
+	#Checks that the next operator is a relational operator to respect order of operations
+	if not global_scope.pending_operators.empty() and (global_scope.pending_operators.peek() == constants.Operators.OP_GREATER
+														or global_scope.pending_operators.peek() == constants.Operators.OP_GREATER_EQUAL
+														or global_scope.pending_operators.peek() == constants.Operators.OP_LESS
+														or global_scope.pending_operators.peek() == constants.Operators.OP_LESS_EQUAL
+														or global_scope.pending_operators.peek() == constants.Operators.OP_EQUAL
+														or global_scope.pending_operators.peek() == constants.Operators.OP_NOT_EQUAL):
+		create_binary_operation_quad()
+
+#ITEM action 1 - Generates quad for the addition or subtraction operation
+def p_EC_SEEN_TERM(p):
+	"EC_SEEN_TERM : "
+	#Checks that the next operator is an addition or subtraction to respect order of operations
+	if not global_scope.pending_operators.empty() and (global_scope.pending_operators.peek() == constants.Operators.OP_ADDITION or global_scope.pending_operators.peek() == constants.Operators.OP_SUBTRACTION):
+		create_binary_operation_quad()
+
+#ITEM action 2 - Pushes the appropriate operator into the operators stack
+def p_EC_SEEN_ITEM_OP(p):
+	"EC_SEEN_ITEM_OP : "
+	operator = p[-1]
+
+	if operator == "+":
+		global_scope.pending_operators.push(constants.Operators.OP_ADDITION)
+	elif operator == "-":
+		global_scope.pending_operators.push(constants.Operators.OP_SUBTRACTION)
+
+#TERM action 1 - Generates quad for the multiplication or division operation
+def p_EC_SEEN_FACTOR(p):
+	"EC_SEEN_FACTOR : "
+	#Checks that the next operator is a multplication or division to respect order of operations
+	if not global_scope.pending_operators.empty() and (global_scope.pending_operators.peek() == constants.Operators.OP_MULTIPLICATION or global_scope.pending_operators.peek() == constants.Operators.OP_DIVISION):
+		create_binary_operation_quad()
+
+#TERM action 2 - Pushes the appropriate operator into the operators stack
+def p_EC_SEEN_TERM_OP(p):
+	"EC_SEEN_TERM_OP : "
+	operator = p[-1]
+
+	if operator == "*":
+		global_scope.pending_operators.push(constants.Operators.OP_MULTIPLICATION)
+	elif operator == "/":
+		global_scope.pending_operators.push(constants.Operators.OP_DIVISION)
+
+#FACTOR action 1 - Adds a false bottom mark to the operators stack
+def p_EC_SEEN_FACT_LP(p):	
+	"EC_SEEN_FACT_LP : "
+	global_scope.pending_operators.push(constants.Misc.FALSE_BOTTOM)
+
+#FACTOR action 2 - Removes the false bottom mark of the operators stack
+def p_EC_SEEN_FACT_RP(p):	
+	"EC_SEEN_FACT_RP : "
+	global_scope.pending_operators.pop()
+
+#FACTOR action 3 - States that the next number is negative
+def p_EC_SEEN_NEGATIVE(p):
+	"EC_SEEN_NEGATIVE : "
+	global_scope.sign = -1
+
+#CALL action 1 - Validates block return type with no return value
+def p_EC_SEEN_CALL_VOID_BLOCK_ID(p):
+	"EC_SEEN_CALL_VOID_BLOCK_ID : "
+	abstract_seen_block_id(p, False)
+
+#CALL action 4 - Generate block call quads for blocks with no return value
+def p_EC_SEEN_BLOCK_CALL(p):
+	"EC_SEEN_BLOCK_CALL : "
+	abstract_seen_block_call(p, False)
+
+#LOOP action 1 - Pushes starting point of loop to the pending jumps stack
+def p_EC_SEEN_DO(p):
+	"EC_SEEN_DO : "
+	global_scope.pending_jumps.push(global_scope.quad_list.get_quad_count())
+
+#LOOP action 2: - Generates quad to go to the beginning of the loop
+def p_EC_SEEN_UNTIL(p):
+	"EC_SEEN_UNTIL : "
+	exp_type = global_scope.pending_operand_types.pop()
+
+	#The expression should resolve to a boolean value
+	if exp_type == constants.Data_Types.BOOLEAN:
+		evaluation_result = global_scope.pending_operands.pop()
+		loop_start = global_scope.pending_jumps.pop()
+
+		if not global_scope.quad_list.append_quad(constants.Operators.OP_GO_TO_F, evaluation_result, "-1", loop_start):
+			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+
+		#increase the quad count of the block by one
+		global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
+
+		#increase the loop count of the block by one, and send the number of the just added quad
+		global_scope.code_review.increase_compiled_loop_counter(global_scope.current_block_id, global_scope.quad_list.get_quad_count() - 1)
+	else:
+		stop_exec("Expected a boolean expression, found a '%s' expression instead" % exp_type)
+
+#ASSIGN action 5 - Pushes the assignment operator to the operators stack
+def p_EC_SEEN_ASSIGN_OP(p):
+	"EC_SEEN_ASSIGN_OP : "
+	global_scope.pending_operators.push(constants.Operators.OP_ASSIGN)
+
+#ASSIGN action 6 - Generates quad for assignment operations
+def p_EC_SEEN_ASSIGN_VALUE(p):
+	"EC_SEEN_ASSIGN_VALUE : "
+	#Checks that the next operator is an assignment operator to respect order of operations
+	if not global_scope.pending_operators.empty() and global_scope.pending_operators.peek() == constants.Operators.OP_ASSIGN:
+			#Value to be assigned
+			right_operand = global_scope.pending_operands.pop()
+			right_type = global_scope.pending_operand_types.pop()
+
+			#Space where value will be assigned
+			left_operand = global_scope.pending_operands.pop()
+			left_type = global_scope.pending_operand_types.pop()
+
+			operator = global_scope.pending_operators.pop()
+
+			#Checks if right_operand can be stored in a left_operand container
+			result_type = global_scope.semantic_cube.validate_operation(operator, left_type, right_type)
+
+			#Assignment should be valid
+			if result_type != -1:
+				if not global_scope.quad_list.append_quad(operator, right_operand, "-1", left_operand):
+					stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+
+				#increase the quad count of the block by one
+				global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
+			else:
+				stop_exec("Expression of type '%s' cannot be assigned to ID of type '%s'" % (right_type, left_type))
 
 #RETURN action 1 - Validates return type
 def p_EC_SEEN_RETURN(p):
@@ -848,61 +879,31 @@ def p_EC_SEEN_RETURN(p):
 	else:
 		stop_exec("Block '%s' should not return a value" % global_scope.current_block_id)
 
-#CALL action 1 - Validates block return type with no return value
-def p_EC_SEEN_CALL_VOID_BLOCK_ID(p):
-	"EC_SEEN_CALL_VOID_BLOCK_ID : "
-	abstract_seen_block_id(p, False)
+#READ action 1 - Generates quad for the read action
+def p_EC_SEEN_READ_ID(p):
+	"EC_SEEN_READ_ID : "
+	#This is an address, so it should've already passed through an existence verification process
+	id_to_read_into = global_scope.pending_operands.pop()
+	input_type = global_scope.pending_operand_types.pop()
 
-#CALL action 2 - Generates quad for ERA and initializes argument counter
-def p_EC_SEEN_START_PARAM(p):
-	"EC_SEEN_START_PARAM : "
-	call_block_id = global_scope.pending_blocks.peek()
-
-	if not global_scope.quad_list.append_quad(constants.Operators.OP_ERA, call_block_id, "-1", "-1"):
-		stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
+	#The ID that will store whatever is read should exist
+	#if global_scope.function_directory.primitive_id_exists(id_to_read_into, global_scope.current_block_id):
+	if not global_scope.quad_list.append_quad(constants.Operators.OP_INPUT, input_type, "-1", id_to_read_into):
+			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
 	#increase the quad count of the block by one
 	global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
 
-	#adds false bottom mark to solve operations for parameters first
-	global_scope.pending_operators.push(constants.Misc.FALSE_BOTTOM)
-	global_scope.pending_blocks_argument_counter.push(0)
-	global_scope.pending_parameter_type_counter.push([0,0,0,0])
+#WRITE action 1 - Generates quad for the write action
+def p_EC_SEEN_WRITE_EXP(p):
+	"EC_SEEN_WRITE_EXP : "
+	expression_to_print = global_scope.pending_operands.pop()
 
-#CALL action 3 - Validates argument counter with parameter number
-def p_EC_SEEN_PARAM(p):
-	"EC_SEEN_PARAM : "
-	argument_type = global_scope.pending_operand_types.pop()
+	if not global_scope.quad_list.append_quad(constants.Operators.OP_PRINT, expression_to_print, "-1", "-1"):
+		stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
 
-	try:
-		call_block_id = global_scope.pending_blocks.peek()
-		block_argument_counter = global_scope.pending_blocks_argument_counter.pop()
-		parameter_type = global_scope.function_directory.get_parameter_type_for_block(call_block_id, block_argument_counter)
-	#If the argument counter is greater than the parameter counter, there is a counter mismatch
-	except IndexError:
-		block_parameter_counter = global_scope.function_directory.get_parameter_count_for_block(call_block_id)
-		stop_exec("Block '%s' receives %d parameter(s), found %d argument(s) instead" % (call_block_id, block_parameter_counter, block_argument_counter + 1))
-
-	block_argument_counter = block_argument_counter + 1
-	global_scope.pending_blocks_argument_counter.push(block_argument_counter)
-
-	#Validates argument type with parameter type
-	if argument_type == parameter_type:
-		argument = global_scope.pending_operands.pop()
-		param_address = get_parameter_address(argument_type)
-
-		if not global_scope.quad_list.append_quad(constants.Operators.OP_PARAM, argument, "-1", param_address):
-			stop_exec("Number of operations permitted has surpassed the limit (%i)" % constants.Memory_Limits.QUAD_SIZE)
-
-		#increase the quad count of the block by one
-		global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
-	else:
-		stop_exec("Argument #%d of block '%s' should be a '%s' value, found a '%s' value instead" % (block_argument_counter, call_block_id, parameter_type, argument_type))
-
-#CALL action 4 - Generate block call quads for blocks with no return value
-def p_EC_SEEN_BLOCK_CALL(p):
-	"EC_SEEN_BLOCK_CALL : "
-	abstract_seen_block_call(p, False)
+	#increase the quad count of the block by one
+	global_scope.code_review.increase_compiled_quad_counter(global_scope.current_block_id)
 
 #ERROR - Prints message for unexpected tokens
 def p_error(p):
@@ -1008,6 +1009,11 @@ def create_binary_operation_quad():
 #constant_type is the data type of the constant to be transformed
 def push_constant_address(constant_type):
 	constant_value = global_scope.pending_operands.pop()
+
+	if global_scope.sign == -1 and (constant_type == constants.Data_Types.DECIMAL or constant_type == constants.Data_Types.WHOLE):
+		constant_value = constant_value * -1
+		global_scope.sign = 1
+
 	constant_address = global_scope.function_directory.get_constant_address(constant_value, constant_type)
 
 	if constant_address == -1:
@@ -1045,14 +1051,14 @@ def stop_exec(message):
 
 #Prints results of compilation when successful
 def end_compilation():
+	print global_scope.quad_list
 	print('Compilation Successful!')
-	#global_scope.function_directory.print_table()
-	#print(global_scope.quad_list)
 
 #Entry method to start the compilation process
 def start_compilation(code):
     #initialize structures to begin complation
 	global_scope.initialize_structures()
+
 	#Build the parser
 	parser = yacc.yacc()
 	parser.parse(code)

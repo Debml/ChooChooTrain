@@ -17,6 +17,7 @@ code_review = Code_Review_Data()
 
 #Helper variables for semantic validation
 line_count = 1
+sign = 1
 is_starting_block = False
 block_returns = False
 current_block_id = ""
