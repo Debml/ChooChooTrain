@@ -902,6 +902,7 @@ function show_output(text){
     a.focus();
     a.value = "";
     a.value = text;
+    a.scrollTop = a.scrollHeight 
 }
 
 function show_output_input(text){
@@ -909,13 +910,7 @@ function show_output_input(text){
     var a = document.getElementById('output-text');
     a.value = "";
     a.value = text;
-    //in case not in scroll view
-    if(a.scrollHeight>0){
-        a.style.height = a.scrollHeight+'px';
-    }
-    else {
-        a.style.height = 72+'px';
-    }
+    a.scrollTop = a.scrollHeight 
 }
 
 function runtime_end(){

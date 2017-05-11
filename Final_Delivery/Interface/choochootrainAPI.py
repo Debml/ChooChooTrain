@@ -5,6 +5,7 @@ from flask import make_response
 from flask import request
 from flask import abort
 from flask_cors import CORS, cross_origin
+import flask
 
 #any other imports
 from compiler_connection import Compiler_Handler
@@ -78,4 +79,5 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == '__main__':
+    print flask.__version__
     app.run(debug=True)
